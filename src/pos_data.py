@@ -16,7 +16,9 @@ def collect(domain):
             words.append([pos,word,tag])
         else:
             words.append(p)
-    print split_on_sentences(words)
+    sentences = split_on_sentences(words)
+    new_sentences = [word+[len(sentence)] for sentence in sentences for word in sentence]
+    print new_sentences
     pass
 
 # a method to group words into sentences by new lines
