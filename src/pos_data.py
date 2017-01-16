@@ -1,6 +1,7 @@
 import numpy as np
 import re
 import itertools
+from decimal import *
 
 # collect words and pos tags for experiments
 def collect(domain):
@@ -8,7 +9,13 @@ def collect(domain):
     words = []
     for line in input_file:
         p = filter(None,re.split("\t",line))
-        words.append(p)
+        if p != ["\n"]:
+            pos = int(Decimal(p[0]))
+            word = p[1].lower()
+            tag = p[3]
+            words.append([pos,word,tag])
+        else:
+            words.append(p)
     print split_on_sentences(words)
     pass
 
