@@ -145,12 +145,12 @@ def load_preprocess_obj(name):
 
 # save and load by source and target domains
 def save_obj(source,target,obj,name):
-    with open('../work/%s-%s/'+name + '.pkl'%(source,target), 'wb') as f:
+    with open('../work/%s-%s/%s.pkl'%(source,target,name), 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
-        print '../work/%s-%s/'+name + '.pkl saved'%(source,target)
+        print '../work/%s-%s/%s.pkl'%(source,target,name)
 
 def load_obj(source,target,name):
-    with open('../work/%s-%s/'+name + '.pkl'%(source,target), 'rb') as f:
+    with open('../work/%s-%s/%s.pkl'%(source,target,name), 'rb') as f:
         return pickle.load(f)
 
 
