@@ -8,7 +8,7 @@ import pickle
 
 # collect words and pos tags from labeled dataset 
 def collect_labeled(domain):
-    fname = "../data/gweb-%s-dev.conll"%domain
+    fname = "../data/gweb-%s.conll"%domain
     if domain == "wsj":
         fname = "../data/ontonotes-wsj-train.conll"
     input_file = open(fname,'r')
@@ -25,8 +25,11 @@ def collect_labeled(domain):
     sentences = split_on_sentences(words)
     # add sentence_length as additional term for generating feature vectors
     new_sentences = [[word+[len(sentence)]  for word in sentence] for sentence in sentences]
-    save_preprocess_obj(new_sentences,'%s-labeled'%domain)
-    print '%s-labeled saved'%domain 
+    save_name = domain
+    if 'wsj' in domain:
+        save_name = '%s-labeled'%domain
+    save_preprocess_obj(new_sentences,save_name)
+    print '%s saved'%save_name 
     pass
 
 # a method to group words into sentences by new lines
@@ -74,7 +77,9 @@ def load_preprocess_obj(name):
         return pickle.load(f)
 
 if __name__ == "__main__":
-    domains = ["answers","emails","reviews","newsgroups","weblogs","wsj"]
+    # domains = ["answers-dev","answers-test","emails-test","reviews-dev"]
+    # domains += ["reviews-test","newsgroups-dev","newsgroups-test","weblogs-test"]
+    domains = ["wsj"]
     for domain in domains:
         collect_labeled(domain)
     collect_unlabeled_wsj()
