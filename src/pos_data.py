@@ -38,9 +38,17 @@ def split_on_sentences(lst):
     spl = [list(y) for x, y in itertools.groupby(lst, lambda z: z == w) if not x]
     return spl
 
-# collect data from unlabeled dataset 
+# collect data from other unlabeled dataset 
 def collect_unlabeled(domain):
-
+    input_file = open("../data/gweb-%s.unlabeled.txt"%domain,"r")
+    sentences = []
+    for line in input_file:
+        p = filter(None,re.split(" ",line.replace("\n","")))
+        sentences.append(list(p))
+    new_sentences = [[[word.lower()]+['-',sent.index(word)+1,len(sent)] for word in sent] for sent in sentences]
+    save_name = '%s-unlabeled'%domain
+    save_preprocess_obj(new_sentences,save_name)
+    print '%s saved'%save_name, len(new_sentences)
     pass
 
 # collect data from unlabeled wsj
@@ -55,7 +63,7 @@ def collect_unlabeled_wsj():
             if p: 
                 sents = nltk.sent_tokenize(p)
                 words = [nltk.word_tokenize(sent) for sent in sents]
-                wsj = wsj+words
+                wsj += words
     new_wsj = [[[word.lower()]+['-',sent.index(word)+1,len(sent)] for word in sent] for sent in wsj]
     save_preprocess_obj(new_wsj,'wsj-unlabeled')
     print 'wsj-unlabeled saved'
@@ -79,7 +87,12 @@ def load_preprocess_obj(name):
 if __name__ == "__main__":
     # domains = ["answers-dev","answers-test","emails-test","reviews-dev"]
     # domains += ["reviews-test","newsgroups-dev","newsgroups-test","weblogs-test"]
-    domains = ["wsj"]
+    # domains = ["wsj"]
+    # for domain in domains:
+    #     collect_labeled(domain)
+    # # target domain unlabeled datasets
+    domains = ["answers","emails","reviews","newsgroups","weblogs"]
+    # domain = "answers"
     for domain in domains:
-        collect_labeled(domain)
-    collect_unlabeled_wsj()
+        collect_unlabeled(domain)
+    # collect_unlabeled_wsj()
