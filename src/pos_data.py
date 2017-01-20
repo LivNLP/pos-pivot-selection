@@ -5,6 +5,7 @@ from decimal import *
 import nltk
 import glob
 import pickle
+import os
 
 # collect words and pos tags from labeled dataset 
 def collect_labeled(domain):
@@ -71,7 +72,52 @@ def collect_unlabeled_wsj():
     pass
 
 def presets_labeled(source,target):
+    # generate a tag list from labeled data for iteration
+    src_labeled = load_preprocess_obj('%s-labeled'%source)
+    tags = tag_list(src_labeled)
+    # loop tags to divide presets into groups
+    for pos_tag in tags:
+        print "TAG = %s"% pos_tag
+        presets_labeled_tag(source,target,pos_tag,src_labeled)
+    pass
 
+# different from SA, for each pos_tag, the source labeled data is divided into
+# sentences HAVE pos_tag and NOT pos_tag, so this is a single method for a single pos_tag
+# this target does nothing, just for saving into the correct dir
+def presets_labeled_tag(source,target,pos_tag,src_labeled):
+    # tgt_labeled = load_preprocess_obj('%s-dev'%target)
+    src_sentences = float(len(src_labeled))
+
+    # list sentences and number of sentences HAS pos_tag
+    pos_src_data = sentence_list_contain_tag(pos_tag,src_labeled)
+    pos_src_sentences = float(len(pos_src_data))
+
+    # list sentences and number of sentences NOT pos_tag
+    neg_src_data = minus_lists(src_labeled,pos_src_data)
+    neg_src_sentences = float(len(neg_src_data))
+    print pos_src_sentences,neg_src_sentences
+
+    # feature list
+    pos_src_features = feature_list(pos_src_data)
+    neg_src_features = feature_list(neg_src_data)
+    src_features = set(pos_src_features).union(neg_src_features)
+    print len(src_features)
+
+    # sentences contain x
+    x_pos_src = sentences_contain_x(src_features,pos_src_data)
+    x_neg_src = sentences_contain_x(src_features,neg_src_data)
+    x_src = combine_dicts(x_pos_src, x_neg_src)
+    print len(x_src)
+
+    # save presets to temp objects
+    save_tag_obj(source,target,pos_src_data,pos_tag,"pos_src_data")
+    save_tag_obj(source,target,neg_src_data,pos_tag,"neg_src_data")
+    save_tag_obj(source,target,pos_src_sentences,pos_tag,"pos_src_sentences")
+    save_tag_obj(source,target,neg_src_sentences,pos_tag,"neg_src_sentences")
+    save_tag_obj(source,target,src_features,pos_tag,"src_features")
+    save_tag_obj(source,target,x_pos_src,pos_tag,"x_pos_src")
+    save_tag_obj(source,target,x_neg_src,pos_tag,"x_neg_src")
+    save_tag_obj(source,target,x_src,pos_tag,"x_src")
     pass
 
 def presets_unlabeled(source,target):
@@ -80,8 +126,8 @@ def presets_unlabeled(source,target):
     tgt_unlabeled = load_preprocess_obj('%s-unlabeled'%target)
 
     # number of sentences
-    un_src_sentences = len(src_unlabeled)
-    un_tgt_sentences = len(tgt_unlabeled)
+    un_src_sentences = float(len(src_unlabeled))
+    un_tgt_sentences = float(len(tgt_unlabeled))
     un_sentences = un_src_sentences+un_tgt_sentences
 
     # feature list
@@ -118,6 +164,7 @@ def tag_list(sentences):
 def index_list(i,my_list):
     return list(set([a[i] for b in my_list for a in b]))
 
+# number of sentences contains x
 def sentences_contain_x(features,sentences):
     features = list(features)
     features_bag = np.zeros(len(features), dtype=float)
@@ -129,10 +176,23 @@ def sentences_contain_x(features,sentences):
             features_bag[i] += 1
     return dict(zip(features,features_bag))
 
-# method to combine dictionaries
+# a method to combine dictionaries
 def combine_dicts(a, b):
     return dict([(n, a.get(n, 0)+b.get(n, 0)) for n in set(a)|set(b)])
 
+# a method to return a list a-b
+def minus_lists(a,b):
+    return [x for x in a if x not in b]
+
+# sentences contain pos_tag with position info
+def sentence_list_contain_tag(pos_tag,sentences):
+    sents_vector = np.zeros(len(sentences), dtype=float)
+    for sent in sentences:
+        for word in sent:
+            if word[1] == pos_tag:
+                i = sentences.index(sent)
+                sents_vector[i]+=1
+    return [sent for sent in sentences if sents_vector[sentences.index(sent)]>0]
 
 # save and load for preprocessing
 def save_preprocess_obj(obj, name):
@@ -153,12 +213,30 @@ def load_obj(source,target,name):
     with open('../work/%s-%s/%s.pkl'%(source,target,name), 'rb') as f:
         return pickle.load(f)
 
+# save pos_tag related objects in the created subdir
+def save_tag_obj(source,target,obj,tag,name):
+    filename = '../work/%s-%s/%s/%s.pkl'%(source,target,tag,name)
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
+    with open(filename, 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+        print filename
+
+def load_tag_obj(source,target,tag,name):
+    with open('../work/%s-%s/%s/%s.pkl'%(source,target,tag,name), 'rb') as f:
+        return pickle.load(f)
+
 
 ##########test methods##########
 def print_test():
     my_object = load_preprocess_obj('answers-dev')
-    features = feature_list(my_object)
-    print sentences_contain_x(features,my_object)
+    # features = feature_list(my_object)
+    print sentence_list_contain_tag('NN', my_object) 
+    print len(my_object), len(sentence_list_contain_tag('NN', my_object))
     pass
 
 
@@ -168,14 +246,15 @@ if __name__ == "__main__":
     # domains = ["wsj"]
     # for domain in domains:
     #     collect_labeled(domain)
-    # # target domain unlabeled datasets
-    domains = ["answers","emails"]
-    domains += ["reviews","newsgroups","weblogs"]
+    # target domain unlabeled datasets
+    # domains = ["answers","emails"]
+    # domains += ["reviews","newsgroups","weblogs"]
     # domain = "answers"
     # for domain in domains:
     #     collect_unlabeled(domain)
     # collect_unlabeled_wsj()
     source = 'wsj'
-    for target in domains:
-        presets_unlabeled(source,target)
+    # for target in domains:
+    #     presets_unlabeled(source,target)
     # print_test()
+    presets_labeled(source,'answers')
