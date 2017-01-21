@@ -207,9 +207,16 @@ def load_preprocess_obj(name):
 
 # save and load by source and target domains
 def save_obj(source,target,obj,name):
-    with open('../work/%s-%s/%s.pkl'%(source,target,name), 'wb') as f:
+    filename = '../work/%s-%s/%s.pkl'%(source,target,name)
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
+    with open(filename, 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
-        print '../work/%s-%s/%s.pkl'%(source,target,name)
+        print '%s saved'%filename
 
 def load_obj(source,target,name):
     with open('../work/%s-%s/%s.pkl'%(source,target,name), 'rb') as f:
