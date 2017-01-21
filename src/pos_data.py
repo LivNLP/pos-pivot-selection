@@ -75,6 +75,7 @@ def presets_labeled(source,target):
     # generate a tag list from labeled data for iteration
     src_labeled = load_preprocess_obj('%s-labeled'%source)
     tags = tag_list(src_labeled)
+    # tags = ['.']
     # loop tags to divide presets into groups
     for pos_tag in tags:
         print "TAG = %s"% pos_tag
@@ -110,6 +111,7 @@ def presets_labeled_tag(source,target,pos_tag,src_labeled):
     print len(x_src)
 
     # save presets to temp objects
+    # pos_tag="TAG."
     save_tag_obj(source,target,pos_src_data,pos_tag,"pos_src_data")
     save_tag_obj(source,target,neg_src_data,pos_tag,"neg_src_data")
     save_tag_obj(source,target,pos_src_sentences,pos_tag,"pos_src_sentences")
@@ -233,10 +235,11 @@ def load_tag_obj(source,target,tag,name):
 
 ##########test methods##########
 def print_test():
-    my_object = load_preprocess_obj('answers-dev')
+    my_object = load_preprocess_obj('wsj-labeled')
     # features = feature_list(my_object)
-    print sentence_list_contain_tag('NN', my_object) 
-    print len(my_object), len(sentence_list_contain_tag('NN', my_object))
+    print tag_list(my_object),len(tag_list(my_object))
+    # print sentence_list_contain_tag('NN', my_object) 
+    # print len(my_object), len(sentence_list_contain_tag('NN', my_object))
     pass
 
 
