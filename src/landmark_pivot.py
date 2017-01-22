@@ -397,26 +397,21 @@ def calculate_all_u_pretrained_glove():
     pass
 
 def compute_all_gamma():
-    domains = ["books", "electronics", "dvd", "kitchen"]
-    for source in domains:
-        for target in domains:
-            if source ==target:
-                continue
-            print 'computing gamma for %s-%s ...' % (source,target)
-            gamma_function(source,target)
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for target in domains:
+        print 'computing gamma for %s-%s ...' % (source,target)
+        gamma_function(source,target)
     print '-----Complete!!-----'
     pass
 
 def store_all_selections(params,model,pretrained,paramOn):
-    domains = ["books", "electronics", "dvd", "kitchen"]
-    for param in params:
-        for source in domains:
-            for target in domains:
-                if source ==target:
-                    continue
-                print 'getting alpha from %s-%s ...' % (source,target)
-                select_pivots_by_alpha(source,target,param,model,pretrained,paramOn)
-                print '------selection completed--------' 
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for target in domains:
+        print 'getting alpha from %s-%s ...' % (source,target)
+        select_pivots_by_alpha(source,target,param,model,pretrained,paramOn)
+        print '------selection completed--------' 
     pass
 
 # test methods
@@ -427,13 +422,6 @@ def solve_qp():
     param = 1
     dirname = '../work/%s-%s/test/'% (source,target)
     opt_function(dirname,param,model_name,1)
-    pass
-
-def construct_freq_dict():
-    source = 'books'
-    target = 'electronics'
-    limit = 5
-    print len(freq_keys(source,target,limit))
     pass
 
 def print_alpha(param):
@@ -452,28 +440,6 @@ def print_alpha(param):
     print 'param = %f'%param
     for x,score in alpha[:10]:
         print x,score
-    pass
-
-def glove_model_test():
-    source = 'books'
-    target = 'dvd'
-    # glove(source,target)
-    glove_to_word2vec(source,target)
-    pass
-
-def read_glove():
-    path = '../data/glove.42B.300d.txt'
-    # model = load_pretrained_glove(path)
-    source = 'books'
-    target = 'dvd'
-    model = load_filtered_glove(source,target,path)   
-    # print len(model['good'])
-    pass
-
-def read_word2vec():
-    path = '../data/GoogleNews-vectors-negative300.bin'
-    model = gensim.models.Word2Vec.load_word2vec_format(path,binary=True)
-    print len(model['good'])
     pass
 
 def print_ppmi():
@@ -510,9 +476,5 @@ if __name__ == "__main__":
     #     store_all_selections(params,model,1,paramOn)
     ######test##########
     # solve_qp() 
-    # construct_freq_dict()
     # print_alpha(0)
-    # glove_model_test()
-    # read_glove()
-    # read_word2vec()
     # print_ppmi()
