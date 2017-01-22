@@ -196,6 +196,13 @@ def sentence_list_contain_tag(pos_tag,sentences):
                 sents_vector[i]+=1
     return [sent for sent in sentences if sents_vector[sentences.index(sent)]>0]
 
+# count frequency
+def count_freq(sentences,h):
+    for sentence in sentences:
+        for word in sentence:
+            h[word]=h.get(word,0)+1
+    pass
+
 # save and load for preprocessing
 def save_preprocess_obj(obj, name):
     with open('../work/preprocess/'+name + '.pkl', 'wb') as f:
