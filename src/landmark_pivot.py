@@ -7,12 +7,14 @@
 import pos_data
 import numpy
 import pickle
-import gensim,logging
-from glove import Corpus, Glove
-import glove
+# import gensim,logging
+# from glove import Corpus, Glove
+# import glove
 from cvxopt import matrix
 from cvxopt.solvers import qp
 import os
+import collections
+from collections import OrderedDict
 
 # construct training data for such domian: labeled and unlabeled
 # format: [[sentence 1],[sentence 2]...]
@@ -87,52 +89,45 @@ def load_filtered_glove(source,target,gloveFile):
     print "After filtering, ",len(model)," words loaded!"
     return model
 
-
-# get GloVe word vector
-# def glove_to_word2vec(source,target):
-#     path = '../work/%s-%s/glove.model' % (source,target)
-#     model = Glove.load(path)
-#     print len(model.get_word_vector('good'))
-#     pass
-
 def glove_to_vec(feature,model):
     return model.get_word_vector(feature)
 
-# PPMI: replace all negative values in PMI with zero
-def ppmi(pmi_score):
-    return 0 if pmi_score < 0 else pmi_score
-
-# gamma function: PPMI, other pivot selection methods can be also used
-# tag difference.....
+# gamma function: sum up all tags to get one score for single domain pair
 def gamma_function(source,target):
-    print 'loading objects...'
-    features = pos_data.load_obj(source,target,'filtered_features')
-    x_src = pos_data.load_obj(source,target,'x_src')
-    x_pos_src = pos_data.load_obj(source,target,'x_pos_src')
-    x_neg_src = pos_data.load_obj(source,target,'x_neg_src')
-    src_sentences = pos_data.load_obj(source,target,'src_sentences')
-    pos_src_sentences = pos_data.load_obj(source,target,'pos_src_sentences')
-    neg_src_sentences = pos_data.load_obj(source,target,'neg_src_sentences')
-
-    ppmi_dict = {}
-    for x in features:
-        if x_src.get(x,0)*x_pos_src.get(x,0)*x_neg_src.get(x,0) > 0:
-            pos_pmi = sp.pointwise_mutual_info(x_src.get(x,0), x_pos_src.get(x,0), pos_src_sentences, src_sentences) 
-            neg_pmi = sp.pointwise_mutual_info(x_src.get(x,0), x_neg_src.get(x,0), neg_src_sentences, src_sentences)
-            ppmi_dict[x] = (ppmi(pos_pmi)-ppmi(neg_pmi))**2
-        else:
-            ppmi_dict[x] = 0
-    
+    src_labeled = pos_data.load_preprocess_obj('%s-labeled'%source)
+    tags = pos_data.tag_list(src_labeled)
+    ppmi_dict={}
+    for pos_tag in tags:
+        ppmi_dict = pos_data.combine_dicts(ppmi_dict,gamma_function_single_tag(source,target,pos_tag))
 
     dirname = '../work/%s-%s/test/'% (source,target)
     print 'saving ppmi_dict in ' + dirname
     temp = normalize_dict(ppmi_dict)     
-    # L = temp.items()
-    # print 'sorting...'
-    # L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
-    # print temp.items()[:5]
     save_loop_obj(temp,dirname,'ppmi_dict')
     pass
+
+# single gamma function by pos_tag: PPMI, other pivot selection methods can be also used
+def gamma_function_single_tag(source,target,pos_tag):
+    print 'S: %s, T: %s,tag = %s in processing'%(source,target,pos_tag)
+    pos_tag = 'TAG.' if pos_tag == '.' else pos_tag
+    features = pos_data.load_obj(source,target,'filtered_features')
+    x_src = pos_data.load_tag_obj(source,target,pos_tag,"x_src")
+    x_pos_src = pos_data.load_tag_obj(source,target,pos_tag,"x_pos_src")
+    x_neg_src = pos_data.load_tag_obj(source,target,pos_tag,"x_neg_src")
+    pos_src_sentences = pos_data.load_tag_obj(source,target,pos_tag,"pos_src_sentences")
+    neg_src_sentences = pos_data.load_tag_obj(source,target,pos_tag,"neg_src_sentences")
+    src_sentences = pos_src_sentences+neg_src_sentences
+
+    ppmi_dict = {}
+    for x in features:
+        if x_src.get(x,0)*x_pos_src.get(x,0)*x_neg_src.get(x,0) > 0:
+            pos_pmi = pos_data.pointwise_mutual_info(x_src.get(x,0), x_pos_src.get(x,0), pos_src_sentences, src_sentences) 
+            neg_pmi = pos_data.pointwise_mutual_info(x_src.get(x,0), x_neg_src.get(x,0), neg_src_sentences, src_sentences)
+            ppmi_dict[x] = (pos_data.ppmi(pos_pmi)-pos_data.ppmi(neg_pmi))**2
+        else:
+            ppmi_dict[x] = 0
+    return ppmi_dict
+
 
 # f(Wk) = document frequency of Wk in S_L / # documents in S_L -
 # document frequency of Wk in T_U / # documents in T_U
@@ -211,6 +206,8 @@ def qp_solver(Uk,Rk,param):
     P = numpy.dot(2,U*U.T)
     P = P.astype(float) 
     # print "%d" % len(P)
+    # print sort_by_keys(Rk).keys()[:10]
+    # print sort_by_keys(Uk).keys()[:10]
     print sort_by_keys(Rk).keys()==sort_by_keys(Uk).keys()
     q = numpy.dot(-param,R)
     n = len(q)
@@ -264,9 +261,8 @@ def normalize_dict(a):
     a.update((k,v/total) for k,v in a.items())
     return a
 
-def sort_by_keys(dic):
-    dic.keys().sort()
-    return dic
+def sort_by_keys(d):
+    return collections.OrderedDict([(k, d[k]) for k in sorted(d.keys())])
 
 def remove_low_freq_feats(old_dict,new_keys):
     new_dict = {new_key:old_dict[new_key] for new_key in new_keys}
@@ -319,20 +315,6 @@ def save_loop_obj(obj,dirname,name):
     with open(filename,'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
         print filename
-
-# preset methods
-# def collect_features():
-#     source = 'wsj'
-#     domains = ["answers","emails"]
-#     domains += ["sentences","newsgroups","weblogs"]
-#     for target in domains:
-#         src_features = pos_data.fealabeled_sentences(source)
-#         un_tgt_features = unlabeled_sentences(target)
-#         sl_tu_features = src_features.union(set(un_tgt_features))
-
-#         print 'saving sl_tu_features for %s-%s ...' % (source,target)
-#         pos_data.save_obj(source,target,sl_tu_features,'sl_tu_features')
-#     pass
 
 def collect_filtered_features(limit):
     source = 'wsj'
@@ -396,6 +378,7 @@ def calculate_all_u_pretrained_glove():
     pass
 
 def compute_all_gamma():
+    source = 'wsj'
     domains = ["answers","emails"]
     domains += ["reviews","newsgroups","weblogs"]
     for target in domains:
@@ -405,12 +388,14 @@ def compute_all_gamma():
     pass
 
 def store_all_selections(params,model,pretrained,paramOn):
+    source = 'wsj'
     domains = ["answers","emails"]
     domains += ["reviews","newsgroups","weblogs"]
     for target in domains:
-        print 'getting alpha from %s-%s ...' % (source,target)
-        select_pivots_by_alpha(source,target,param,model,pretrained,paramOn)
-        print '------selection completed--------' 
+        for param in params:
+            print 'getting alpha from %s-%s ...' % (source,target)
+            select_pivots_by_alpha(source,target,param,model,pretrained,paramOn)
+            print '------selection completed--------' 
     pass
 
 # test methods
@@ -467,20 +452,20 @@ if __name__ == "__main__":
     # collect_filtered_features(5)
     # create_word2vec_models()
     # create_glove_models()
-    calculate_all_u_pretrained_word2vec()
-    calculate_all_u_pretrained_glove()
+    # calculate_all_u_pretrained_word2vec()
+    # calculate_all_u_pretrained_glove()
     # compute_all_gamma()
     # params = [0,1]
     # model_names = ['word2vec','glove']
     # ######param#########
-    # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
-    # params = [10e-3,10e-4,10e-5,10e-6]
+    params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
+    params += [10e-3,10e-4,10e-5,10e-6]
     # model_names = ['word2vec']
-    # model_names = ['glove']
-    # paramOn = True
+    model_names = ['glove']
+    paramOn = True
     # paramOn = False
-    # for model in model_names:
-    #     store_all_selections(params,model,1,paramOn)
+    for model in model_names:
+        store_all_selections(params,model,1,paramOn)
     ######test##########
     # read_word2vec()
     # solve_qp() 
