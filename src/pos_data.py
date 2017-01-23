@@ -409,13 +409,13 @@ def sum_up_labeled_scores(source,target):
     ppmi_dict={}
     for pos_tag in tags:
         print "TAG = %s"% pos_tag
-        print "FREQ-L"
+        # print "FREQ-L"
         freq_dict = combine_dicts(freq_dict,select_pivots_freq_labeled_tag(source,target,pos_tag))
-        print "MI-L"
+        # print "MI-L"
         mi_dict = combine_dicts(mi_dict,select_pivots_mi_labeled_tag(source,target,pos_tag))
-        print "PMI-L"
+        # print "PMI-L"
         pmi_dict = combine_dicts(pmi_dict,select_pivots_pmi_labeled_tag(source,target,pos_tag))
-        print "PPMI-L"
+        # print "PPMI-L"
         ppmi_dict = combine_dicts(ppmi_dict,select_pivots_ppmi_labeled_tag(source,target,pos_tag))
     freq_list = freq_dict.items()
     mi_list = mi_dict.items()
