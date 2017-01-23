@@ -373,8 +373,8 @@ def calculate_all_u_pretrained_word2vec():
     model = gensim.models.Word2Vec.load_word2vec_format(path,binary=True)
     # print model.most_similar('very')
     source = 'wsj'
-    domains = ["newsgroups"]
-    # domains += ["answers","emails","reviews","weblogs"]
+    domains = ["weblogs"]
+    # domains += ["answers","emails","reviews","newsgroups"]
     for target in domains:
         print 'calcualting u_pretrained for %s-%s ...' % (source,target)
         u_function_pretrained(source,target,model) 
@@ -386,8 +386,8 @@ def calculate_all_u_pretrained_glove():
     path = '../data/glove.42B.300d.txt'
     # model = load_pretrained_glove(path)
     source = 'wsj'
-    domains = ["newsgroups"]
-    # domains += ["answers","emails","reviews","weblogs"]
+    domains = ["weblogs"]
+    # domains += ["answers","emails","reviews","newsgroups"]
     for target in domains:
         print 'calcualting u_pretrained for %s-%s ...' % (source,target)
         model = load_filtered_glove(source,target,path)
@@ -463,12 +463,12 @@ def print_ppmi():
 
 
 # main
-# if __name__ == "__main__":
+if __name__ == "__main__":
     # collect_filtered_features(5)
     # create_word2vec_models()
     # create_glove_models()
-    # calculate_all_u_pretrained_word2vec()
-    # calculate_all_u_pretrained_glove()
+    calculate_all_u_pretrained_word2vec()
+    calculate_all_u_pretrained_glove()
     # compute_all_gamma()
     # params = [0,1]
     # model_names = ['word2vec','glove']
