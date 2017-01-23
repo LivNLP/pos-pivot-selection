@@ -25,10 +25,12 @@ def window_vectors(name,sentences,l):
                 word_i = find_word_in_position(sent,word_postion)
                 word_vector = word_to_300d(model,word_i)
                 new_word = joint_vectors(new_word,word_vector)
-                print len(new_word)
+                # print len(new_word)
             new_sent += [new_word]
+        # print len(sent),len(new_sent)
         new_sentences+= [new_sent]
-    print len(sentences), len(new_sentences)
+    # print len(sentences), len(new_sentences)
+    print 'unfound words =', count
     save_classify_obj(new_sentences,'%s-classify'%name)
     pass
 
@@ -43,7 +45,6 @@ def word_to_300d(model,word):
             # different from sentpiv, we use empty for unfound vector
             return numpy.zeros(300, dtype=float)
             count+=1
-            print count
         else:
             return lp.word_to_vec(word,model)
     pass
@@ -97,6 +98,7 @@ if __name__ == "__main__":
     l = 2
     # name = 'answers-dev'
     # sentences=lp.pos_data.load_preprocess_obj(name)
+    # window_vectors(name,sentences,l)
     my_dir = '../work/preprocess'
     names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
     for name in names:
