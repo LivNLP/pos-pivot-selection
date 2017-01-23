@@ -19,11 +19,11 @@ import os
 # not reivews!!! are sentences, so here, we need to deal with sentences
 def labeled_sentences(domain_name):
     sentences = pos_data.load_preprocess_obj('%s-labeled'%domain_name)
-    return [[word[0] for word in sent] for sent in sentences]
+    return pos_data.format_sentences(sentences)
 
 def unlabeled_sentences(domain_name):
     sentences = pos_data.load_preprocess_obj('%s-unlabeled'%domain_name)
-    return [[word[0] for word in sent] for sent in sentences]
+    return pos_data.format_sentences(sentences)
 
 # word embedding: from word to word vector
 # Word2Vec

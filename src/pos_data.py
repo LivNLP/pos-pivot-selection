@@ -6,6 +6,7 @@ import nltk
 import glob
 import pickle
 import os
+import math
 
 # collect words and pos tags from labeled dataset 
 def collect_labeled(domain):
@@ -146,6 +147,7 @@ def presets_unlabeled(source,target):
     print len(x_un)
 
     # save presets to temp objects
+    save_obj(source,target,un_features,"un_features")
     save_obj(source,target,un_src_sentences,"un_src_sentences")
     save_obj(source,target,un_tgt_sentences,"un_tgt_sentences")
     save_obj(source,target,un_sentences,"un_sentences")
@@ -171,7 +173,7 @@ def sentences_contain_x(features,sentences):
     features = list(features)
     features_bag = np.zeros(len(features), dtype=float)
     # remove the detail we don't need for our computation
-    new_sentences = [[word[0] for word in sent] for sent in sentences]
+    new_sentences = format_sentences(sentences)
     for sentence in new_sentences:
         for x in set(sentence):
             i = features.index(x)
@@ -196,10 +198,123 @@ def sentence_list_contain_tag(pos_tag,sentences):
                 sents_vector[i]+=1
     return [sent for sent in sentences if sents_vector[sentences.index(sent)]>0]
 
+# format sentences, remove other info just leave the word itself for computation
+def format_sentences(sentences):
+    return [[word[0] for word in sent] for sent in sentences]
+
+
 # unlabeled methods
+# FREQ-U
+def select_pivots_freq_unlabeled(source,target):
+    print 'source = ',source,'target = ',target
+    src_sentences = load_preprocess_obj('%s-unlabeled'%source)
+    tgt_sentences = load_preprocess_obj('%s-unlabeled'%target)
 
+    src_freq = {}
+    tgt_freq = {}
+    count_freq(format_sentences(src_sentences),src_freq)
+    count_freq(format_sentences(tgt_sentences),tgt_freq)
+    s = {}
+    features = set(src_freq.keys()).union(set(tgt_freq.keys()))
+    for feat in features:
+        s[feat] = min(src_freq.get(feat, 0), tgt_freq.get(feat, 0))
+    L = s.items()
+    L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+    for (feat, freq) in L[:10]:
+        print feat, src_freq.get(feat, 0), tgt_freq.get(feat, 0) 
+    save_obj(source,target,L,'un_freq')
+    return L
+
+# MI-U
+def select_pivots_mi_unlabeled(source,target):
+    print 'source = ',source,'target = ',target
+    un_src_sentences = float(load_obj(source,target,"un_src_sentences"))
+    un_tgt_sentences = float(load_obj(source,target,"un_tgt_sentences"))
+    un_sentences = float(load_obj(source,target,"un_sentences"))
+    x_un_src = load_obj(source,target,"x_un_src")
+    x_un_tgt = load_obj(source,target,"x_un_tgt")
+    x_un = load_obj(source,target,"x_un")
+    un_features = load_obj(source,target,"un_features")
+
+    mi_dict = {}
+    for x in un_features:
+        if x_un.get(x,0)*x_un_src.get(x,0)*x_un_tgt.get(x,0) > 0:
+            src_mi = mutual_info(x_un.get(x,0), x_un_src.get(x,0), un_src_sentences, un_sentences) 
+            tgt_mi = mutual_info(x_un.get(x,0), x_un_tgt.get(x,0), un_tgt_sentences, un_sentences)
+            mi_dict[x] = abs(src_mi-tgt_mi)
+    L = mi_dict.items()
+    # ascending order
+    L.sort(lambda x, y: -1 if x[1] < y[1] else 1)
+
+    for (x, mi) in L[:10]:
+        print x, mi_dict.get(x,0)
+    save_obj(source,target,L,'un_mi')
+    return L
+
+# PMI-U
+def select_pivots_pmi_unlabeled(source,target):
+    print 'source = ',source,'target = ',target
+    un_src_sentences = float(load_obj(source,target,"un_src_sentences"))
+    un_tgt_sentences = float(load_obj(source,target,"un_tgt_sentences"))
+    un_sentences = float(load_obj(source,target,"un_sentences"))
+    x_un_src = load_obj(source,target,"x_un_src")
+    x_un_tgt = load_obj(source,target,"x_un_tgt")
+    x_un = load_obj(source,target,"x_un")
+    un_features = load_obj(source,target,"un_features")
+
+    pmi_dict = {}
+    for x in un_features:
+        if x_un.get(x,0)*x_un_src.get(x,0)*x_un_tgt.get(x,0) > 0:
+            src_pmi = pointwise_mutual_info(x_un.get(x,0), x_un_src.get(x,0), un_src_sentences, un_sentences) 
+            tgt_pmi = pointwise_mutual_info(x_un.get(x,0), x_un_tgt.get(x,0), un_tgt_sentences, un_sentences)
+            pmi_dict[x] = abs(src_pmi-tgt_pmi)
+    L = pmi_dict.items()
+    # ascending order
+    L.sort(lambda x, y: -1 if x[1] < y[1] else 1)
+
+    for (x, pmi) in L[:10]:
+        print x, pmi_dict.get(x,0)
+    save_obj(source,target,L,'un_pmi')
+    return L
+
+
+
+# PPMI-U
+def select_pivots_ppmi_unlabeled(source,target):
+    print 'source = ',source,'target = ',target
+    un_src_sentences = float(load_obj(source,target,"un_src_sentences"))
+    un_tgt_sentences = float(load_obj(source,target,"un_tgt_sentences"))
+    un_sentences = float(load_obj(source,target,"un_sentences"))
+    x_un_src = load_obj(source,target,"x_un_src")
+    x_un_tgt = load_obj(source,target,"x_un_tgt")
+    x_un = load_obj(source,target,"x_un")
+    un_features = load_obj(source,target,"un_features")
+
+    ppmi_dict = {}
+    for x in un_features:
+        if x_un.get(x,0)*x_un_src.get(x,0)*x_un_tgt.get(x,0) > 0:
+            src_pmi = pointwise_mutual_info(x_un.get(x,0), x_un_src.get(x,0), un_src_sentences, un_sentences) 
+            tgt_pmi = pointwise_mutual_info(x_un.get(x,0), x_un_tgt.get(x,0), un_tgt_sentences, un_sentences)
+            ppmi_dict[x] = abs(ppmi(src_pmi)-ppmi(tgt_pmi))
+    L = ppmi_dict.items()
+    # ascending order
+    L.sort(lambda x, y: -1 if x[1] < y[1] else 1)
+
+    for (x, y) in L[:10]:
+        print x, ppmi_dict.get(x,0)
+    save_obj(source,target,L,'un_ppmi')
+    return L
+    
 # labeled methods
+# FREQ-L
 
+# MI-L
+
+# PMI-L
+
+# PPMI-L
+
+# sum up scores
 
 # count frequency
 def count_freq(sentences,h):
@@ -207,6 +322,27 @@ def count_freq(sentences,h):
         for word in sentence:
             h[word]=h.get(word,0)+1
     pass
+
+# MI: mutual info
+def mutual_info(joint_x, x_scale, y, N):
+    prob_y = float(y / N)
+    prob_x = float(joint_x / N)
+    prob_x_scale = float(x_scale / N)
+    # print prob_x_scale, prob_x,prob_y,y,N
+    val = float(prob_x_scale / (prob_x * prob_y))
+    return prob_x_scale * math.log(val)
+
+# PMI: only difference between mi is no addition multipler
+def pointwise_mutual_info(joint_x, x_scale, y, N):
+    prob_y = float(y / N)
+    prob_x = float(joint_x / N)
+    prob_x_scale = float(x_scale / N)
+    val = float(prob_x_scale / (prob_x * prob_y))
+    return math.log(val)
+
+# PPMI: replace all negative values in PMI with zero
+def ppmi(pmi_score):
+    return 0 if pmi_score < 0 else pmi_score
 
 # save and load for preprocessing
 def save_preprocess_obj(obj, name):
@@ -269,8 +405,8 @@ if __name__ == "__main__":
     # for domain in domains:
     #     collect_labeled(domain)
     # target domain unlabeled datasets
-    # domains = ["answers","emails"]
-    # domains += ["reviews","newsgroups","weblogs"]
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
     # domain = "answers"
     # for domain in domains:
     #     collect_unlabeled(domain)
@@ -279,4 +415,10 @@ if __name__ == "__main__":
     # for target in domains:
     #     presets_unlabeled(source,target)
     # print_test()
-    presets_labeled(source,'answers')
+    # source is just wsj enough, copy to all
+    # presets_labeled(source,'answers')
+    for target in domains:
+        # select_pivots_freq_unlabeled(source,target)
+        # select_pivots_mi_unlabeled(source,target)
+        # select_pivots_pmi_unlabeled(source,target)
+        select_pivots_ppmi_unlabeled(source,target)
