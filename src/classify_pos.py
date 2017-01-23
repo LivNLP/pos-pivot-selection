@@ -100,6 +100,7 @@ if __name__ == "__main__":
     my_dir = '../work/preprocess'
     names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
     for name in names:
-        print name
-        sentences=lp.pos_data.load_preprocess_obj(name)
-        window_vectors(name,sentences,l)
+        if 'unlabeled' not in name:
+            print name
+            sentences=lp.pos_data.load_preprocess_obj(name)
+            window_vectors(name,sentences,l)
