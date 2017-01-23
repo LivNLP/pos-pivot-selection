@@ -7,7 +7,6 @@
 import pos_data
 import numpy
 import pickle
-import glob
 import gensim,logging
 from glove import Corpus, Glove
 import glove
@@ -374,8 +373,8 @@ def calculate_all_u_pretrained_word2vec():
     model = gensim.models.Word2Vec.load_word2vec_format(path,binary=True)
     # print model.most_similar('very')
     source = 'wsj'
-    domains = ["answers","emails","reviews"]
-    # domains += ["newsgroups","weblogs"]
+    domains = ["newsgroups"]
+    # domains += ["answers","emails","reviews","weblogs"]
     for target in domains:
         print 'calcualting u_pretrained for %s-%s ...' % (source,target)
         u_function_pretrained(source,target,model) 
@@ -387,8 +386,8 @@ def calculate_all_u_pretrained_glove():
     path = '../data/glove.42B.300d.txt'
     # model = load_pretrained_glove(path)
     source = 'wsj'
-    domains = ["answers","emails","reviews"]
-    # domains += ["newsgroups","weblogs"]
+    domains = ["newsgroups"]
+    # domains += ["answers","emails","reviews","weblogs"]
     for target in domains:
         print 'calcualting u_pretrained for %s-%s ...' % (source,target)
         model = load_filtered_glove(source,target,path)
@@ -415,6 +414,14 @@ def store_all_selections(params,model,pretrained,paramOn):
     pass
 
 # test methods
+def read_word2vec():
+    path = '../data/GoogleNews-vectors-negative300.bin'
+    model = gensim.models.Word2Vec.load_word2vec_format(path,binary=True)
+    empty_word = numpy.zeros(300, dtype=float)
+    print len(numpy.concatenate((model['good'],empty_word)))
+    print len(numpy.concatenate((model['good'],model['boy'])))
+    pass
+
 def solve_qp():
     source = 'books'
     target = 'dvd'
@@ -456,12 +463,12 @@ def print_ppmi():
 
 
 # main
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # collect_filtered_features(5)
     # create_word2vec_models()
     # create_glove_models()
     # calculate_all_u_pretrained_word2vec()
-    calculate_all_u_pretrained_glove()
+    # calculate_all_u_pretrained_glove()
     # compute_all_gamma()
     # params = [0,1]
     # model_names = ['word2vec','glove']
@@ -475,6 +482,7 @@ if __name__ == "__main__":
     # for model in model_names:
     #     store_all_selections(params,model,1,paramOn)
     ######test##########
+    # read_word2vec()
     # solve_qp() 
     # print_alpha(0)
     # print_ppmi()
