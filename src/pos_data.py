@@ -118,6 +118,7 @@ def presets_labeled_tag(source,target,pos_tag,src_labeled):
     save_tag_obj(source,target,pos_src_sentences,pos_tag,"pos_src_sentences")
     save_tag_obj(source,target,neg_src_sentences,pos_tag,"neg_src_sentences")
     save_tag_obj(source,target,src_features,pos_tag,"src_features")
+    save_tag_obj(source,target,src_sentences,pos_tag,"src_sentences")
     save_tag_obj(source,target,x_pos_src,pos_tag,"x_pos_src")
     save_tag_obj(source,target,x_neg_src,pos_tag,"x_neg_src")
     save_tag_obj(source,target,x_src,pos_tag,"x_src")
@@ -219,6 +220,7 @@ def select_pivots_freq_unlabeled(source,target):
     for feat in features:
         s[feat] = min(src_freq.get(feat, 0), tgt_freq.get(feat, 0))
     L = s.items()
+    # descending order
     L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
     for (feat, freq) in L[:10]:
         print feat, src_freq.get(feat, 0), tgt_freq.get(feat, 0) 
@@ -277,8 +279,6 @@ def select_pivots_pmi_unlabeled(source,target):
     save_obj(source,target,L,'un_pmi')
     return L
 
-
-
 # PPMI-U
 def select_pivots_ppmi_unlabeled(source,target):
     print 'source = ',source,'target = ',target
@@ -307,14 +307,136 @@ def select_pivots_ppmi_unlabeled(source,target):
     
 # labeled methods
 # FREQ-L
+def select_pivots_freq_labeled_tag(source,target,pos_tag):
+    pos_tag = 'TAG.' if pos_tag == '.' else pos_tag
+    pos_src_data=load_tag_obj(source,target,pos_tag,"pos_src_data")
+    neg_src_data=load_tag_obj(source,target,pos_tag,"neg_src_data")
+
+    pos_src_freq={}
+    neg_src_freq={}
+    count_freq(format_sentences(pos_src_data),pos_src_freq)
+    count_freq(format_sentences(neg_src_data),neg_src_freq)
+    s = {}
+    features = set(pos_src_freq.keys()).union(set(neg_src_freq.keys()))
+    for feat in features:
+        s[feat] = min(pos_src_freq.get(feat, 0), neg_src_freq.get(feat, 0))
+    # L = s.items()
+    # # descending order
+    # L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+    # for (feat, freq) in L[:10]:
+    #     print feat, pos_src_freq.get(feat, 0), neg_src_freq.get(feat, 0) 
+    # save_obj(source,target,L,'freq')
+    return s
 
 # MI-L
+def select_pivots_mi_labeled_tag(source,target,pos_tag):
+    pos_tag = 'TAG.' if pos_tag == '.' else pos_tag
+    features = load_tag_obj(source,target,pos_tag,"src_features")
+    x_src = load_tag_obj(source,target,pos_tag,"x_src")
+    x_pos_src = load_tag_obj(source,target,pos_tag,"x_pos_src")
+    x_neg_src = load_tag_obj(source,target,pos_tag,"x_neg_src")
+    pos_src_sentences = load_tag_obj(source,target,pos_tag,"pos_src_sentences")
+    neg_src_sentences = load_tag_obj(source,target,pos_tag,"neg_src_sentences")
+    src_sentences = pos_src_sentences+neg_src_sentences
+
+    mi_dict = {}
+    for x in features:
+        if x_src.get(x,0)*x_pos_src.get(x,0)*x_neg_src.get(x,0) > 0:
+            pos_mi = mutual_info(x_src.get(x,0), x_pos_src.get(x,0), pos_src_sentences, src_sentences) 
+            neg_mi = mutual_info(x_src.get(x,0), x_neg_src.get(x,0), neg_src_sentences, src_sentences)
+            mi_dict[x] = abs(pos_mi-neg_mi)
+    # L = mi_dict.items()
+    # L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+    # for (x, mi) in L[:10]:
+    #     print x, mi_dict.get(x,0)
+    return mi_dict
 
 # PMI-L
+def select_pivots_pmi_labeled_tag(source,target,pos_tag):
+    pos_tag = 'TAG.' if pos_tag == '.' else pos_tag
+    features = load_tag_obj(source,target,pos_tag,"src_features")
+    x_src = load_tag_obj(source,target,pos_tag,"x_src")
+    x_pos_src = load_tag_obj(source,target,pos_tag,"x_pos_src")
+    x_neg_src = load_tag_obj(source,target,pos_tag,"x_neg_src")
+    pos_src_sentences = load_tag_obj(source,target,pos_tag,"pos_src_sentences")
+    neg_src_sentences = load_tag_obj(source,target,pos_tag,"neg_src_sentences")
+    src_sentences = pos_src_sentences+neg_src_sentences
+
+    pmi_dict = {}
+    for x in features:
+        if x_src.get(x,0)*x_pos_src.get(x,0)*x_neg_src.get(x,0) > 0:
+            pos_pmi = pointwise_mutual_info(x_src.get(x,0), x_pos_src.get(x,0), pos_src_sentences, src_sentences) 
+            neg_pmi = pointwise_mutual_info(x_src.get(x,0), x_neg_src.get(x,0), neg_src_sentences, src_sentences)
+            pmi_dict[x] = abs(pos_pmi-neg_pmi)
+    # L = pmi_dict.items()
+    # L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+
+    # for (x, pmi) in L[:10]:
+    #     print x, pmi_dict.get(x,0)
+    return pmi_dict
 
 # PPMI-L
+def select_pivots_ppmi_labeled_tag(source,target,pos_tag):
+    pos_tag = 'TAG.' if pos_tag == '.' else pos_tag
+    features = load_tag_obj(source,target,pos_tag,"src_features")
+    x_src = load_tag_obj(source,target,pos_tag,"x_src")
+    x_pos_src = load_tag_obj(source,target,pos_tag,"x_pos_src")
+    x_neg_src = load_tag_obj(source,target,pos_tag,"x_neg_src")
+    pos_src_sentences = load_tag_obj(source,target,pos_tag,"pos_src_sentences")
+    neg_src_sentences = load_tag_obj(source,target,pos_tag,"neg_src_sentences")
+    src_sentences = pos_src_sentences+neg_src_sentences
+
+    ppmi_dict = {}
+    for x in features:
+        if x_src.get(x,0)*x_pos_src.get(x,0)*x_neg_src.get(x,0) > 0:
+            pos_pmi = pointwise_mutual_info(x_src.get(x,0), x_pos_src.get(x,0), pos_src_sentences, src_sentences) 
+            neg_pmi = pointwise_mutual_info(x_src.get(x,0), x_neg_src.get(x,0), neg_src_sentences, src_sentences)
+            ppmi_dict[x] = abs(ppmi(pos_pmi)-ppmi(neg_pmi))
+    # L = ppmi_dict.items()
+    # L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+    # for (x, y) in L[:10]:
+    #     print x, ppmi_dict.get(x,0)
+    return ppmi_dict
 
 # sum up scores
+def sum_up_labeled_scores(source,target):
+    src_labeled = load_preprocess_obj('%s-labeled'%source)
+    tags = tag_list(src_labeled)
+    # loop tags to divide presets into groups
+    freq_dict={}
+    mi_dict={}
+    pmi_dict={}
+    ppmi_dict={}
+    for pos_tag in tags:
+        print "TAG = %s"% pos_tag
+        print "FREQ-L"
+        freq_dict = combine_dicts(freq_dict,select_pivots_freq_labeled_tag(source,target,pos_tag))
+        print "MI-L"
+        mi_dict = combine_dicts(mi_dict,select_pivots_mi_labeled_tag(source,target,pos_tag))
+        print "PMI-L"
+        pmi_dict = combine_dicts(pmi_dict,select_pivots_pmi_labeled_tag(source,target,pos_tag))
+        print "PPMI-L"
+        ppmi_dict = combine_dicts(ppmi_dict,select_pivots_ppmi_labeled_tag(source,target,pos_tag))
+    freq_list = freq_dict.items()
+    mi_list = mi_dict.items()
+    pmi_list = pmi_dict.items()
+    ppmi_list = ppmi_dict.items()
+
+    freq_list.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+    mi_list.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+    pmi_list.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+    ppmi_list.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+
+    print "FREQ", freq_list[:10]
+    print "MI", mi_list[:10]
+    print "PMI", pmi_list[:10]
+    print "PPMI", ppmi_list[:10]
+    save_obj(source,target,freq_list,"freq")
+    save_obj(source,target,mi_list,"mi")
+    save_obj(source,target,pmi_list,"pmi")
+    save_obj(source,target,ppmi_list,"ppmi")
+    pass
+
 
 # count frequency
 def count_freq(sentences,h):
@@ -421,4 +543,5 @@ if __name__ == "__main__":
         # select_pivots_freq_unlabeled(source,target)
         # select_pivots_mi_unlabeled(source,target)
         # select_pivots_pmi_unlabeled(source,target)
-        select_pivots_ppmi_unlabeled(source,target)
+        # select_pivots_ppmi_unlabeled(source,target)
+        sum_up_labeled_scores(source,target)
