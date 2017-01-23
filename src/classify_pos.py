@@ -3,8 +3,6 @@ import numpy
 import os
 import glob
 import pickle
-# counter for unfound vectors
-count=0
 
 #### prepare classification data ####
 # words to word vectors by a window size 2l+1
@@ -30,7 +28,6 @@ def window_vectors(name,sentences,l):
         # print len(sent),len(new_sent)
         new_sentences+= [new_sent]
     # print len(sentences), len(new_sentences)
-    print 'unfound words =', count
     save_classify_obj(new_sentences,'%s-classify'%name)
     pass
 
@@ -44,7 +41,6 @@ def word_to_300d(model,word):
         if model.get(word,0)==0:
             # different from sentpiv, we use empty for unfound vector
             return numpy.zeros(300, dtype=float)
-            count+=1
         else:
             return lp.word_to_vec(word,model)
     pass
