@@ -107,8 +107,10 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     print "selecting top-%d features in %s as pivots" % (n, pivotsMethod)
 
     # Load features and get domain specific features
-    features = pos_data.load_obj(sourceDomain,targetDomain,"un_freq") if "un_" in pivotsMethod else pos_data.load_obj(sourceDomain,targetDomain,"freq")
-    feats = selectTh(dict(features),domainTh[sourceDomain])
+    feats = pos_data.load_obj(sourceDomain,targetDomain,"filtered_features")
+    if "landmark" not in pivotsMethod:
+        features = pos_data.load_obj(sourceDomain,targetDomain,"un_freq") if "un_" in pivotsMethod else pos_data.load_obj(sourceDomain,targetDomain,"freq")
+        feats = selectTh(dict(features),domainTh[source])
     print "experimental features = ", len(feats)
     # print feats.keys()
 
@@ -186,7 +188,7 @@ def evaluate_SA(source, target, project, gamma, method, n):
     Report the cross-domain sentiment classification accuracy. 
     """
     # Parameters to reduce the number of features in the tail
-    domainTh = {'books':5, 'dvd':5, 'kitchen':5, 'electronics':5}
+    domainTh = {'wsj':5, 'answers':5, 'emails':5, 'reviews':5, 'weblogs':5,'newsgroups':5}
 
     # gamma = 1.0
     print "Source Domain", source
@@ -205,8 +207,10 @@ def evaluate_SA(source, target, project, gamma, method, n):
     print "selecting top-%d features in %s as pivots" % (n, method)
 
     # Load features 
-    features = pos_data.load_obj(source,target,"un_freq") if "un_" in method else pos_data.load_obj(source,target,"freq")
-    feats = selectTh(dict(features),domainTh[source])
+    feats = pos_data.load_obj(source,target,"filtered_features")
+    if "landmark" not in method:
+        features = pos_data.load_obj(source,target,"un_freq") if "un_" in method else pos_data.load_obj(source,target,"freq")
+        feats = selectTh(dict(features),domainTh[source])
     print "experimental features = ", len(feats)
     #print feats
 
