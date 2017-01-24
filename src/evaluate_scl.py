@@ -200,16 +200,12 @@ def evaluate_SA(source, target, project, gamma, method, n):
     (nDS, h) = M.shape
 
     # Load pivots.
-    pivotsFile = "../work/%s-%s/obj/%s" % (source, target, method)
-    features = pi.load_stored_obj(pivotsFile)
+    features = pos_data.load_obj(source,target,method)
     pivots = dict(features[:n]).keys()
     print "selecting top-%d features in %s as pivots" % (n, method)
 
     # Load features 
-    fname = "../work/%s-%s/obj/freq" % (source, target)
-    if "un_" in method:
-        fname = "../work/%s-%s/obj/un_freq" % (source, target)
-    features = pi.load_stored_obj(fname)
+    features = pos_data.load_obj(source,target,"un_freq") if "un_" in method else pos_data.load_obj(source,target,"freq")
     feats = selectTh(dict(features),domainTh[source])
     print "experimental features = ", len(feats)
     #print feats
