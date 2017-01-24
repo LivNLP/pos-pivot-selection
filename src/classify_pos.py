@@ -3,6 +3,7 @@ import numpy
 import os
 import glob
 import pickle
+import pos_data
 
 #### prepare classification data ####
 # words to word vectors by a window size 2l+1
@@ -124,6 +125,7 @@ def save_test_obj(target,obj,tag,name):
                 raise
     with open(filename, 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+        print "%s saved"%filename
 
 def load_test_obj(target,tag,name):
     with open('../work/%s/%s/%s.pkl'%(target,tag,name), 'rb') as f:
