@@ -72,6 +72,31 @@ def load_filtered_glove(sentences,gloveFile):
     print "After filtering, ",len(model)," words loaded!"
     return model
 
+######## prepare test data #########
+# training data was prepared in pos_data, however for the classification,
+# we also need to divide test data into groups by pos_tag
+def divide_test_data(source,target):
+    tgt_test = pos_data.load_preprocess_obj('%s-test'%target)
+    src_labeled = pos_data.load_preprocess_obj('%s-labeled'%source)
+    tags = pos_data.tag_list(src_labeled)
+
+    for pos_tag in tags:
+        print "TAG = %s"% pos_tag
+        divide_test_data_tag(target,pos_tag,tgt_test)
+    pass
+
+def divide_test_data_tag(target,pos_tag,tgt_test):
+    # list sentences HAS pos_tag
+    pos_tgt_data = pos_data.sentence_list_contain_tag(pos_tag,tgt_test)
+    # list sentences NOT pos_tag
+    neg_tgt_data = pos_data.minus_lists(tgt_test,pos_tgt_data)
+    # save test objects to target domain folders
+    pos_tag = 'TAG.' if pos_tag == '.' else pos_tag
+    save_test_obj(target,pos_tgt_data,pos_tag,"pos_tgt_data")
+    save_test_obj(target,neg_tgt_data,pos_tag,"neg_tgt_data")
+    pass
+
+
 # save and load for classification
 def save_classify_obj(obj, name):
     filename = '../work/classify/'+name + '.pkl'
@@ -84,25 +109,45 @@ def save_classify_obj(obj, name):
     with open(filename, 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
-def load_preprocess_obj(name):
+def load_classify_obj(name):
     with open('../work/classify/'+name + '.pkl', 'rb') as f:
         return pickle.load(f)
 
+# save and load for testing
+def save_test_obj(target,obj,tag,name):
+    filename = '../work/%s/%s/%s.pkl'%(target,tag,name)
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
+    with open(filename, 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+
+def load_test_obj(target,tag,name):
+    with open('../work/%s/%s/%s.pkl'%(target,tag,name), 'rb') as f:
+        return pickle.load(f)
 
 
 if __name__ == "__main__":
-    l = 2
+    # l = 2
     # name = 'answers-dev'
     # sentences=lp.pos_data.load_preprocess_obj(name)
     # window_vectors(name,sentences,l)
-    my_dir = '../work/preprocess'
-    names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
-    for name in names:
+    # my_dir = '../work/preprocess'
+    # names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
+    # for name in names:
         # if 'unlabeled' not in name:
         #     print name
         #     sentences=lp.pos_data.load_preprocess_obj(name)
         #     window_vectors(name,sentences,l)
-        if 'unlabeled' in name:
-            print name
-            sentences=lp.pos_data.load_preprocess_obj(name)
-            window_vectors(name,sentences,l)
+        # if 'unlabeled' in name:
+        #     print name
+        #     sentences=lp.pos_data.load_preprocess_obj(name)
+        #     window_vectors(name,sentences,l)
+    source = 'wsj'
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for target in domains:
+        divide_test_data(source,target)
