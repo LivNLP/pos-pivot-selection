@@ -407,46 +407,6 @@ def read_word2vec():
     print len(numpy.concatenate((model['good'],model['boy'])))
     pass
 
-def solve_qp():
-    source = 'books'
-    target = 'dvd'
-    model_name = 'word2vec'
-    param = 1
-    dirname = '../work/%s-%s/test/'% (source,target)
-    opt_function(dirname,param,model_name,1)
-    pass
-
-def print_alpha(param):
-    source = 'books'
-    target = 'dvd'
-    param = param
-    # model = 'word2vec'
-    model = 'glove'
-    pretrained = 1
-    paramOn=True
-    # paramOn=False
-    dirname = '../work/%s-%s/test/'% (source,target)
-    temp = 'landmark' if pretrained == 0 else 'landmark_pretrained'
-    method = method_name_param(temp,model,param) if paramOn==True else method_name(temp,model,param)
-    alpha = load_loop_obj(dirname,method)
-    print 'param = %f'%param
-    for x,score in alpha[:10]:
-        print x,score
-    pass
-
-def print_ppmi():
-    source = 'books'
-    target = 'dvd'
-    dirname = '../work/%s-%s/test/'% (source,target)
-    ppmi_dict = load_loop_obj(dirname,'ppmi_dict')
-    L = ppmi_dict.items()
-    L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
-    print len(ppmi_dict)
-    for x,score in L[:10]:
-        print x,ppmi_dict.get(x,0)
-    pass
-
-
 # main
 if __name__ == "__main__":
     # collect_filtered_features(5)
