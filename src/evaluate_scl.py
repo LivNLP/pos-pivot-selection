@@ -2,6 +2,9 @@
 Forked Code from Danushka Bollegala
 Implementation of SCL following steps after pivot selection
 Used for evaluation of pivot selection methods
+-----------
+
+Change log: make some changes to do a multilabel classification
 """
 
 import numpy as np
@@ -32,6 +35,17 @@ def trainLBFGS(train_file, model_file):
     """
     retcode = subprocess.call(
         "classias-train -tb -a lbfgs.logistic -pc1=0 -pc2=1 -m %s %s > /dev/null"  %\
+        (model_file, train_file), shell=True)
+    return retcode
+
+
+def trainMultiLBFGS(train_file, model_file):
+    """
+    Train lbfgs on train file. and evaluate on test file. different from the previous one!
+    Read the output file and return the multi-label classification accuracy.
+    """
+    retcode = subprocess.call(
+        "classias-train -tn -a lbfgs.logistic -pc1=0 -pc2=1 -m %s %s > /dev/null"  %\
         (model_file, train_file), shell=True)
     return retcode
 
@@ -90,6 +104,7 @@ def selectTh(h, t):
             p[key] = val
     del(h)
     return p
+
 
 def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     """
@@ -155,7 +170,8 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
 def getWeightVector(word, vects):
     """
     Train a binary classifier to predict the given word and 
-    return the corresponding weight vector. 
+    return the corresponding weight vector. Not depending on the task,
+    always a binary classification, a pivot or not a pivot.
     """
     trainFileName = "../work/trainFile"
     modelFileName = "../work/modelFile"
@@ -232,6 +248,7 @@ def evaluate_SA(source, target, project, gamma, method, n):
             # write the original features.
             featFile.write("%d " % label)
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
+            # bag-of-words model
             for w in words:
                 #featFile.write("%s:1 " % w)
                 if w in feats:
@@ -256,6 +273,7 @@ def evaluate_SA(source, target, project, gamma, method, n):
             # write the original features.
             featFile.write("%d " % label)
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
+            # again bag-of-words model
             for w in words:
                 #featFile.write("%s:1 " % w)
                 if w in feats:
@@ -279,107 +297,6 @@ def evaluate_SA(source, target, project, gamma, method, n):
     print "###########################################\n\n"
     return acc,intervals
 
-# NoAdapt Baseline
-def evaluate_NA(source, target):
-    """
-    Report the cross-domain sentiment classification accuracy. 
-    """
-    print "Source Domain", source
-    print "Target Domain", target 
-
-    # write train feature vectors.
-    trainFileName = "../work/%s-%s/trainVects.NA" % (source, target)
-    testFileName = "../work/%s-%s/testVects.NA" % (source, target)
-    featFile = open(trainFileName, 'w')
-    count = 0
-    for (label, fname) in [(1, 'train.positive'), (-1, 'train.negative')]:
-        F = open("../data/%s/%s" % (source, fname))
-        for line in F:
-            count += 1
-            # print "Train ", count
-            words = set(line.strip().split())
-            # write the original features.
-            for w in words:
-                featFile.write("%d %s\n" % (label, w))
-                # print "%d %s\n" % (label, w)
-        F.close()
-    featFile.close()
-    # write test feature vectors.
-    featFile = open(testFileName, 'w')
-    count = 0
-    for (label, fname) in [(1, 'test.positive'), (-1, 'test.negative')]:
-        F = open("../data/%s/%s" % (target, fname))
-        for line in F:
-            count += 1
-            #print "Test ", count
-            words = set(line.strip().split())
-            # write the original features.
-            for w in words:
-                featFile.write("%d %s\n" % (label, w))
-                # print "%d %s\n" % (label, w)
-        F.close()
-    featFile.close()
-    # Train using classias.
-    modelFileName = "../work/%s-%s/model.NA" % (source, target)
-    trainLBFGS(trainFileName, modelFileName)
-    # Test using classias.
-    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
-    intervals = clopper_pearson(correct,total)
-    print "Accuracy =", acc
-    print "Intervals=", intervals
-    print "###########################################\n\n"
-    return acc,intervals
-
-# InDomain Baseline
-def evaluate_InDomain(source, target):
-    """
-    Report the cross-domain sentiment classification accuracy. 
-    """
-    print "Source Domain", source
-    print "Target Domain", target 
-
-    # write train feature vectors.
-    trainFileName = "../work/%s-%s/trainVects.ID" % (source, target)
-    testFileName = "../work/%s-%s/testVects.ID" % (source, target)
-    featFile = open(trainFileName, 'w')
-    count = 0
-    for (label, fname) in [(1, 'train.positive'), (-1, 'train.negative')]:
-        F = open("../data/%s/%s" % (target, fname))
-        for line in F:
-            count += 1
-            # print "Train ", count
-            words = set(line.strip().split())
-            # write the original features.
-            for w in words:
-                featFile.write("%d %s\n" % (label, w))
-                # print "%d %s\n" % (label, w)
-        F.close()
-    featFile.close()
-    # write test feature vectors.
-    featFile = open(testFileName, 'w')
-    count = 0
-    for (label, fname) in [(1, 'test.positive'), (-1, 'test.negative')]:
-        F = open("../data/%s/%s" % (target, fname))
-        for line in F:
-            count += 1
-            #print "Test ", count
-            words = set(line.strip().split())
-            # write the original features.
-            for w in words:
-                featFile.write("%d %s\n" % (label, w))
-                # print "%d %s\n" % (label, w)
-        F.close()
-    featFile.close()
-    # Train using classias.
-    modelFileName = "../work/%s-%s/model.ID" % (source, target)
-    trainLBFGS(trainFileName, modelFileName)
-    # Test using classias.
-    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
-    intervals = clopper_pearson(correct,total)
-    print "Accuracy =", acc
-    print "Intervals=", intervals
-    print "###########################################\n\n"
-    return acc,intervals
 
 
 def batchEval(method, gamma, n):
@@ -400,33 +317,6 @@ def batchEval(method, gamma, n):
     resFile.close()
     pass
 
-def batchNA():
-    resFile = open("../work/batchNA.NA.csv", "w")
-    domains = ["books", "electronics", "dvd", "kitchen"]
-    resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
-    for source in domains:
-        for target in domains:
-            if source == target:
-                continue
-            evaluation = evaluate_NA(source, target)
-            resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, 'NA', evaluation[0], evaluation[1][0],evaluation[1][1]))
-            resFile.flush()
-    resFile.close()
-    pass
-
-def batchID():
-    resFile = open("../work/batchID.ID.csv", "w")
-    domains = ["books", "electronics", "dvd", "kitchen"]
-    resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
-    for source in domains:
-        for target in domains:
-            if source == target:
-                continue
-            evaluation = evaluate_InDomain(source, target)
-            resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, 'ID', evaluation[0], evaluation[1][0],evaluation[1][1]))
-            resFile.flush()
-    resFile.close()
-    pass
 
 def choose_gamma(source, target, method, gammas, n):
     resFile = open("../work/gamma/%s-%s/SCLgamma.%s.csv"% (source, target, method), "w")
