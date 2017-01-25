@@ -177,6 +177,7 @@ def loadFeatureVecors(sentences, feats):
     """
     Returns a list of lists that contain features for a document. 
     """
+    # sentences = pos_data.format_sentences(old_sentences)
     L = []
     for sent in sentences:
         L.append(set([word[0] for word in sent])&(set(feats)))
