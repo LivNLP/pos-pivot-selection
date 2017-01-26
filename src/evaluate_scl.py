@@ -122,10 +122,10 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     print "selecting top-%d features in %s as pivots" % (n, pivotsMethod)
 
     # Load features and get domain specific features
-    feats = pos_data.load_obj(sourceDomain,targetDomain,"filtered_features")
-    if "landmark" not in pivotsMethod:
-        features = pos_data.load_obj(sourceDomain,targetDomain,"un_freq") if "un_" in pivotsMethod else pos_data.load_obj(sourceDomain,targetDomain,"freq")
-        feats = selectTh(dict(features),domainTh[source])
+    features = pos_data.load_obj(sourceDomain,targetDomain,"un_freq") if "un_" in pivotsMethod else pos_data.load_obj(sourceDomain,targetDomain,"freq")
+    feats = selectTh(dict(features),domainTh[sourceDomain])
+    if "landmark" in pivotsMethod:
+        feats = pos_data.load_obj(sourceDomain,targetDomain,"filtered_features")
     print "experimental features = ", len(feats)
     # print feats.keys()
 
@@ -158,6 +158,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     print "Took %ss" % str(round(endTime-startTime, 2))   
 
     # Perform SVD on M
+    print M[0].shape
     print "Perform SVD on the weight matrix...",
     startTime = time.time()
     ut, s, vt = sparsesvd(M.tocsc(), h)
@@ -197,12 +198,13 @@ def loadFeatureVecors(sentences, feats):
     L = []
     for sent in sentences:
         L.append(set([word[0] for word in sent])&(set(feats)))
+    # print L
     return L
 
 
-def evaluate_SA(source, target, project, gamma, method, n):
+def evaluate_POS(source, target, project, gamma, method, n):
     """
-    Report the cross-domain sentiment classification accuracy. 
+    Report the cross-domain POS classification accuracy. 
     """
     # Parameters to reduce the number of features in the tail
     domainTh = {'wsj':5, 'answers':5, 'emails':5, 'reviews':5, 'weblogs':5,'newsgroups':5}
@@ -223,11 +225,11 @@ def evaluate_SA(source, target, project, gamma, method, n):
     pivots = dict(features[:n]).keys()
     print "selecting top-%d features in %s as pivots" % (n, method)
 
-    # Load features 
-    feats = pos_data.load_obj(source,target,"filtered_features")
-    if "landmark" not in method:
-        features = pos_data.load_obj(source,target,"un_freq") if "un_" in method else pos_data.load_obj(source,target,"freq")
-        feats = selectTh(dict(features),domainTh[source])
+    # Load features
+    features = pos_data.load_obj(source,target,"un_freq") if "un_" in method else pos_data.load_obj(source,target,"freq")
+    feats = selectTh(dict(features),domainTh[source])
+    if "landmark" in method:
+        feats = pos_data.load_obj(source,target,"filtered_features")
     print "experimental features = ", len(feats)
     #print feats
 
@@ -239,56 +241,44 @@ def evaluate_SA(source, target, project, gamma, method, n):
     testFileName = "../work/%s-%s/testVects.SCL" % (source, target)
     featFile = open(trainFileName, 'w')
     count = 0
-    for (label, fname) in [(1, 'train.positive'), (-1, 'train.negative')]:
-        F = open("../data/%s/%s" % (source, fname))
-        for line in F:
-            count += 1
-            #print "Train ", count
-            words = set(line.strip().split())
-            # write the original features.
-            featFile.write("%d " % label)
-            x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            # bag-of-words model
-            for w in words:
-                #featFile.write("%s:1 " % w)
-                if w in feats:
-                    x[0, feats.index(w)] = 1
-            # write projected features.
-            if project:
-                y = x.tocsr().dot(M)
-                for i in range(0, h):
-                    featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-            featFile.write("\n")
-        F.close()
+    train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
+    for sent in train_sentences:
+        # count+=1
+        words=[word[0] in sent]      
+        x = sp.lil_matrix((1, nDS), dtype=np.float64)
+        for w in words:
+            pos_tag=sent[words.index(w)][2]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            if w in feats:
+                x[0, feats.index(w)] = 1
+        if project:
+            y = x.tocsr().dot(M)
+            for i in range(0, h):
+                featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+        featFile.write("\n")
     featFile.close()
     # write test feature vectors.
     featFile = open(testFileName, 'w')
     count = 0
-    for (label, fname) in [(1, 'test.positive'), (-1, 'test.negative')]:
-        F = open("../data/%s/%s" % (target, fname))
-        for line in F:
-            count += 1
-            #print "Test ", count
-            words = set(line.strip().split())
-            # write the original features.
-            featFile.write("%d " % label)
-            x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            # again bag-of-words model
-            for w in words:
-                #featFile.write("%s:1 " % w)
-                if w in feats:
-                    x[0, feats.index(w)] = 1
-            # write projected features.
-            if project:
-                y = x.dot(M)
-                for i in range(0, h):
-                    featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-            featFile.write("\n")
-        F.close()
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
+    for sent in test_sentences:
+        # count+=1
+        words=[word[0] in sent]      
+        x = sp.lil_matrix((1, nDS), dtype=np.float64)
+        for w in words:
+            pos_tag=sent[words.index(w)][2]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            if w in feats:
+                x[0, feats.index(w)] = 1
+        if project:
+            y = x.tocsr().dot(M)
+            for i in range(0, h):
+                featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+        featFile.write("\n")
     featFile.close()
     # Train using classias.
     modelFileName = "../work/%s-%s/model.SCL" % (source, target)
-    trainLBFGS(trainFileName, modelFileName)
+    trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
     [acc,correct,total] = testLBFGS(testFileName, modelFileName)
     intervals = clopper_pearson(correct,total)
@@ -296,7 +286,6 @@ def evaluate_SA(source, target, project, gamma, method, n):
     print "Intervals=", intervals
     print "###########################################\n\n"
     return acc,intervals
-
 
 
 def batchEval(method, gamma, n):
@@ -311,7 +300,7 @@ def batchEval(method, gamma, n):
             if source == target:
                 continue
             learnProjection(source, target, method, n)
-            evaluation = evaluate_SA(source, target, True, gamma, method, n)
+            evaluation = evaluate_POS(source, target, True, gamma, method, n)
             resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
             resFile.flush()
     resFile.close()
@@ -323,7 +312,7 @@ def choose_gamma(source, target, method, gammas, n):
     resFile.write("Source, Target, Method, Proj, Gamma\n")
     learnProjection(source, target, method, n)
     for gamma in gammas:    
-        resFile.write("%s, %s, %s, %f, %f\n" % (source, target, method, evaluate_SA(source, target, True, gamma, method, n), gamma))
+        resFile.write("%s, %s, %s, %f, %f\n" % (source, target, method, evaluate_POS(source, target, True, gamma, method, n), gamma))
         resFile.flush()
     resFile.close()
     pass
@@ -339,36 +328,36 @@ def choose_param(method,params,gamma,n):
                 if source == target:
                     continue
                 learnProjection(source, target, test_method, n)
-                evaluation = evaluate_SA(source, target, True, gamma, test_method, n)
+                evaluation = evaluate_POS(source, target, True, gamma, test_method, n)
                 resFile.write("%s, %s, %s, %f, %f, %f, %f\n" % (source, target, method , evaluation[0], evaluation[1][0],evaluation[1][1],param))
                 resFile.flush()
     resFile.close()
     pass
 
 if __name__ == "__main__":
-    # source = "dvd"
-    # target = "books"
+    source = "wsj"
+    target = "answers"
     # evaluate_NA(source,target)
     # batchNA()
     # batchID()
-    # method = "un_mi"
-    # learnProjection(source, target, method, 500)
-    # evaluate_SA(source, target, True, method, 500)
+    method = "mi"
+    learnProjection(source, target, method, 500)
+    evaluate_POS(source, target, True, 1,method, 500)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
-    methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    n = 500
+    # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
+    # n = 500
     # for method in methods:
     #     batchEval(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
-    params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
-    params += [10e-3,10e-4,10e-5,10e-6]
-    params.sort()
+    # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
+    # params += [10e-3,10e-4,10e-5,10e-6]
+    # params.sort()
     # params = [1,50,100,1000,10000]
     # params = [0,1,50,100,1000,10000]
-    for method in methods:
-        choose_param(method,params,1,n)
+    # for method in methods:
+    #     choose_param(method,params,1,n)

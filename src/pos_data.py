@@ -169,6 +169,10 @@ def tag_list(sentences):
 def index_list(i,my_list):
     return list(set([a[i] for b in my_list for a in b]))
 
+def tag_to_number(pos_tag):
+    tag_list = load_preprocess_obj("src_tag_list")
+    return tag_list.index(pos_tag)+1
+
 # number of sentences contains x
 def sentences_contain_x(features,sentences):
     features = list(features)
@@ -198,6 +202,17 @@ def sentence_list_contain_tag(pos_tag,sentences):
                 i = sentences.index(sent)
                 sents_vector[i]+=1
     return [sent for sent in sentences if sents_vector[sentences.index(sent)]>0]
+
+# features contain pos_tag without position info
+def feature_list_contain_tag(pos_tag,sentences):
+    features = feature_list(sentences)
+    features_bag = np.zeros(len(features),dtype=float)
+    for sent in sentences:
+        for word in sent:
+            if word[1]==pos_tag:
+                i = features.index(word)
+                features_bag[i]+=1
+    return [word[0] for sent in sentences for word in sent if features_bag[features.index(word)]>0]
 
 # format sentences, remove other info just leave the word itself for computation
 def format_sentences(sentences):
@@ -515,6 +530,7 @@ def print_test():
     my_object = load_preprocess_obj('wsj-labeled')
     # features = feature_list(my_object)
     print tag_list(my_object),len(tag_list(my_object))
+    save_preprocess_obj(tag_list(my_object),"src_tag_list")
     # print sentence_list_contain_tag('NN', my_object) 
     # print len(my_object), len(sentence_list_contain_tag('NN', my_object))
     pass
@@ -527,21 +543,21 @@ if __name__ == "__main__":
     # for domain in domains:
     #     collect_labeled(domain)
     # target domain unlabeled datasets
-    domains = ["answers","emails"]
-    domains += ["reviews","newsgroups","weblogs"]
+    # domains = ["answers","emails"]
+    # domains += ["reviews","newsgroups","weblogs"]
     # domain = "answers"
     # for domain in domains:
     #     collect_unlabeled(domain)
     # collect_unlabeled_wsj()
-    source = 'wsj'
+    # source = 'wsj'
     # for target in domains:
     #     presets_unlabeled(source,target)
-    # print_test()
+    print_test()
     # source is just wsj enough, copy to all
     # presets_labeled(source,'answers')
-    for target in domains:
+    # for target in domains:
         # select_pivots_freq_unlabeled(source,target)
         # select_pivots_mi_unlabeled(source,target)
         # select_pivots_pmi_unlabeled(source,target)
         # select_pivots_ppmi_unlabeled(source,target)
-        sum_up_labeled_scores(source,target)
+        # sum_up_labeled_scores(source,target)
