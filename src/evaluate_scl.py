@@ -244,10 +244,10 @@ def evaluate_POS(source, target, project, gamma, method, n):
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     for sent in train_sentences:
         # count+=1
-        words=[word[0] in sent]      
+        words=[word[0] for word in sent]      
         x = sp.lil_matrix((1, nDS), dtype=np.float64)
         for w in words:
-            pos_tag=sent[words.index(w)][2]
+            pos_tag=sent[words.index(w)][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             if w in feats:
                 x[0, feats.index(w)] = 1
@@ -263,10 +263,10 @@ def evaluate_POS(source, target, project, gamma, method, n):
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     for sent in test_sentences:
         # count+=1
-        words=[word[0] in sent]      
+        words=[word[0] for word in sent]      
         x = sp.lil_matrix((1, nDS), dtype=np.float64)
         for w in words:
-            pos_tag=sent[words.index(w)][2]
+            pos_tag=sent[words.index(w)][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             if w in feats:
                 x[0, feats.index(w)] = 1
@@ -341,7 +341,7 @@ if __name__ == "__main__":
     # batchNA()
     # batchID()
     method = "mi"
-    learnProjection(source, target, method, 500)
+    # learnProjection(source, target, method, 500)
     evaluate_POS(source, target, True, 1,method, 500)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
