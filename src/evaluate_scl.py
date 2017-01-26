@@ -251,10 +251,11 @@ def evaluate_POS(source, target, project, gamma, method, n):
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             if w in feats:
                 x[0, feats.index(w)] = 1
-        if project:
-            y = x.tocsr().dot(M)
-            for i in range(0, h):
-                featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+            if project:
+                y = x.tocsr().dot(M)
+                for i in range(0, h):
+                    featFile.write("proj_%d:%f " % (i, gamma * y[0,i]))
+            featFile.write("\n") 
         featFile.write("\n")
     featFile.close()
     # write test feature vectors.
@@ -270,10 +271,11 @@ def evaluate_POS(source, target, project, gamma, method, n):
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             if w in feats:
                 x[0, feats.index(w)] = 1
-        if project:
-            y = x.tocsr().dot(M)
-            for i in range(0, h):
-                featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+            if project:
+                y = x.tocsr().dot(M)
+                for i in range(0, h):
+                    featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+            featFile.write("\n")
         featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -340,7 +342,7 @@ if __name__ == "__main__":
     # evaluate_NA(source,target)
     # batchNA()
     # batchID()
-    method = "mi"
+    method = "un_mi"
     # learnProjection(source, target, method, 500)
     evaluate_POS(source, target, True, 1,method, 500)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
