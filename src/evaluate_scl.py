@@ -276,7 +276,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
             featFile.write("\n")
-        featFile.write("\n")
+        # featFile.write("\n")
     featFile.close()
     # Train using classias.
     modelFileName = "../work/%s-%s/model.SCL" % (source, target)
@@ -292,15 +292,14 @@ def evaluate_POS(source, target, project, gamma, method, n):
 
 def batchEval(method, gamma, n):
     """
-    Evaluate on all 12 domain pairs. 
+    Evaluate on all 5 domain pairs. 
     """
     resFile = open("../work/batchSCL.%s.csv"% method, "w")
-    domains = ["books", "electronics", "dvd", "kitchen"]
     resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
-    for source in domains:
-        for target in domains:
-            if source == target:
-                continue
+    source = 'wsj'
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for target in domains:
             learnProjection(source, target, method, n)
             evaluation = evaluate_POS(source, target, True, gamma, method, n)
             resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
@@ -322,37 +321,36 @@ def choose_gamma(source, target, method, gammas, n):
 def choose_param(method,params,gamma,n):
     resFile = open("../work/sim/SCLparams.%s.csv"% method, "w")
     resFile.write("Source, Target, Model, Acc, IntLow, IntHigh, Param\n")
-    domains = ["books", "electronics", "dvd", "kitchen"]
+    source = 'wsj'
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
     for param in params:
         test_method = "test_%s_%f"% (method,param)
-        for source in domains:
-            for target in domains:
-                if source == target:
-                    continue
-                learnProjection(source, target, test_method, n)
-                evaluation = evaluate_POS(source, target, True, gamma, test_method, n)
-                resFile.write("%s, %s, %s, %f, %f, %f, %f\n" % (source, target, method , evaluation[0], evaluation[1][0],evaluation[1][1],param))
-                resFile.flush()
+        for target in domains:
+            learnProjection(source, target, test_method, n)
+            evaluation = evaluate_POS(source, target, True, gamma, test_method, n)
+            resFile.write("%s, %s, %s, %f, %f, %f, %f\n" % (source, target, method , evaluation[0], evaluation[1][0],evaluation[1][1],param))
+            resFile.flush()
     resFile.close()
     pass
 
 if __name__ == "__main__":
-    source = "wsj"
-    target = "answers"
+    # source = "wsj"
+    # target = "answers"
     # evaluate_NA(source,target)
     # batchNA()
     # batchID()
-    method = "un_mi"
+    # method = "freq"
     # learnProjection(source, target, method, 500)
-    evaluate_POS(source, target, True, 1,method, 500)
-    # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
-    # methods += ["ppmi",'un_ppmi']
+    # evaluate_POS(source, target, True, 1,method, 500)
+    methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
+    methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    # n = 500
-    # for method in methods:
-    #     batchEval(method, 1, n)
+    n = 500
+    for method in methods:
+        batchEval(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
