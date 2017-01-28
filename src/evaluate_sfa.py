@@ -51,8 +51,8 @@ def testLBFGS(test_file, model_file):
     Evaluate on the test file.
     Read the output file and return the classification accuracy.
     """
-    output = "../work/output"
-    retcode = subprocess.call("cat %s | classias-tag -m %s -t > %s" %\
+    output = "../work/output_sfa"
+    retcode = subprocess.call("cat %s | classias-tag -m %s -t -fap > %s" %\
                               (test_file, model_file, output), shell=True)
     F = open(output)
     accuracy = 0
@@ -73,7 +73,7 @@ def getCounts(S, M, fname):
     those to the dictionary M. We only consider features in S.
     """
     count = 0
-    sentences = pos_data.load_preprocess_obj(fname)
+    sentences = pos_data.format_sentences(pos_data.load_preprocess_obj(fname))
     for sent in sentences:
         count += 1
         #if count > 1000:
@@ -93,7 +93,6 @@ def getCounts(S, M, fname):
                     M[rpair] += 1
                 else:
                     M[pair] = 1
-    F.close()
     pass
 
 def selectTh(h, t):
@@ -160,9 +159,11 @@ def createMatrix(source, target, method, n):
     # print "%s positive %d" % (source, len(M)) 
     # getCounts(V, M, "../data/%s/train.negative" % source)
     # print "%s negative %d" % (source, len(M))
-    getCounts(V, M, "../data/%s/train.unlabeled" % source)
+    getCounts(V, M, "%s-labeled" % source)
+    print "%s labeled %d" % (source, len(M))
+    getCounts(V, M, "%s-unlabeled" % source)
     print "%s unlabeled %d" % (source, len(M))
-    getCounts(V, M, "../data/%s/train.unlabeled" % target)
+    getCounts(V, M, "%s-unlabeled" % target)
     print "%s unlabeled %d" % (target, len(M))  
     # Remove co-occurrence less than the coocTh
     M = selectTh(M, coocTh)
@@ -226,7 +227,7 @@ def learnProjection(sourceDomain, targetDomain):
     pass
 
 
-def evaluate_SA(source, target, project,gamma, n):
+def evaluate_POS(source, target, project,gamma, n):
     """
     Report the cross-domain sentiment classification accuracy. 
     """
@@ -254,54 +255,49 @@ def evaluate_SA(source, target, project,gamma, n):
     testFileName = "../work/%s-%s/testVects.SFA" % (source, target)
     featFile = open(trainFileName, 'w')
     count = 0
-    for (label, fname) in [(1, 'train.positive'), (-1, 'train.negative')]:
-        F = open("../data/%s/%s" % (source, fname))
-        for line in F:
-            count += 1
-            #print "Train ", count
-            words = set(line.strip().split())
-            # write the original features.
-            featFile.write("%d " % label)
-            x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            for w in words:
-                #featFile.write("%s:1 " % w)
-                if w in DSfeat:
-                    x[0, DSfeat[w] - 1] = 1
+    train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
+    for sent in train_sentences:
+        # count+=1
+        words=[word[0] for word in sent]      
+        x = sp.lil_matrix((1, nDS), dtype=np.float64)
+        for w in words:
+            pos_tag=sent[words.index(w)][1]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            if w in DSfeat:
+                x[0, DSfeat[w] - 1] = 1
+                print x
             # write projected features.
             if project:
                 y = x.tocsr().dot(M)
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-            featFile.write("\n")
-        F.close()
+            featFile.write("\n") 
+        # featFile.write("\n")
     featFile.close()
     # write test feature vectors.
     featFile = open(testFileName, 'w')
     count = 0
-    for (label, fname) in [(1, 'test.positive'), (-1, 'test.negative')]:
-        F = open("../data/%s/%s" % (target, fname))
-        for line in F:
-            count += 1
-            #print "Test ", count
-            words = set(line.strip().split())
-            # write the original features.
-            featFile.write("%d " % label)
-            x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            for w in words:
-                #featFile.write("%s:1 " % w)
-                if w in DSfeat:
-                    x[0, DSfeat[w] - 1] = 1
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
+    for sent in test_sentences:
+        # count+=1
+        words=[word[0] for word in sent]      
+        x = sp.lil_matrix((1, nDS), dtype=np.float64)
+        for w in words:
+            pos_tag=sent[words.index(w)][1]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            if w in DSfeat:
+                x[0, DSfeat[w] - 1] = 1
             # write projected features.
             if project:
                 y = x.dot(M)
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
             featFile.write("\n")
-        F.close()
+        # featFile.write("\n")
     featFile.close()
     # Train using classias.
     modelFileName = "../work/%s-%s/model.SFA" % (source, target)
-    trainLBFGS(trainFileName, modelFileName)
+    trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
     [acc,correct,total] = testLBFGS(testFileName, modelFileName)
     intervals = clopper_pearson(correct,total)
@@ -317,15 +313,15 @@ def batchEval(method, gamma, n):
     resFile = open("../work/batchSFA.%s.csv"% method, "w")
     domains = ["books", "electronics", "dvd", "kitchen"]
     resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
-    for source in domains:
-        for target in domains:
-            if source == target:
-                continue
-            createMatrix(source, target, method, n)
-            learnProjection(source, target)
-            evaluation = evaluate_SA(source, target, True, gamma, n)
-            resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
-            resFile.flush()
+    source = 'wsj'
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for target in domains:
+        createMatrix(source, target, method, n)
+        learnProjection(source, target)
+        evaluation = evaluate_POS(source, target, True, gamma, n)
+        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
+        resFile.flush()
     resFile.close()
     pass
 
@@ -336,52 +332,51 @@ def choose_gamma(source, target, method, gammas, n):
     learnProjection(source, target)
     for gamma in gammas:    
         resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, 
-        evaluate_SA(source, target, False, gamma, n), evaluate_SA(source, target, True, gamma, n), gamma))
+        evaluate_POS(source, target, False, gamma, n), evaluate_POS(source, target, True, gamma, n), gamma))
         resFile.flush()
     resFile.close()
     pass
 
 def choose_param(method,params,gamma,n):
-    domains = ["books", "electronics", "dvd", "kitchen"]
     resFile = open("../work/sim/SFAparams.%s.csv"% method, "w")
     resFile.write("Source, Target, Model, Acc, IntLow, IntHigh, Param\n")
+    source = 'wsj'
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
     for param in params:
         test_method = "test_%s_%f"% (method,param)
-        for source in domains:
-            for target in domains:
-                if source == target:
-                    continue
-                createMatrix(source, target, test_method, n)
-                learnProjection(source, target)
-                evaluation = evaluate_SA(source, target, True, gamma, n)
-                resFile.write("%s, %s, %s, %f, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1],param))
-                resFile.flush()
+        for target in domains:
+            createMatrix(source, target, test_method, n)
+            learnProjection(source, target)
+            evaluation = evaluate_POS(source, target, True, gamma, n)
+            resFile.write("%s, %s, %s, %f, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1],param))
+            resFile.flush()
     resFile.close()
     pass
 
 
 if __name__ == "__main__":
-    # source = "dvd"
-    # target = "books"
-    # method = "freq"
-    # createMatrix(source, target, method, 500)
-    # learnProjection(source, target)
-    # evaluate_SA(source, target, False,1,500)
-    # evaluate_SA(source, target, True, 500)
+    source = "wsj"
+    target = "answers"
+    method = "freq"
+    createMatrix(source, target, method, 500)
+    learnProjection(source, target)
+    # evaluate_POS(source, target, False,1,500)
+    evaluate_POS(source, target, True, 1, 500)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods = ["ppmi",'un_ppmi']
     # methods = ["freq"]
-    methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    n = 500
+    # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
+    # n = 500
     # for method in methods:
     #     batchEval(method,1, n)
     # gammas = [1,5,10,20,50,100,1000]
     # for method in methods:
     #     choose_gamma(source, target, method,gammas,n)
-    params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
-    params += [10e-3,10e-4,10e-5,10e-6]
-    params.sort()
+    # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
+    # params += [10e-3,10e-4,10e-5,10e-6]
+    # params.sort()
     # params = [0,1,50,100,1000,10000]
     # params = [0,10e-3,0.2,0.4,0.6,0.8,1]
-    for method in methods:
-        choose_param(method,params,1,n)
+    # for method in methods:
+    #     choose_param(method,params,1,n)

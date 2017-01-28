@@ -256,7 +256,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i]))
             featFile.write("\n") 
-        featFile.write("\n")
+        # featFile.write("\n")
     featFile.close()
     # write test feature vectors.
     featFile = open(testFileName, 'w')
@@ -300,10 +300,10 @@ def batchEval(method, gamma, n):
     domains = ["answers","emails"]
     domains += ["reviews","newsgroups","weblogs"]
     for target in domains:
-            learnProjection(source, target, method, n)
-            evaluation = evaluate_POS(source, target, True, gamma, method, n)
-            resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
-            resFile.flush()
+        learnProjection(source, target, method, n)
+        evaluation = evaluate_POS(source, target, True, gamma, method, n)
+        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
+        resFile.flush()
     resFile.close()
     pass
 
