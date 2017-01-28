@@ -62,7 +62,6 @@ def testLBFGS(test_file, model_file):
         if line.startswith("Accuracy"):
             p = line.strip().split()
             accuracy = float(p[1])
-            accuracy = float(p[1])
             [correct, total]=[int(s) for s in re.findall(r'\b\d+\b',p[2])]
     F.close()
     return accuracy,correct,total
@@ -70,18 +69,17 @@ def testLBFGS(test_file, model_file):
 
 def getCounts(S, M, fname):
     """
-    Get the feature co-occurrences in the file fname and append 
+    Get the feature co-occurrences in the sentences and append 
     those to the dictionary M. We only consider features in S.
     """
     count = 0
-    F = open(fname)
-    for line in F:
+    sentences = pos_data.load_preprocess_obj(fname)
+    for sent in sentences:
         count += 1
         #if count > 1000:
         #   break
-        allP = line.strip().split()
         p = []
-        for w in allP:
+        for w in sent:
             if w in S:
                 p.append(w) 
         n = len(p)
@@ -158,10 +156,10 @@ def createMatrix(source, target, method, n):
     # Compute the co-occurrences of features in reviews
     M = {}
     print "Vocabulary size =", len(V)
-    getCounts(V, M, "../data/%s/train.positive" % source)
-    print "%s positive %d" % (source, len(M)) 
-    getCounts(V, M, "../data/%s/train.negative" % source)
-    print "%s negative %d" % (source, len(M))
+    # getCounts(V, M, "../data/%s/train.positive" % source)
+    # print "%s positive %d" % (source, len(M)) 
+    # getCounts(V, M, "../data/%s/train.negative" % source)
+    # print "%s negative %d" % (source, len(M))
     getCounts(V, M, "../data/%s/train.unlabeled" % source)
     print "%s unlabeled %d" % (source, len(M))
     getCounts(V, M, "../data/%s/train.unlabeled" % target)

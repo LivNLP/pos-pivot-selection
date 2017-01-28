@@ -56,7 +56,7 @@ def testLBFGS(test_file, model_file):
     Read the output file and return the classification accuracy.
     """
     output = "../work/output"
-    retcode = subprocess.call("cat %s | classias-tag -m %s -t > %s" %\
+    retcode = subprocess.call("cat %s | classias-tag -m %s -t -fap > %s" %\
                               (test_file, model_file, output), shell=True)
     F = open(output)
     accuracy = 0
