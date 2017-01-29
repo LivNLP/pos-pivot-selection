@@ -272,7 +272,6 @@ def evaluate_POS(source, target, project,gamma, n):
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
             featFile.write("\n") 
-        # featFile.write("\n")
     featFile.close()
     # write test feature vectors.
     featFile = open(testFileName, 'w')
@@ -293,7 +292,6 @@ def evaluate_POS(source, target, project,gamma, n):
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
             featFile.write("\n")
-        # featFile.write("\n")
     featFile.close()
     # Train using classias.
     modelFileName = "../work/%s-%s/model.SFA" % (source, target)
