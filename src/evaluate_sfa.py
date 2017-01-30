@@ -264,13 +264,20 @@ def evaluate_POS(source, target, project,gamma, n):
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = train_vectors[nSent][nWord]
-            print len(x)
+            x = sp.lil_matrix((1, nDS), dtype=np.float64)
+            if x in DSfeat:
+                x[0, DSfeat[w]-1] = train_vectors[nSent][nWord]
+            print x.getnnz()
+            # print x.getnnz()
             if project:
-                print M.getnnz()
-                y = x.dot(M)
-                print len(y)
+                print M.shape
+                y = x.tocsr().dot(M)
+                print y
+                print y.getnnz()
                 for i in range(0, h):
+                    print i
+                    # print y
+                    print y[i]
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
                     print "proj_%d:%f " % (i, gamma * y[0,i])
             featFile.write("\n")
@@ -372,15 +379,45 @@ def choose_param(method,params,gamma,n):
     resFile.close()
     pass
 
+###############test################
+
+def train_test(source,gamma):
+    M = sp.csr_matrix(sio.loadmat("../work/%s-%s/proj.mat" % (source, target))['proj'])
+    (nDS, h) = M.shape
+    count = 0
+    print "Loading training instances.."
+    train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
+    train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            print "%d "%pos_data.tag_to_number(pos_tag)
+            x = sp.lil_matrix((1, nDS), dtype=np.float64)
+            # if x in DSfeat:
+            x[0,:1500] = train_vectors[nSent][nWord]
+            # print x
+            # if project:
+            # print M.shape
+            y = x.tocsr().dot(M)
+            # print y
+            # print y.getnnz()
+            for i in range(0, h):
+                # featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+                print "proj_%d:%f " % (i, gamma * y[0,i])
+            # featFile.write("\n")
+    # featFile.close()
+    pass
 
 if __name__ == "__main__":
     source = "wsj"
     target = "answers"
     method = "freq"
+    train_test(source,1)
     # createMatrix(source, target, method, 500)
     # learnProjection(source, target)
     # evaluate_POS(source, target, False,1,500)
-    evaluate_POS(source, target, True, 1, 500)
+    # evaluate_POS(source, target, True, 1, 500)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods = ["ppmi",'un_ppmi']
     # methods = ["freq"]
