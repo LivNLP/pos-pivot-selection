@@ -218,6 +218,8 @@ def feature_list_contain_tag(pos_tag,sentences):
 def format_sentences(sentences):
     return [[word[0] for word in sent] for sent in sentences]
 
+def format_tags(sentences):
+    return [[word[1] for word in sent] for sent in sentences]
 
 # unlabeled methods
 # FREQ-U

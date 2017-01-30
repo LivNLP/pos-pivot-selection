@@ -12,6 +12,7 @@ from sparsesvd import sparsesvd
 import subprocess
 
 import pos_data
+import classify_pos
 import re
 import scipy.stats
 
@@ -255,24 +256,43 @@ def evaluate_POS(source, target, project,gamma, n):
     testFileName = "../work/%s-%s/testVects.SFA" % (source, target)
     featFile = open(trainFileName, 'w')
     count = 0
+    print "Loading training instances.."
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
-    for sent in train_sentences:
-        # count+=1
-        words=[word[0] for word in sent]      
-        x = sp.lil_matrix((1, nDS), dtype=np.float64)
-        for w in words:
-            pos_tag=sent[words.index(w)][1]
+    train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            if w in DSfeat:
-                x[0, DSfeat[w] - 1] = 1
-                print x
-            # write projected features.
+            x = train_vectors[nSent][nWord]
+            print len(x)
             if project:
-                y = x.tocsr().dot(M)
+                print M.getnnz()
+                y = x.dot(M)
+                print len(y)
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-            featFile.write("\n") 
+                    print "proj_%d:%f " % (i, gamma * y[0,i])
+            featFile.write("\n")
     featFile.close()
+    # train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
+    # for sent in train_sentences:
+    #     # count+=1
+    #     words=[word[0] for word in sent]      
+    #     x = sp.lil_matrix((1, nDS), dtype=np.float64)
+    #     for w in words:
+    #         pos_tag=sent[words.index(w)][1]
+    #         featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+    #         if w in DSfeat:
+    #             x[0, DSfeat[w] - 1] = 1
+    #             print x
+    #         # write projected features.
+    #         if project:
+    #             y = x.tocsr().dot(M)
+    #             for i in range(0, h):
+    #                 featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+    #         featFile.write("\n") 
+    # featFile.close()
     # write test feature vectors.
     featFile = open(testFileName, 'w')
     count = 0
@@ -357,8 +377,8 @@ if __name__ == "__main__":
     source = "wsj"
     target = "answers"
     method = "freq"
-    createMatrix(source, target, method, 500)
-    learnProjection(source, target)
+    # createMatrix(source, target, method, 500)
+    # learnProjection(source, target)
     # evaluate_POS(source, target, False,1,500)
     evaluate_POS(source, target, True, 1, 500)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
