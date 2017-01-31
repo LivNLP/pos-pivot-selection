@@ -5,8 +5,8 @@ import glob
 import pickle
 import pos_data
 import gensim,logging
-from glove import Corpus, Glove
-import glove
+# from glove import Corpus, Glove
+# import glove
 
 
 #### prepare classification data ####

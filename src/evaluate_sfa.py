@@ -266,20 +266,11 @@ def evaluate_POS(source, target, project,gamma, n):
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
             if x in DSfeat:
-                x[0, DSfeat[w]-1] = train_vectors[nSent][nWord]
-            print x.getnnz()
-            # print x.getnnz()
+                x[0,:1500] = train_vectors[nSent][nWord]
             if project:
-                print M.shape
                 y = x.tocsr().dot(M)
-                print y
-                print y.getnnz()
                 for i in range(0, h):
-                    print i
-                    # print y
-                    print y[i]
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-                    print "proj_%d:%f " % (i, gamma * y[0,i])
             featFile.write("\n")
     featFile.close()
     # train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
@@ -304,18 +295,17 @@ def evaluate_POS(source, target, project,gamma, n):
     featFile = open(testFileName, 'w')
     count = 0
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
-    for sent in test_sentences:
-        # count+=1
-        words=[word[0] for word in sent]      
-        x = sp.lil_matrix((1, nDS), dtype=np.float64)
-        for w in words:
-            pos_tag=sent[words.index(w)][1]
+    test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
+    for nSent,sent in enumerate(test_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            if w in DSfeat:
-                x[0, DSfeat[w] - 1] = 1
-            # write projected features.
+            x = sp.lil_matrix((1, nDS), dtype=np.float64)
+            if x in DSfeat:
+                x[0,:1500] = test_vectors[nSent][nWord]
             if project:
-                y = x.dot(M)
+                y = x.tocsr().dot(M)
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
             featFile.write("\n")
@@ -336,7 +326,6 @@ def batchEval(method, gamma, n):
     Evaluate on all 12 domain pairs. 
     """
     resFile = open("../work/batchSFA.%s.csv"% method, "w")
-    domains = ["books", "electronics", "dvd", "kitchen"]
     resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
     source = 'wsj'
     domains = ["answers","emails"]
@@ -396,12 +385,8 @@ def train_test(source,gamma):
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
             # if x in DSfeat:
             x[0,:1500] = train_vectors[nSent][nWord]
-            # print x
             # if project:
-            # print M.shape
             y = x.tocsr().dot(M)
-            # print y
-            # print y.getnnz()
             for i in range(0, h):
                 # featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
                 print "proj_%d:%f " % (i, gamma * y[0,i])
@@ -413,11 +398,11 @@ if __name__ == "__main__":
     source = "wsj"
     target = "answers"
     method = "freq"
-    train_test(source,1)
+    # train_test(source,1)
     # createMatrix(source, target, method, 500)
     # learnProjection(source, target)
     # evaluate_POS(source, target, False,1,500)
-    # evaluate_POS(source, target, True, 1, 500)
+    evaluate_POS(source, target, True, 1, 500)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods = ["ppmi",'un_ppmi']
     # methods = ["freq"]
