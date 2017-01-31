@@ -23,6 +23,10 @@ def labeled_sentences(domain_name):
     sentences = pos_data.load_preprocess_obj('%s-labeled'%domain_name)
     return pos_data.format_sentences(sentences)
 
+def labeled_sentences_test(domain_name):
+    sentences = pos_data.load_preprocess_obj('%s-test'%domain_name)
+    return pos_data.format_sentences(sentences)
+
 def unlabeled_sentences(domain_name):
     sentences = pos_data.load_preprocess_obj('%s-unlabeled'%domain_name)
     return pos_data.format_sentences(sentences)

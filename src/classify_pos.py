@@ -4,7 +4,7 @@ import os
 import glob
 import pickle
 import pos_data
-import gensim,logging
+# import gensim,logging
 # from glove import Corpus, Glove
 # import glove
 
@@ -47,7 +47,7 @@ def word_to_300d(ds_model,model,x):
         if model.get(x,0)==0:
             # print x
             if x not in ds_model.dictionary:
-                # print "zeros"
+                print "zeros"
                 return numpy.zeros(300, dtype=float)
             else:
                 return lp.glove_to_vec(x,ds_model)
@@ -97,6 +97,25 @@ def glove_single(domain_name):
     model.save('../work/classify/glove-selftrained.model') 
     return
 
+def glove_group():
+    corpus_model = Corpus()
+    sentences = lp.labeled_sentences("wsj")
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for domain in domains:
+        print "current domain: ", domain
+        sentences+=lp.labeled_sentences_test(domain)
+    corpus_model.fit(sentences, window=10)
+    corpus_model.save('../work/classify/corpus-selftrained.model')
+    print('Dict size: %s' % len(corpus_model.dictionary))
+    print('Collocations: %s' % corpus_model.matrix.nnz)
+    print('Training the GloVe model')
+    model = Glove(no_components=300, learning_rate=0.05)
+    model.fit(corpus_model.matrix, epochs=int(10),
+              no_threads=6, verbose=True)
+    model.add_dictionary(corpus_model.dictionary)
+    model.save('../work/classify/glove-selftrained.model') 
+    return
 
 ######## prepare test data #########
 # training data was prepared in pos_data, however for the classification,
@@ -176,6 +195,7 @@ if __name__ == "__main__":
 
     # source = 'wsj'
     # glove_single(source)
+    # glove_group()
     # domains = ["answers","emails"]
     # domains += ["reviews","newsgroups","weblogs"]
     # for target in domains:
