@@ -232,7 +232,6 @@ def evaluate_POS(source, target, project, gamma, method, n):
         feats = pos_data.load_obj(source,target,"filtered_features")
     print "experimental features = ", len(feats)
     #print feats
-
     # DSwords = [item for item in feats if item not in pivots]
 
     feats = feats.keys()
