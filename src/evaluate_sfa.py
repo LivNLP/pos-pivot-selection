@@ -265,8 +265,8 @@ def evaluate_POS(source, target, project,gamma, n):
             pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            if x in DSfeat:
-                x[0,:1500] = train_vectors[nSent][nWord]
+            # if x in DSfeat:
+            x[0,:1500] = train_vectors[nSent][nWord]
             if project:
                 y = x.tocsr().dot(M)
                 for i in range(0, h):
@@ -303,8 +303,8 @@ def evaluate_POS(source, target, project,gamma, n):
             pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            if x in DSfeat:
-                x[0,:1500] = test_vectors[nSent][nWord]
+            # if x in DSfeat:
+            x[0,:1500] = test_vectors[nSent][nWord]
             if project:
                 y = x.tocsr().dot(M)
                 for i in range(0, h):

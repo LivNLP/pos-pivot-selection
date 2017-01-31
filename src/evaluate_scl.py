@@ -249,8 +249,8 @@ def evaluate_POS(source, target, project, gamma, method, n):
             pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            if x in feats:
-                x[0,:1500] = train_vectors[nSent][nWord]
+            # if x in feats:
+            x[0,:1500] = train_vectors[nSent][nWord]
             if project:
                 y = x.tocsr().dot(M)
                 for i in range(0, h):
@@ -281,8 +281,9 @@ def evaluate_POS(source, target, project, gamma, method, n):
             pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            if x in feats:
-                x[0,:1500] = test_vectors[nSent][nWord]
+            print nDS
+            # if x in feats:
+            x[0,:1500] = test_vectors[nSent][nWord]
             if project:
                 y = x.tocsr().dot(M)
                 for i in range(0, h):
@@ -361,22 +362,22 @@ def choose_param(method,params,gamma,n):
     pass
 
 if __name__ == "__main__":
-    # source = "wsj"
-    # target = "answers"
+    source = "wsj"
+    target = "answers"
     # evaluate_NA(source,target)
     # batchNA()
     # batchID()
-    # method = "freq"
+    method = "freq"
     # learnProjection(source, target, method, 500)
-    # evaluate_POS(source, target, True, 1,method, 500)
-    methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
-    methods += ["ppmi",'un_ppmi']
+    evaluate_POS(source, target, True, 1,method, 500)
+    # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
+    # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    n = 500
-    for method in methods:
-        batchEval(method, 1, n)
+    # n = 500
+    # for method in methods:
+    #     batchEval(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
