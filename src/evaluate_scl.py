@@ -158,7 +158,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     print "Took %ss" % str(round(endTime-startTime, 2))   
 
     # Perform SVD on M
-    print M[0].shape
+    # print M[0].shape
     print "Perform SVD on the weight matrix...",
     startTime = time.time()
     ut, s, vt = sparsesvd(M.tocsc(), h)
@@ -242,42 +242,68 @@ def evaluate_POS(source, target, project, gamma, method, n):
     featFile = open(trainFileName, 'w')
     count = 0
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
-    for sent in train_sentences:
-        # count+=1
-        words=[word[0] for word in sent]      
-        x = sp.lil_matrix((1, nDS), dtype=np.float64)
-        for w in words:
-            pos_tag=sent[words.index(w)][1]
+    train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            if w in feats:
-                x[0, feats.index(w)] = 1
-            if project:
-                y = x.tocsr().dot(M)
-                for i in range(0, h):
-                    featFile.write("proj_%d:%f " % (i, gamma * y[0,i]))
-            featFile.write("\n") 
-        # featFile.write("\n")
-    featFile.close()
-    # write test feature vectors.
-    featFile = open(testFileName, 'w')
-    count = 0
-    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
-    for sent in test_sentences:
-        # count+=1
-        words=[word[0] for word in sent]      
-        x = sp.lil_matrix((1, nDS), dtype=np.float64)
-        for w in words:
-            pos_tag=sent[words.index(w)][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            if w in feats:
-                x[0, feats.index(w)] = 1
+            x = sp.lil_matrix((1, nDS), dtype=np.float64)
+            if x in feats:
+                x[0,:1500] = train_vectors[nSent][nWord]
             if project:
                 y = x.tocsr().dot(M)
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
             featFile.write("\n")
-        # featFile.write("\n")
     featFile.close()
+    # for sent in train_sentences:
+    #     words=[word[0] for word in sent]      
+    #     x = sp.lil_matrix((1, nDS), dtype=np.float64)
+    #     for w in words:
+    #         pos_tag=sent[words.index(w)][1]
+    #         featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+    #         if w in feats:
+    #             x[0, feats.index(w)] = 1
+    #         if project:
+    #             y = x.tocsr().dot(M)
+    #             for i in range(0, h):
+    #                 featFile.write("proj_%d:%f " % (i, gamma * y[0,i]))
+    #         featFile.write("\n") 
+    # featFile.close()
+    # write test feature vectors.
+    featFile = open(testFileName, 'w')
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
+    test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
+    for nSent,sent in enumerate(test_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            x = sp.lil_matrix((1, nDS), dtype=np.float64)
+            if x in feats:
+                x[0,:1500] = test_vectors[nSent][nWord]
+            if project:
+                y = x.tocsr().dot(M)
+                for i in range(0, h):
+                    featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+            featFile.write("\n")
+    featFile.close()
+    # for sent in test_sentences:
+    #     words=[word[0] for word in sent]      
+    #     x = sp.lil_matrix((1, nDS), dtype=np.float64)
+    #     for w in words:
+    #         pos_tag=sent[words.index(w)][1]
+    #         featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+    #         if w in feats:
+    #             x[0, feats.index(w)] = 1
+    #         if project:
+    #             y = x.tocsr().dot(M)
+    #             for i in range(0, h):
+    #                 featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+    #         featFile.write("\n")
+    #     # featFile.write("\n")
+    # featFile.close()
     # Train using classias.
     modelFileName = "../work/%s-%s/model.SCL" % (source, target)
     trainMultiLBFGS(trainFileName, modelFileName)

@@ -294,6 +294,7 @@ def evaluate_POS(source, target, project,gamma, n):
     # write test feature vectors.
     featFile = open(testFileName, 'w')
     count = 0
+    print "Loading test instances.."
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
     for nSent,sent in enumerate(test_sentences):
