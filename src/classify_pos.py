@@ -4,6 +4,10 @@ import os
 import glob
 import pickle
 import pos_data
+import gensim,logging
+from glove import Corpus, Glove
+import glove
+
 
 #### prepare classification data ####
 # words to word vectors by a window size 2l+1
@@ -13,6 +17,8 @@ def window_vectors(name,sentences,l):
     # new_sentences = [[word[0] for word in sent] for sent in sentences]
     path = '../data/glove.42B.300d.txt'
     model = load_filtered_glove(sentences,path)
+    print "Loading self-trained model"
+    ds_model = Glove.load('../work/classify/glove-selftrained.model')
 
     new_sentences = []
     for sent in sentences:
@@ -22,7 +28,7 @@ def window_vectors(name,sentences,l):
             for i in range(-l,l+1):
                 word_postion = word[2]+i
                 word_i = find_word_in_position(sent,word_postion)
-                word_vector = word_to_300d(model,word_i)
+                word_vector = word_to_300d(ds_model,model,word_i)
                 new_word = joint_vectors(new_word,word_vector)
                 # print len(new_word)
             new_sent += [new_word]
@@ -32,18 +38,22 @@ def window_vectors(name,sentences,l):
     save_classify_obj(new_sentences,'%s-classify'%name)
     pass
 
-# load GloVe embeddings or 0s
-def word_to_300d(model,word):
-    if word==0:
+# load GloVe pretrained embeddings or self trained embeddings or zeros
+def word_to_300d(ds_model,model,x):
+    if x == 0:
         # emtpy word with zeros
         return numpy.zeros(300, dtype=float)
     else:
-        # print word
-        if model.get(word,0)==0:
-            # different from sentpiv, we use empty for unfound vector
-            return numpy.zeros(300, dtype=float)
+        if model.get(x,0)==0:
+            # print x
+            if x not in ds_model.dictionary:
+                # print "zeros"
+                return numpy.zeros(300, dtype=float)
+            else:
+                return lp.glove_to_vec(x,ds_model)
         else:
-            return lp.word_to_vec(word,model)
+            return lp.word_to_vec(x,model)
+        
     pass
 
 def find_word_in_position(sent,position):
@@ -58,7 +68,7 @@ def joint_vectors(a,b):
     return numpy.concatenate((a,b))
 
 def load_filtered_glove(sentences,gloveFile):
-    print "Loading Glove Model"
+    print "Loading pretrained GloVe Model"
     f = open(gloveFile,'r')
     model = {}
     filtered_features = lp.pos_data.feature_list(sentences)
@@ -72,6 +82,21 @@ def load_filtered_glove(sentences,gloveFile):
         #     model[word.replace('.','__')] = embedding
     print "After filtering, ",len(model)," words loaded!"
     return model
+
+def glove_single(domain_name):
+    corpus_model = Corpus()
+    corpus_model.fit(lp.labeled_sentences(domain_name), window=10)
+    corpus_model.save('../work/classify/corpus-selftrained.model')
+    print('Dict size: %s' % len(corpus_model.dictionary))
+    print('Collocations: %s' % corpus_model.matrix.nnz)
+    print('Training the GloVe model')
+    model = Glove(no_components=300, learning_rate=0.05)
+    model.fit(corpus_model.matrix, epochs=int(10),
+              no_threads=6, verbose=True)
+    model.add_dictionary(corpus_model.dictionary)
+    model.save('../work/classify/glove-selftrained.model') 
+    return
+
 
 ######## prepare test data #########
 # training data was prepared in pos_data, however for the classification,
@@ -133,23 +158,25 @@ def load_test_obj(target,tag,name):
 
 
 if __name__ == "__main__":
-    # l = 2
-    # name = 'answers-dev'
+    l = 2
+    # name = 'answers-test'
     # sentences=lp.pos_data.load_preprocess_obj(name)
     # window_vectors(name,sentences,l)
-    # my_dir = '../work/preprocess'
-    # names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
-    # for name in names:
-        # if 'unlabeled' not in name:
-        #     print name
-        #     sentences=lp.pos_data.load_preprocess_obj(name)
-        #     window_vectors(name,sentences,l)
+    my_dir = '../work/preprocess'
+    names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
+    for name in names:
+        if 'unlabeled' not in name:
+            print name
+            sentences=lp.pos_data.load_preprocess_obj(name)
+            window_vectors(name,sentences,l)
         # if 'unlabeled' in name:
         #     print name
         #     sentences=lp.pos_data.load_preprocess_obj(name)
         #     window_vectors(name,sentences,l)
-    source = 'wsj'
-    domains = ["answers","emails"]
-    domains += ["reviews","newsgroups","weblogs"]
-    for target in domains:
-        divide_test_data(source,target)
+
+    # source = 'wsj'
+    # glove_single(source)
+    # domains = ["answers","emails"]
+    # domains += ["reviews","newsgroups","weblogs"]
+    # for target in domains:
+    #     divide_test_data(source,target)
