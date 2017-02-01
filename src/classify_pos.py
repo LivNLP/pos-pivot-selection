@@ -57,12 +57,13 @@ def word_to_300d(ds_model,model,x):
     pass
 
 def find_word_in_position(sent,position):
+    # print position
     for word in sent:
-        if word[2]==position:
+        if sent.index(word)+1==position:
+            # print word[0]
             return word[0]
-        else:
-            return 0
-    pass
+#     print"zero"
+    return 0
 
 def joint_vectors(a,b):
     return numpy.concatenate((a,b))
@@ -178,16 +179,16 @@ def load_test_obj(target,tag,name):
 
 if __name__ == "__main__":
     l = 2
-    # name = 'answers-test'
-    # sentences=lp.pos_data.load_preprocess_obj(name)
-    # window_vectors(name,sentences,l)
-    my_dir = '../work/preprocess'
-    names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
-    for name in names:
-        if 'unlabeled' not in name:
-            print name
-            sentences=lp.pos_data.load_preprocess_obj(name)
-            window_vectors(name,sentences,l)
+    name = 'answers-test'
+    sentences=lp.pos_data.load_preprocess_obj(name)
+    window_vectors(name,sentences,l)
+    # my_dir = '../work/preprocess'
+    # names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
+    # for name in names:
+    #     if 'unlabeled' not in name:
+    #         print name
+    #         sentences=lp.pos_data.load_preprocess_obj(name)
+    #         window_vectors(name,sentences,l)
         # if 'unlabeled' in name:
         #     print name
         #     sentences=lp.pos_data.load_preprocess_obj(name)

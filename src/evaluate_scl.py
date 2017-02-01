@@ -249,7 +249,6 @@ def evaluate_POS(source, target, project, gamma, method, n):
             pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            # if x in feats:
             x[0,:1500] = train_vectors[nSent][nWord]
             if project:
                 y = x.tocsr().dot(M)
@@ -257,21 +256,6 @@ def evaluate_POS(source, target, project, gamma, method, n):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
             featFile.write("\n")
     featFile.close()
-    # for sent in train_sentences:
-    #     words=[word[0] for word in sent]      
-    #     x = sp.lil_matrix((1, nDS), dtype=np.float64)
-    #     for w in words:
-    #         pos_tag=sent[words.index(w)][1]
-    #         featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-    #         if w in feats:
-    #             x[0, feats.index(w)] = 1
-    #         if project:
-    #             y = x.tocsr().dot(M)
-    #             for i in range(0, h):
-    #                 featFile.write("proj_%d:%f " % (i, gamma * y[0,i]))
-    #         featFile.write("\n") 
-    # featFile.close()
-    # write test feature vectors.
     featFile = open(testFileName, 'w')
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
@@ -290,21 +274,6 @@ def evaluate_POS(source, target, project, gamma, method, n):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
             featFile.write("\n")
     featFile.close()
-    # for sent in test_sentences:
-    #     words=[word[0] for word in sent]      
-    #     x = sp.lil_matrix((1, nDS), dtype=np.float64)
-    #     for w in words:
-    #         pos_tag=sent[words.index(w)][1]
-    #         featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-    #         if w in feats:
-    #             x[0, feats.index(w)] = 1
-    #         if project:
-    #             y = x.tocsr().dot(M)
-    #             for i in range(0, h):
-    #                 featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-    #         featFile.write("\n")
-    #     # featFile.write("\n")
-    # featFile.close()
     # Train using classias.
     modelFileName = "../work/%s-%s/model.SCL" % (source, target)
     trainMultiLBFGS(trainFileName, modelFileName)
@@ -315,6 +284,95 @@ def evaluate_POS(source, target, project, gamma, method, n):
     print "Intervals=", intervals
     print "###########################################\n\n"
     return acc,intervals
+
+def evaluate_POS_NA(source,target):
+    trainFileName = "../work/%s-%s/trainVects.NA" % (source, target)
+    testFileName = "../work/%s-%s/testVects.NA" % (source, target)
+    featFile = open(trainFileName, 'w')
+    count = 0
+    train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
+    train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            x = train_vectors[nSent][nWord]
+            for i in x:
+                featFile.write("%f " % i) 
+            featFile.write("\n")
+    featFile.close()
+    featFile = open(testFileName, 'w')
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
+    test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
+    for nSent,sent in enumerate(test_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            x = test_vectors[nSent][nWord]
+            for i in x:
+                featFile.write("%f " % i) 
+            featFile.write("\n")
+    featFile.close()
+    # Train using classias.
+    modelFileName = "../work/%s-%s/model.NA" % (source, target)
+    trainMultiLBFGS(trainFileName, modelFileName)
+    # Test using classias.
+    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
+    intervals = clopper_pearson(correct,total)
+    print "Accuracy =", acc
+    print "Intervals=", intervals
+    print "###########################################\n\n"
+    return acc,intervals
+    pass
+
+def evaluate_POS_ID(source):
+    trainFileName = "../work/%s/trainVects.ID" % (source)
+    testFileName = "../work/%s/testVects.ID" % (source)
+    featFile = open(trainFileName, 'w')
+    count = 0
+    print "Loading training vectors..."
+    train_sentences = pos_data.load_preprocess_obj("%s-dev"%source)
+    train_vectors = classify_pos.load_classify_obj("%s-dev-classify"%source)
+    print "training features = ", len(pos_data.feature_list(train_sentences))
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            x = train_vectors[nSent][nWord]
+            for i in x:
+                featFile.write("%f " % i) 
+            featFile.write("\n")
+    featFile.close()
+    featFile = open(testFileName, 'w')
+    print "Loading test vectors..."
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%source)
+    test_vectors = classify_pos.load_classify_obj("%s-test-classify"%source)
+    print "test features = ", len(pos_data.feature_list(test_sentences))
+    for nSent,sent in enumerate(test_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            x = test_vectors[nSent][nWord]
+            for i in x:
+                featFile.write("%f " % i) 
+            featFile.write("\n")
+    featFile.close()
+    # Train using classias.
+    modelFileName = "../work/%s/model.ID" % (source)
+    trainMultiLBFGS(trainFileName, modelFileName)
+    # Test using classias.
+    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
+    intervals = clopper_pearson(correct,total)
+    print "Accuracy =", acc
+    print "Intervals=", intervals
+    print "###########################################\n\n"
+    return acc,intervals
+    pass
+
 
 
 def batchEval(method, gamma, n):
@@ -364,12 +422,13 @@ def choose_param(method,params,gamma,n):
 if __name__ == "__main__":
     source = "wsj"
     target = "answers"
-    # evaluate_NA(source,target)
     # batchNA()
     # batchID()
-    method = "freq"
+    # method = "freq"
     # learnProjection(source, target, method, 500)
-    evaluate_POS(source, target, True, 1,method, 500)
+    # evaluate_POS(source, target, True, 1,method, 500)
+    # evaluate_POS_NA(source,target)
+    evaluate_POS_ID(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
