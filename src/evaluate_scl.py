@@ -281,7 +281,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
             pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            print nDS
+            # print nDS
             # if x in feats:
             x[0,:1500] = test_vectors[nSent][nWord]
             if project:
