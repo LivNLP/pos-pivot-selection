@@ -4,9 +4,9 @@ import os
 import glob
 import pickle
 import pos_data
-# import gensim,logging
-# from glove import Corpus, Glove
-# import glove
+import gensim,logging
+from glove import Corpus, Glove
+import glove
 
 
 #### prepare classification data ####
@@ -47,7 +47,7 @@ def word_to_300d(ds_model,model,x):
         if model.get(x,0)==0:
             # print x
             if x not in ds_model.dictionary:
-                print "zeros"
+                # print "zeros"
                 return numpy.zeros(300, dtype=float)
             else:
                 return lp.glove_to_vec(x,ds_model)
@@ -106,6 +106,10 @@ def glove_group():
     for domain in domains:
         print "current domain: ", domain
         sentences+=lp.labeled_sentences_test(domain)
+    domains = ["answers","reviews","newsgroups"]
+    for domain in domains:
+        print "current domain: ", domain
+        sentences+=lp.labeled_sentences_dev(domain)
     corpus_model.fit(sentences, window=10)
     corpus_model.save('../work/classify/corpus-selftrained.model')
     print('Dict size: %s' % len(corpus_model.dictionary))
@@ -179,16 +183,16 @@ def load_test_obj(target,tag,name):
 
 if __name__ == "__main__":
     l = 2
-    name = 'answers-test'
-    sentences=lp.pos_data.load_preprocess_obj(name)
-    window_vectors(name,sentences,l)
-    # my_dir = '../work/preprocess'
-    # names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
-    # for name in names:
-    #     if 'unlabeled' not in name:
-    #         print name
-    #         sentences=lp.pos_data.load_preprocess_obj(name)
-    #         window_vectors(name,sentences,l)
+    # name = 'answers-test'
+    # sentences=lp.pos_data.load_preprocess_obj(name)
+    # window_vectors(name,sentences,l)
+    my_dir = '../work/preprocess'
+    names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
+    for name in names:
+        if 'unlabeled' not in name:
+            print name
+            sentences=lp.pos_data.load_preprocess_obj(name)
+            window_vectors(name,sentences,l)
         # if 'unlabeled' in name:
         #     print name
         #     sentences=lp.pos_data.load_preprocess_obj(name)
