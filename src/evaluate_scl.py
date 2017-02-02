@@ -292,6 +292,7 @@ def evaluate_POS_NA(source,target):
     count = 0
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    print "training features = ", len(pos_data.feature_list(train_sentences))
     for nSent,sent in enumerate(train_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
@@ -305,6 +306,7 @@ def evaluate_POS_NA(source,target):
     featFile = open(testFileName, 'w')
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
+    print "test features = ", len(pos_data.feature_list(test_sentences))
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
@@ -317,8 +319,10 @@ def evaluate_POS_NA(source,target):
     featFile.close()
     # Train using classias.
     modelFileName = "../work/%s-%s/model.NA" % (source, target)
+    print "Training..."
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
+    print "Testing..."
     [acc,correct,total] = testLBFGS(testFileName, modelFileName)
     intervals = clopper_pearson(correct,total)
     print "Accuracy =", acc
@@ -427,8 +431,8 @@ if __name__ == "__main__":
     # method = "freq"
     # learnProjection(source, target, method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
-    # evaluate_POS_NA(source,target)
-    evaluate_POS_ID(target)
+    evaluate_POS_NA(source,target)
+    # evaluate_POS_ID(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
