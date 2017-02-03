@@ -259,6 +259,7 @@ def evaluate_POS(source, target, project,gamma, n):
     print "Loading training instances.."
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    print "training features = ", len(pos_data.feature_list(train_sentences))
     for nSent,sent in enumerate(train_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
@@ -297,6 +298,7 @@ def evaluate_POS(source, target, project,gamma, n):
     print "Loading test instances.."
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
+    print "test features = ", len(pos_data.feature_list(test_sentences))
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
@@ -312,9 +314,11 @@ def evaluate_POS(source, target, project,gamma, n):
             featFile.write("\n")
     featFile.close()
     # Train using classias.
+    print "Training..."
     modelFileName = "../work/%s-%s/model.SFA" % (source, target)
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
+    print "Testing..."
     [acc,correct,total] = testLBFGS(testFileName, modelFileName)
     intervals = clopper_pearson(correct,total)
     print "Accuracy =", acc
@@ -378,6 +382,7 @@ def train_test(source,gamma):
     print "Loading training instances.."
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    print "training features = ", len(pos_data.feature_list(train_sentences))
     for nSent,sent in enumerate(train_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
