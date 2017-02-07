@@ -430,7 +430,7 @@ if __name__ == "__main__":
     # batchID()
     method = "freq"
     # learnProjection(source, target, method, 500)
-    # evaluate_POS(source, target, True, 1,method, 500)
+    evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_ID(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]

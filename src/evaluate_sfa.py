@@ -403,7 +403,7 @@ def train_test(source,gamma):
 if __name__ == "__main__":
     source = "wsj"
     target = "answers"
-    method = "freq"
+    method = "un_freq"
     # train_test(source,1)
     # createMatrix(source, target, method, 500)
     # learnProjection(source, target)
