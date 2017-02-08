@@ -10,6 +10,34 @@ import pos_data
 
 
 #### prepare classification data ####
+# words to lexical features by a window size 2l+1
+# default l = 2
+def window_features(name,sentences,l):
+    new_sentences= []
+    for sent in sentences:
+        new_sent = []
+        freq_sent={}
+        get_freq_in_sentence(sent,freq_sent)
+        for word in sent:
+            new_word = []
+            for i in range(-l,l+1):
+                word_postion = word[2]+i
+                word_i = find_word_in_position(sent,word_postion)
+                new_word +=[word_i,freq_sent.get(word_i,0)] 
+                print len(new_word),new_word
+            new_sent += [new_word]
+        # print len(sent),len(new_sent)
+        new_sentences+= [new_sent]
+    # print len(sentences), len(new_sentences)
+    save_classify_obj(new_sentences,'%s-lexical'%name)
+    pass
+
+def get_freq_in_sentence(sent,h):
+    for word in sent:
+        h[word]=h.get(word,0)+1
+    pass
+
+#### prepare classification data ####
 # words to word vectors by a window size 2l+1
 # default l = 2
 def window_vectors(name,sentences,l):
@@ -53,7 +81,6 @@ def word_to_300d(ds_model,model,x):
                 return lp.glove_to_vec(x,ds_model)
         else:
             return lp.word_to_vec(x,model)
-        
     pass
 
 def find_word_in_position(sent,position):
