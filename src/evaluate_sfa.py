@@ -405,8 +405,8 @@ if __name__ == "__main__":
     target = "answers"
     method = "un_freq"
     # train_test(source,1)
-    # createMatrix(source, target, method, 500)
-    # learnProjection(source, target)
+    createMatrix(source, target, method, 500)
+    learnProjection(source, target)
     # evaluate_POS(source, target, False,1,500)
     evaluate_POS(source, target, True, 1, 500)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
