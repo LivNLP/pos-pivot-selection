@@ -23,8 +23,8 @@ def window_features(name,sentences,l):
             for i in range(-l,l+1):
                 word_postion = word[2]+i
                 word_i = find_word_in_position(sent,word_postion)
-                new_word +=[word_i,freq_sent.get(word_i,0)] 
-                print len(new_word),new_word
+                new_word.append([word_i,freq_sent.get(word_i,0)])
+                # print len(new_word)
             new_sent += [new_word]
         # print len(sent),len(new_sent)
         new_sentences+= [new_sent]
@@ -34,7 +34,7 @@ def window_features(name,sentences,l):
 
 def get_freq_in_sentence(sent,h):
     for word in sent:
-        h[word]=h.get(word,0)+1
+        h[word[0]]=h.get(word[0],0)+1
     pass
 
 #### prepare classification data ####
@@ -213,13 +213,15 @@ if __name__ == "__main__":
     # name = 'answers-test'
     # sentences=lp.pos_data.load_preprocess_obj(name)
     # window_vectors(name,sentences,l)
+    # window_features(name,sentences,l)
     my_dir = '../work/preprocess'
     names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
     for name in names:
         if 'unlabeled' not in name:
             print name
             sentences=lp.pos_data.load_preprocess_obj(name)
-            window_vectors(name,sentences,l)
+            # window_vectors(name,sentences,l)
+            window_features(name,sentences,l)
         # if 'unlabeled' in name:
         #     print name
         #     sentences=lp.pos_data.load_preprocess_obj(name)
