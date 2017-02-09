@@ -331,6 +331,55 @@ def evaluate_POS_NA(source,target):
     return acc,intervals
     pass
 
+def evaluate_POS_NA_lexical(source,target):
+    trainFileName = "../work/%s-%s/trainVects_lexical.NA" % (source, target)
+    testFileName = "../work/%s-%s/testVects_lexical.NA" % (source, target)
+    featFile = open(trainFileName, 'w')
+    count = 0
+    train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
+    train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
+    print "training features = ", len(pos_data.feature_list(train_sentences))
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            x = train_feats[nSent][nWord]
+            # print x
+            for ft in x:
+                featFile.write("%s:%f " % (ft[0],ft[1])) 
+            featFile.write("\n")
+    featFile.close()
+    featFile = open(testFileName, 'w')
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
+    test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
+    print "test features = ", len(pos_data.feature_list(test_sentences))
+    for nSent,sent in enumerate(test_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
+            x = test_feats[nSent][nWord]
+            for ft in x:
+                featFile.write("%s:%f " % (ft[0],ft[1])) 
+            featFile.write("\n")
+    featFile.close()
+    # Train using classias.
+    modelFileName = "../work/%s-%s/model_lexical.NA" % (source, target)
+    print "Training..."
+    trainMultiLBFGS(trainFileName, modelFileName)
+    # Test using classias.
+    print "Testing..."
+    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
+    intervals = clopper_pearson(correct,total)
+    print "Accuracy =", acc
+    print "Intervals=", intervals
+    print "###########################################\n\n"
+    return acc,intervals
+    pass
+
+
+
 def evaluate_POS_ID(source):
     trainFileName = "../work/%s/trainVects.ID" % (source)
     testFileName = "../work/%s/testVects.ID" % (source)
@@ -428,10 +477,11 @@ if __name__ == "__main__":
     target = "answers"
     # batchNA()
     # batchID()
-    method = "freq"
+    # method = "freq"
     # learnProjection(source, target, method, 500)
-    evaluate_POS(source, target, True, 1,method, 500)
+    # evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
+    evaluate_POS_NA_lexical(source,target)
     # evaluate_POS_ID(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
