@@ -461,7 +461,7 @@ def evaluate_POS_ID_lexical(source):
             featFile.write("\n")
     featFile.close()
     # Train using classias.
-    modelFileName = "../work/%s-%s/model_lexical.ID" % (source, target)
+    modelFileName = "../work/%s/model_lexical.ID" % (source)
     print "Training..."
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
