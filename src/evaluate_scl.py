@@ -211,6 +211,8 @@ def evaluate_POS(source, target, project, gamma, method, n):
     domainTh = {'wsj':5, 'answers':5, 'emails':5, 'reviews':5, 'weblogs':5,'newsgroups':5}
 
     # gamma = 1.0
+    nEmbed = 1500
+    nLex = 5
     print "Source Domain", source
     print "Target Domain", target
     if project:
@@ -240,38 +242,47 @@ def evaluate_POS(source, target, project, gamma, method, n):
     trainFileName = "../work/%s-%s/trainVects.SCL" % (source, target)
     testFileName = "../work/%s-%s/testVects.SCL" % (source, target)
     featFile = open(trainFileName, 'w')
-    count = 0
+    
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    # load lexical features as additional features
+    train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
     for nSent,sent in enumerate(train_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            x[0,:1500] = train_vectors[nSent][nWord]
+            x[0,:nEmbed] = train_vectors[nSent][nWord]
+            # x[0,nEmbed:nEmbed+nLex] = train_feats[nSent][nWord]
             if project:
                 y = x.tocsr().dot(M)
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+            lex = train_feats[nSent][nWord]
+            for ft in lex:
+                featFile.write("%s:%f " % (ft[0],ft[1])) 
             featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
+    # load lexical features as additional features
+    test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
             featFile.write("%d "%pos_data.tag_to_number(pos_tag))
             x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            # print nDS
-            # if x in feats:
-            x[0,:1500] = test_vectors[nSent][nWord]
+            x[0,:nEmbed] = test_vectors[nSent][nWord]
             if project:
                 y = x.tocsr().dot(M)
                 for i in range(0, h):
                     featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+            lex = test_feats[nSent][nWord]
+            for ft in lex:
+                featFile.write("%s:%f " % (ft[0],ft[1])) 
             featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -292,6 +303,8 @@ def evaluate_POS_NA(source,target):
     count = 0
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    # load lexical features as additional features
+    # train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
     print "training features = ", len(pos_data.feature_list(train_sentences))
     for nSent,sent in enumerate(train_sentences):
         words = [word[0] for word in sent]
@@ -306,6 +319,8 @@ def evaluate_POS_NA(source,target):
     featFile = open(testFileName, 'w')
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
+    # load lexical features as additional features
+    # test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
     print "test features = ", len(pos_data.feature_list(test_sentences))
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
@@ -524,13 +539,13 @@ if __name__ == "__main__":
     target = "answers"
     # batchNA()
     # batchID()
-    # method = "freq"
-    # learnProjection(source, target, method, 500)
-    # evaluate_POS(source, target, True, 1,method, 500)
+    method = "freq"
+    learnProjection(source, target, method, 500)
+    evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # evaluate_POS_ID(target)
-    evaluate_POS_ID_lexical(target)
+    # evaluate_POS_ID_lexical(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
