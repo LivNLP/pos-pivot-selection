@@ -56,7 +56,7 @@ def testLBFGS(test_file, model_file):
     Evaluate on the test file.
     Read the output file and return the classification accuracy.
     """
-    output = "../work/output"
+    output = "../work/output_scl"
     retcode = subprocess.call("cat %s | classias-tag -m %s -t -fap > %s" %\
                               (test_file, model_file, output), shell=True)
     F = open(output)
@@ -118,21 +118,21 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     domainTh = {'wsj':5, 'answers':5, 'emails':5, 'reviews':5, 'weblogs':5,'newsgroups':5}
 
     # Load pivots.
-    features = pos_data.load_obj(sourceDomain,targetDomain,pivotsMethod)
+    features = pos_data.load_obj(sourceDomain,targetDomain,pivotsMethod) if "landmark" not in pivotsMethod else pos_data.load_obj(sourceDomain,targetDomain,"/test/"+pivotsMethod)
     pivots = dict(features[:n]).keys()
     print "selecting top-%d features in %s as pivots" % (n, pivotsMethod)
 
     # Load features and get domain specific features
     features = pos_data.load_obj(sourceDomain,targetDomain,"un_freq") if "un_" in pivotsMethod else pos_data.load_obj(sourceDomain,targetDomain,"freq")
     feats = selectTh(dict(features),domainTh[sourceDomain])
+    feats = feats.keys()
     if "landmark" in pivotsMethod:
         feats = pos_data.load_obj(sourceDomain,targetDomain,"filtered_features")
     print "experimental features = ", len(feats)
-    # print feats.keys()
 
     # DSwords = [item for item in feats if item not in pivots]
 
-    feats = feats.keys()
+    
     # Load train vectors.
     print "Loading Training vectors...",
     startTime = time.time()
@@ -165,7 +165,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     ut, s, vt = sparsesvd(M.tocsc(), h)
     endTime = time.time()
     print "%ss" % str(round(endTime-startTime, 2))     
-    sio.savemat("../work/%s-%s/proj.mat" % (sourceDomain, targetDomain), {'proj':ut.T})
+    sio.savemat("../work/%s-%s/proj_l.mat" % (sourceDomain, targetDomain), {'proj':ut.T})
     pass
 
 
@@ -175,8 +175,8 @@ def getWeightVector(word, vects):
     return the corresponding weight vector. Not depending on the task,
     always a binary classification, a pivot or not a pivot.
     """
-    trainFileName = "../work/trainFile"
-    modelFileName = "../work/modelFile"
+    trainFileName = "../work/trainFile_l"
+    modelFileName = "../work/modelFile_l"
     trainFile = open(trainFileName, 'w')
     for v in vects:
         fv = v.copy()
@@ -220,27 +220,27 @@ def evaluate_POS(source, target, project, gamma, method, n):
     else:
         print "Projection OFF"
     # Load the projection matrix.
-    M = sp.csr_matrix(sio.loadmat("../work/%s-%s/proj.mat" % (source, target))['proj'])
+    M = sp.csr_matrix(sio.loadmat("../work/%s-%s/proj_l.mat" % (source, target))['proj'])
     (nDS, h) = M.shape
 
     # Load pivots.
-    features = pos_data.load_obj(source,target,method)
+    features = pos_data.load_obj(source,target,method) if "landmark" not in method else pos_data.load_obj(source,target,"/test/"+method)
     pivots = dict(features[:n]).keys()
     print "selecting top-%d features in %s as pivots" % (n, method)
 
     # Load features
     features = pos_data.load_obj(source,target,"un_freq") if "un_" in method else pos_data.load_obj(source,target,"freq")
     feats = selectTh(dict(features),domainTh[source])
+    feats = feats.keys()
     if "landmark" in method:
         feats = pos_data.load_obj(source,target,"filtered_features")
     print "experimental features = ", len(feats)
-    #print feats
     # DSwords = [item for item in feats if item not in pivots]
 
-    feats = feats.keys()
+    
     # write train feature vectors.
-    trainFileName = "../work/%s-%s/trainVects.SCL" % (source, target)
-    testFileName = "../work/%s-%s/testVects.SCL" % (source, target)
+    trainFileName = "../work/%s-%s/trainVects_l.SCL" % (source, target)
+    testFileName = "../work/%s-%s/testVects_l.SCL" % (source, target)
     featFile = open(trainFileName, 'w')
     
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
@@ -286,9 +286,11 @@ def evaluate_POS(source, target, project, gamma, method, n):
             featFile.write("\n")
     featFile.close()
     # Train using classias.
-    modelFileName = "../work/%s-%s/model.SCL" % (source, target)
+    print "Training..."
+    modelFileName = "../work/%s-%s/model_l.SCL" % (source, target)
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
+    print "Testing..."
     [acc,correct,total] = testLBFGS(testFileName, modelFileName)
     intervals = clopper_pearson(correct,total)
     print "Accuracy =", acc
@@ -546,21 +548,21 @@ if __name__ == "__main__":
     # evaluate_POS_NA_lexical(source,target)
     # evaluate_POS_ID(target)
     # evaluate_POS_ID_lexical(target)
-    methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
-    methods += ["ppmi",'un_ppmi']
+    # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
+    # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
-    # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
+    methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
     n = 500
-    for method in methods:
-        batchEval(method, 1, n)
+    # for method in methods:
+        # batchEval(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
-    # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
-    # params += [10e-3,10e-4,10e-5,10e-6]
-    # params.sort()
+    params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
+    params += [10e-3,10e-4,10e-5,10e-6]
+    params.sort()
     # params = [1,50,100,1000,10000]
     # params = [0,1,50,100,1000,10000]
-    # for method in methods:
-    #     choose_param(method,params,1,n)
+    for method in methods:
+        choose_param(method,params,1,n)
