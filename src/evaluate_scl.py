@@ -56,7 +56,7 @@ def testLBFGS(test_file, model_file):
     Evaluate on the test file.
     Read the output file and return the classification accuracy.
     """
-    output = "../work/output_scl"
+    output = "../work/output"
     retcode = subprocess.call("cat %s | classias-tag -m %s -t -fap > %s" %\
                               (test_file, model_file, output), shell=True)
     F = open(output)
@@ -165,7 +165,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     ut, s, vt = sparsesvd(M.tocsc(), h)
     endTime = time.time()
     print "%ss" % str(round(endTime-startTime, 2))     
-    sio.savemat("../work/%s-%s/proj_l.mat" % (sourceDomain, targetDomain), {'proj':ut.T})
+    sio.savemat("../work/%s-%s/proj.mat" % (sourceDomain, targetDomain), {'proj':ut.T})
     pass
 
 
@@ -175,8 +175,8 @@ def getWeightVector(word, vects):
     return the corresponding weight vector. Not depending on the task,
     always a binary classification, a pivot or not a pivot.
     """
-    trainFileName = "../work/trainFile_l"
-    modelFileName = "../work/modelFile_l"
+    trainFileName = "../work/trainFile"
+    modelFileName = "../work/modelFile"
     trainFile = open(trainFileName, 'w')
     for v in vects:
         fv = v.copy()
@@ -220,7 +220,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
     else:
         print "Projection OFF"
     # Load the projection matrix.
-    M = sp.csr_matrix(sio.loadmat("../work/%s-%s/proj_l.mat" % (source, target))['proj'])
+    M = sp.csr_matrix(sio.loadmat("../work/%s-%s/proj.mat" % (source, target))['proj'])
     (nDS, h) = M.shape
 
     # Load pivots.
@@ -239,8 +239,8 @@ def evaluate_POS(source, target, project, gamma, method, n):
 
     
     # write train feature vectors.
-    trainFileName = "../work/%s-%s/trainVects_l.SCL" % (source, target)
-    testFileName = "../work/%s-%s/testVects_l.SCL" % (source, target)
+    trainFileName = "../work/%s-%s/trainVects.SCL" % (source, target)
+    testFileName = "../work/%s-%s/testVects.SCL" % (source, target)
     featFile = open(trainFileName, 'w')
     
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
@@ -287,7 +287,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
     featFile.close()
     # Train using classias.
     print "Training..."
-    modelFileName = "../work/%s-%s/model_l.SCL" % (source, target)
+    modelFileName = "../work/%s-%s/model.SCL" % (source, target)
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
     print "Testing..."
@@ -537,13 +537,13 @@ def choose_param(method,params,gamma,n):
     pass
 
 if __name__ == "__main__":
-    # source = "wsj"
-    # target = "answers"
+    source = "wsj"
+    target = "newsgroups"
     # batchNA()
     # batchID()
-    # method = "freq"
-    # learnProjection(source, target, method, 500)
-    # evaluate_POS(source, target, True, 1,method, 500)
+    method = "freq"
+    learnProjection(source, target, method, 500)
+    evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # evaluate_POS_ID(target)
@@ -552,17 +552,18 @@ if __name__ == "__main__":
     # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
-    methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    n = 500
+    # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
+    # n = 500
     # for method in methods:
         # batchEval(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
-    params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
-    params += [10e-3,10e-4,10e-5,10e-6]
-    params.sort()
+    # params = [1]
+    # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
+    # params += [10e-3,10e-4,10e-5,10e-6]
+    # params.sort()
     # params = [1,50,100,1000,10000]
     # params = [0,1,50,100,1000,10000]
-    for method in methods:
-        choose_param(method,params,1,n)
+    # for method in methods:
+    #     choose_param(method,params,1,n)
