@@ -247,43 +247,49 @@ def evaluate_POS(source, target, project, gamma, method, n):
     train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
     # load lexical features as additional features
     train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
-    for nSent,sent in enumerate(train_sentences):
-        words = [word[0] for word in sent]
-        for nWord,w in enumerate(words):
-            pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            x[0,:nEmbed] = train_vectors[nSent][nWord]
-            # x[0,nEmbed:nEmbed+nLex] = train_feats[nSent][nWord]
-            if project:
-                y = x.tocsr().dot(M)
-                for i in range(0, h):
-                    featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-            lex = train_feats[nSent][nWord]
-            for ft in lex:
-                featFile.write("%s:%f " % (ft[0],ft[1])) 
-            featFile.write("\n")
-    featFile.close()
-    featFile = open(testFileName, 'w')
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
     # load lexical features as additional features
     test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
+    tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
+    print "number of tags = ",len(tag_list)
+
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = sp.lil_matrix((1, nDS), dtype=np.float64)
+                x[0,:nEmbed] = train_vectors[nSent][nWord]
+                # x[0,nEmbed:nEmbed+nLex] = train_feats[nSent][nWord]
+                if project:
+                    y = x.tocsr().dot(M)
+                    for i in range(0, h):
+                        featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+                lex = train_feats[nSent][nWord]
+                for ft in lex:
+                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                featFile.write("\n")
+    featFile.close()
+    featFile = open(testFileName, 'w')
+    
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = sp.lil_matrix((1, nDS), dtype=np.float64)
-            x[0,:nEmbed] = test_vectors[nSent][nWord]
-            if project:
-                y = x.tocsr().dot(M)
-                for i in range(0, h):
-                    featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-            lex = test_feats[nSent][nWord]
-            for ft in lex:
-                featFile.write("%s:%f " % (ft[0],ft[1])) 
-            featFile.write("\n")
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = sp.lil_matrix((1, nDS), dtype=np.float64)
+                x[0,:nEmbed] = test_vectors[nSent][nWord]
+                if project:
+                    y = x.tocsr().dot(M)
+                    for i in range(0, h):
+                        featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+                lex = test_feats[nSent][nWord]
+                for ft in lex:
+                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                featFile.write("\n")
     featFile.close()
     # Train using classias.
     print "Training..."
@@ -305,34 +311,35 @@ def evaluate_POS_NA(source,target):
     count = 0
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
-    # load lexical features as additional features
-    # train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
     print "training features = ", len(pos_data.feature_list(train_sentences))
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
+    test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
+    print "test features = ", len(pos_data.feature_list(test_sentences))
+    tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
+    print "number of tags = ",len(tag_list)
     for nSent,sent in enumerate(train_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = train_vectors[nSent][nWord]
-            for i in x:
-                featFile.write("%f " % i) 
-            featFile.write("\n")
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = train_vectors[nSent][nWord]
+                for i in x:
+                    featFile.write("%f " % i) 
+                featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
-    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
-    test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
-    # load lexical features as additional features
-    # test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
-    print "test features = ", len(pos_data.feature_list(test_sentences))
+    
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = test_vectors[nSent][nWord]
-            for i in x:
-                featFile.write("%f " % i) 
-            featFile.write("\n")
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = test_vectors[nSent][nWord]
+                for i in x:
+                    featFile.write("%f " % i) 
+                featFile.write("\n")
     featFile.close()
     # Train using classias.
     modelFileName = "../work/%s-%s/model.NA" % (source, target)
@@ -356,30 +363,34 @@ def evaluate_POS_NA_lexical(source,target):
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
     print "training features = ", len(pos_data.feature_list(train_sentences))
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
+    test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
+    print "test features = ", len(pos_data.feature_list(test_sentences))
+    tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
+    print "number of tags = ",len(tag_list)
     for nSent,sent in enumerate(train_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = train_feats[nSent][nWord]
-            # print x
-            for ft in x:
-                featFile.write("%s:%f " % (ft[0],ft[1])) 
-            featFile.write("\n")
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = train_feats[nSent][nWord]
+                for ft in x:
+                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
-    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
-    test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
-    print "test features = ", len(pos_data.feature_list(test_sentences))
+   
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = test_feats[nSent][nWord]
-            for ft in x:
-                featFile.write("%s:%f " % (ft[0],ft[1])) 
-            featFile.write("\n")
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = test_feats[nSent][nWord]
+                for ft in x:
+                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                featFile.write("\n")
     featFile.close()
     # Train using classias.
     modelFileName = "../work/%s-%s/model_lexical.NA" % (source, target)
@@ -401,35 +412,39 @@ def evaluate_POS_ID(source):
     trainFileName = "../work/%s/trainVects.ID" % (source)
     testFileName = "../work/%s/testVects.ID" % (source)
     featFile = open(trainFileName, 'w')
-    count = 0
-    print "Loading training vectors..."
+    count = 0  
     train_sentences = pos_data.load_preprocess_obj("%s-dev"%source)
     train_vectors = classify_pos.load_classify_obj("%s-dev-classify"%source)
     print "training features = ", len(pos_data.feature_list(train_sentences))
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%source)
+    test_vectors = classify_pos.load_classify_obj("%s-test-classify"%source)
+    print "test features = ", len(pos_data.feature_list(test_sentences))
+    tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
+    print "number of tags = ",len(tag_list)
+    print "Loading training vectors..."
     for nSent,sent in enumerate(train_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = train_vectors[nSent][nWord]
-            for i in x:
-                featFile.write("%f " % i) 
-            featFile.write("\n")
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = train_vectors[nSent][nWord]
+                for i in x:
+                    featFile.write("%f " % i) 
+                featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
     print "Loading test vectors..."
-    test_sentences = pos_data.load_preprocess_obj("%s-test"%source)
-    test_vectors = classify_pos.load_classify_obj("%s-test-classify"%source)
-    print "test features = ", len(pos_data.feature_list(test_sentences))
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = test_vectors[nSent][nWord]
-            for i in x:
-                featFile.write("%f " % i) 
-            featFile.write("\n")
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = test_vectors[nSent][nWord]
+                for i in x:
+                    featFile.write("%f " % i) 
+                featFile.write("\n")
     featFile.close()
     # Train using classias.
     modelFileName = "../work/%s/model.ID" % (source)
@@ -452,30 +467,34 @@ def evaluate_POS_ID_lexical(source):
     train_sentences = pos_data.load_preprocess_obj("%s-dev"%source)
     train_feats = classify_pos.load_classify_obj("%s-dev-lexical"%source)
     print "training features = ", len(pos_data.feature_list(train_sentences))
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%source)
+    test_feats = classify_pos.load_classify_obj("%s-test-lexical"%source)
+    print "test features = ", len(pos_data.feature_list(test_sentences))
+    tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
+    print "number of tags = ",len(tag_list)
     for nSent,sent in enumerate(train_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = train_feats[nSent][nWord]
-            # print x
-            for ft in x:
-                featFile.write("%s:%f " % (ft[0],ft[1])) 
-            featFile.write("\n")
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = train_feats[nSent][nWord]
+                for ft in x:
+                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
-    test_sentences = pos_data.load_preprocess_obj("%s-test"%source)
-    test_feats = classify_pos.load_classify_obj("%s-test-lexical"%source)
-    print "test features = ", len(pos_data.feature_list(test_sentences))
+    
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
             pos_tag = sent[nWord][1]
-            featFile.write("%d "%pos_data.tag_to_number(pos_tag))
-            x = test_feats[nSent][nWord]
-            for ft in x:
-                featFile.write("%s:%f " % (ft[0],ft[1])) 
-            featFile.write("\n")
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = test_feats[nSent][nWord]
+                for ft in x:
+                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                featFile.write("\n")
     featFile.close()
     # Train using classias.
     modelFileName = "../work/%s/model_lexical.ID" % (source)
@@ -538,16 +557,16 @@ def choose_param(method,params,gamma,n):
 
 if __name__ == "__main__":
     source = "wsj"
-    target = "newsgroups"
+    target = "answers"
     # batchNA()
     # batchID()
-    method = "freq"
-    learnProjection(source, target, method, 500)
-    evaluate_POS(source, target, True, 1,method, 500)
+    # method = "freq"
+    # learnProjection(source, target, method, 500)
+    # evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
-    # evaluate_POS_ID(target)
-    # evaluate_POS_ID_lexical(target)
+    evaluate_POS_ID(target)
+    evaluate_POS_ID_lexical(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]

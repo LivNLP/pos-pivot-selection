@@ -169,9 +169,8 @@ def tag_list(sentences):
 def index_list(i,my_list):
     return list(set([a[i] for b in my_list for a in b]))
 
-def tag_to_number(pos_tag):
-    tag_list = load_preprocess_obj("src_tag_list")
-    return tag_list.index(pos_tag)+1 if pos_tag in tag_list else 0
+def tag_to_number(pos_tag,tag_list):
+    return tag_list.index(pos_tag)+1 if pos_tag in tag_list else -1
 
 # number of sentences contains x
 def sentences_contain_x(features,sentences):
