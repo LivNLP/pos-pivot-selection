@@ -304,6 +304,107 @@ def evaluate_POS(source, target, project, gamma, method, n):
     print "###########################################\n\n"
     return acc,intervals
 
+def evaluate_POS_lexical(source, target, project, gamma, method, n):
+    """
+    Report the cross-domain POS classification accuracy. 
+    not using word embeddings
+    """
+    # Parameters to reduce the number of features in the tail
+    domainTh = {'wsj':5, 'answers':5, 'emails':5, 'reviews':5, 'weblogs':5,'newsgroups':5}
+
+    # gamma = 1.0
+    nEmbed = 1500
+    nLex = 5
+    print "Source Domain", source
+    print "Target Domain", target
+    if project:
+        print "Projection ON", "Gamma = %f" % gamma
+    else:
+        print "Projection OFF"
+    # Load the projection matrix.
+    M = sp.csr_matrix(sio.loadmat("../work/%s-%s/proj.mat" % (source, target))['proj'])
+    (nDS, h) = M.shape
+
+    # Load pivots.
+    features = pos_data.load_obj(source,target,method) if "landmark" not in method else pos_data.load_obj(source,target,"/test/"+method)
+    pivots = dict(features[:n]).keys()
+    print "selecting top-%d features in %s as pivots" % (n, method)
+
+    # Load features
+    features = pos_data.load_obj(source,target,"un_freq") if "un_" in method else pos_data.load_obj(source,target,"freq")
+    feats = selectTh(dict(features),domainTh[source])
+    feats = feats.keys()
+    if "landmark" in method:
+        feats = pos_data.load_obj(source,target,"filtered_features")
+    print "experimental features = ", len(feats)
+    # DSwords = [item for item in feats if item not in pivots]
+
+    
+    # write train feature vectors.
+    trainFileName = "../work/%s-%s/trainVects_lexical.SCL" % (source, target)
+    testFileName = "../work/%s-%s/testVects_lexical.SCL" % (source, target)
+    featFile = open(trainFileName, 'w')
+    
+    train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
+    # train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
+    # load lexical features as additional features
+    train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
+    # test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
+    # load lexical features as additional features
+    test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
+    tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
+    print "number of tags = ",len(tag_list)
+
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = sp.lil_matrix((1, nDS), dtype=np.float64)
+                lex = train_feats[nSent][nWord]
+                for ft in lex:
+                    x[0,feats.index(ft[0])] =ft[1] 
+                if project:
+                    y = x.tocsr().dot(M)
+                    for i in range(0, h):
+                        featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+                featFile.write("\n")
+    featFile.close()
+    featFile = open(testFileName, 'w')
+    
+    for nSent,sent in enumerate(test_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = sp.lil_matrix((1, nDS), dtype=np.float64)
+                lex = test_feats[nSent][nWord]
+                for ft in lex:
+                    x[0,feats.index(ft[0])] =ft[1]
+                if project:
+                    y = x.tocsr().dot(M)
+                    for i in range(0, h):
+                        featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+                featFile.write("\n")
+    featFile.close()
+    # Train using classias.
+    print "Training..."
+    modelFileName = "../work/%s-%s/model_lexical.SCL" % (source, target)
+    trainMultiLBFGS(trainFileName, modelFileName)
+    # Test using classias.
+    print "Testing..."
+    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
+    intervals = clopper_pearson(correct,total)
+    print "Accuracy =", acc
+    print "Intervals=", intervals
+    print "###########################################\n\n"
+    return acc,intervals
+
+
+
 def evaluate_POS_NA(source,target):
     trainFileName = "../work/%s-%s/trainVects.NA" % (source, target)
     testFileName = "../work/%s-%s/testVects.NA" % (source, target)
@@ -560,13 +661,14 @@ if __name__ == "__main__":
     target = "answers"
     # batchNA()
     # batchID()
-    # method = "freq"
-    # learnProjection(source, target, method, 500)
+    method = "freq"
+    learnProjection(source, target, method, 500)
+    evaluate_POS_lexical(source, target, True, 1,method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
-    evaluate_POS_ID(target)
-    evaluate_POS_ID_lexical(target)
+    # evaluate_POS_ID(target)
+    # evaluate_POS_ID_lexical(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
