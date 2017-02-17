@@ -365,7 +365,8 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
                 x = sp.lil_matrix((1, nDS), dtype=np.float64)
                 lex = train_feats[nSent][nWord]
                 for ft in lex:
-                    x[0,feats.index(ft[0])] =ft[1] 
+                    if ft[0]!=0 and ft[0] in feats:
+                        x[0,feats.index(ft[0])] =ft[1] 
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
@@ -383,7 +384,8 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
                 x = sp.lil_matrix((1, nDS), dtype=np.float64)
                 lex = test_feats[nSent][nWord]
                 for ft in lex:
-                    x[0,feats.index(ft[0])] =ft[1]
+                    if ft[0]!=0 and ft[0] in feats:
+                        x[0,feats.index(ft[0])] =ft[1]
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
@@ -662,7 +664,7 @@ if __name__ == "__main__":
     # batchNA()
     # batchID()
     method = "freq"
-    learnProjection(source, target, method, 500)
+    # learnProjection(source, target, method, 500)
     evaluate_POS_lexical(source, target, True, 1,method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
