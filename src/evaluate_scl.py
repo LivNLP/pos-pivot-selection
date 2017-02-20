@@ -659,26 +659,26 @@ def choose_param(method,params,gamma,n):
     pass
 
 if __name__ == "__main__":
-    source = "wsj"
-    target = "answers"
+    # source = "wsj"
+    # target = "answers"
     # batchNA()
     # batchID()
-    method = "freq"
+    # method = "freq"
     # learnProjection(source, target, method, 500)
-    evaluate_POS_lexical(source, target, True, 1,method, 500)
+    # evaluate_POS_lexical(source, target, True, 1,method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # evaluate_POS_ID(target)
     # evaluate_POS_ID_lexical(target)
-    # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
-    # methods += ["ppmi",'un_ppmi']
+    methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
+    methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    # n = 500
-    # for method in methods:
-        # batchEval(method, 1, n)
+    n = 500
+    for method in methods:
+        batchEval(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
