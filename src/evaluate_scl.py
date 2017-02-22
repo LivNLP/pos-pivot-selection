@@ -202,6 +202,12 @@ def loadFeatureVecors(sentences, feats):
     # print L
     return L
 
+# a function for split list to list of lists
+def split_list(alist, wanted_parts=1):
+    length = len(alist)
+    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts] 
+             for i in range(wanted_parts) ]
+
 
 def evaluate_POS(source, target, project, gamma, method, n):
     """
@@ -415,7 +421,8 @@ def evaluate_POS_NA(source,target):
     trainFileName = "../work/%s-%s/trainVects.NA" % (source, target)
     testFileName = "../work/%s-%s/testVects.NA" % (source, target)
     featFile = open(trainFileName, 'w')
-    count = 0
+    window_size = 5
+
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
     print "training features = ", len(pos_data.feature_list(train_sentences))
@@ -431,8 +438,10 @@ def evaluate_POS_NA(source,target):
             if pos_tag in tag_list:
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = train_vectors[nSent][nWord]
-                for i in x:
-                    featFile.write("%f " % i) 
+                word_vectors=split_list(x,window_size)
+                for word_index,word_vec in enumerate(word_vectors):
+                    for i,num in enumerate(word_vec):
+                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -444,8 +453,10 @@ def evaluate_POS_NA(source,target):
             if pos_tag in tag_list:
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = test_vectors[nSent][nWord]
-                for i in x:
-                    featFile.write("%f " % i) 
+                word_vectors=split_list(x,window_size)
+                for word_index,word_vec in enumerate(word_vectors):
+                    for i,num in enumerate(word_vec):
+                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -466,7 +477,7 @@ def evaluate_POS_NA_lexical(source,target):
     trainFileName = "../work/%s-%s/trainVects_lexical.NA" % (source, target)
     testFileName = "../work/%s-%s/testVects_lexical.NA" % (source, target)
     featFile = open(trainFileName, 'w')
-    count = 0
+    window_size = 5
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
     print "training features = ", len(pos_data.feature_list(train_sentences))
@@ -519,7 +530,7 @@ def evaluate_POS_ID(source):
     trainFileName = "../work/%s/trainVects.ID" % (source)
     testFileName = "../work/%s/testVects.ID" % (source)
     featFile = open(trainFileName, 'w')
-    count = 0  
+    window_size = 5 
     train_sentences = pos_data.load_preprocess_obj("%s-dev"%source)
     train_vectors = classify_pos.load_classify_obj("%s-dev-classify"%source)
     print "training features = ", len(pos_data.feature_list(train_sentences))
@@ -536,8 +547,10 @@ def evaluate_POS_ID(source):
             if pos_tag in tag_list:
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = train_vectors[nSent][nWord]
-                for i in x:
-                    featFile.write("%f " % i) 
+                word_vectors=split_list(x,window_size)
+                for word_index,word_vec in enumerate(word_vectors):
+                    for i,num in enumerate(word_vec):
+                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -549,8 +562,10 @@ def evaluate_POS_ID(source):
             if pos_tag in tag_list:
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = test_vectors[nSent][nWord]
-                for i in x:
-                    featFile.write("%f " % i) 
+                word_vectors=split_list(x,window_size)
+                for word_index,word_vec in enumerate(word_vectors):
+                    for i,num in enumerate(word_vec):
+                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -688,8 +703,8 @@ if __name__ == "__main__":
     # evaluate_POS_lexical(source, target, True, 1,method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
-    evaluate_POS_NA_lexical(source,target)
-    # evaluate_POS_ID(target)
+    # evaluate_POS_NA_lexical(source,target)
+    evaluate_POS_ID(target)
     # evaluate_POS_ID_lexical(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
