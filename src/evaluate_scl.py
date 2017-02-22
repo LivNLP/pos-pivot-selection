@@ -261,7 +261,9 @@ def evaluate_POS(source, target, project, gamma, method, n):
             if pos_tag in tag_list:
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = sp.lil_matrix((1, nDS), dtype=np.float64)
-                x[0,:nEmbed] = train_vectors[nSent][nWord]
+                # x[0,:nEmbed] = train_vectors[nSent][nWord]
+                if w in feats:
+                    x[0,feats.index(w)]=1
                 # x[0,nEmbed:nEmbed+nLex] = train_feats[nSent][nWord]
                 if project:
                     y = x.tocsr().dot(M)
@@ -281,7 +283,9 @@ def evaluate_POS(source, target, project, gamma, method, n):
             if pos_tag in tag_list:
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = sp.lil_matrix((1, nDS), dtype=np.float64)
-                x[0,:nEmbed] = test_vectors[nSent][nWord]
+                if w in feats:
+                    x[0,feats.index(w)]=1
+                # x[0,:nEmbed] = test_vectors[nSent][nWord]
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
@@ -683,8 +687,8 @@ if __name__ == "__main__":
     # learnProjection(source, target, method, 500)
     # evaluate_POS_lexical(source, target, True, 1,method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
-    evaluate_POS_NA(source,target)
-    # evaluate_POS_NA_lexical(source,target)
+    # evaluate_POS_NA(source,target)
+    evaluate_POS_NA_lexical(source,target)
     # evaluate_POS_ID(target)
     # evaluate_POS_ID_lexical(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
