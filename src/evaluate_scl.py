@@ -46,7 +46,7 @@ def trainMultiLBFGS(train_file, model_file):
     Read the output file and return the multi-label classification accuracy.
     """
     retcode = subprocess.call(
-        "classias-train -tn -a lbfgs.logistic -pc1=0 -pc2=1 -m %s %s > /dev/null"  %\
+        "classias-train -tn -a lbfgs.logistic -pc1=0 -pc2=1 -m %s %s"  %\
         (model_file, train_file), shell=True)
     return retcode
 
@@ -473,6 +473,22 @@ def evaluate_POS_NA(source,target):
     return acc,intervals
     pass
 
+def test_train_NA(source,target):
+    trainFileName = "../work/%s-%s/trainVects.NA" % (source, target)
+    testFileName = "../work/%s-%s/testVects.NA" % (source, target)
+    modelFileName = "../work/%s-%s/model.NA" % (source, target)
+    print "Training..."
+    trainMultiLBFGS(trainFileName, modelFileName)
+    # Test using classias.
+    print "Testing..."
+    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
+    intervals = clopper_pearson(correct,total)
+    print "Accuracy =", acc
+    print "Intervals=", intervals
+    print "###########################################\n\n"
+    return acc,intervals
+    pass
+
 def evaluate_POS_NA_lexical(source,target):
     trainFileName = "../work/%s-%s/trainVects_lexical.NA" % (source, target)
     testFileName = "../work/%s-%s/testVects_lexical.NA" % (source, target)
@@ -704,7 +720,8 @@ if __name__ == "__main__":
     # evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
-    evaluate_POS_ID(target)
+    test_train_NA(source,target)
+    # evaluate_POS_ID(target)
     # evaluate_POS_ID_lexical(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
