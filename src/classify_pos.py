@@ -23,8 +23,11 @@ def window_features(name,sentences,l):
             for i in range(-l,l+1):
                 word_postion = word[2]+i
                 word_i = find_word_in_position(sent,word_postion)
-                new_word.append([word_i,freq_sent.get(word_i,0)])
-                # print len(new_word)
+                if word_i == 0 and word_postion <= 0:
+                    word_i = "null_%d"%(word_postion+l)
+                    # print word_i,freq_sent.get(word_i,1)
+                new_word.append([word_i,freq_sent.get(word_i,1)])
+                # print new_word
             new_sent += [new_word]
         # print len(sent),len(new_sent)
         new_sentences+= [new_sent]
@@ -217,7 +220,7 @@ if __name__ == "__main__":
     my_dir = '../work/preprocess'
     names = [name.replace('.pkl','') for name in os.listdir(my_dir)]
     for name in names:
-        if 'unlabeled' not in name:
+        if 'unlabeled' not in name and 'list' not in name:
             print name
             sentences=lp.pos_data.load_preprocess_obj(name)
             # window_vectors(name,sentences,l)

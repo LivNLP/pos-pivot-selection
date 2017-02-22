@@ -613,6 +613,22 @@ def evaluate_POS_ID_lexical(source):
     return acc,intervals
     pass
 
+def batchEval_lexical(method, gamma, n):
+    """
+    Evaluate on all 5 domain pairs. 
+    """
+    resFile = open("../work/batchSCL_lexical.%s.csv"% method, "w")
+    resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
+    source = 'wsj'
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for target in domains:
+        learnProjection(source, target, method, n)
+        evaluation = evaluate_POS_lexical(source, target, True, gamma, method, n)
+        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
+        resFile.flush()
+    resFile.close()
+    pass
 
 def batchEval(method, gamma, n):
     """
@@ -632,15 +648,15 @@ def batchEval(method, gamma, n):
     pass
 
 
-def choose_gamma(source, target, method, gammas, n):
-    resFile = open("../work/gamma/%s-%s/SCLgamma.%s.csv"% (source, target, method), "w")
-    resFile.write("Source, Target, Method, Proj, Gamma\n")
-    learnProjection(source, target, method, n)
-    for gamma in gammas:    
-        resFile.write("%s, %s, %s, %f, %f\n" % (source, target, method, evaluate_POS(source, target, True, gamma, method, n), gamma))
-        resFile.flush()
-    resFile.close()
-    pass
+# def choose_gamma(source, target, method, gammas, n):
+#     resFile = open("../work/gamma/%s-%s/SCLgamma.%s.csv"% (source, target, method), "w")
+#     resFile.write("Source, Target, Method, Proj, Gamma\n")
+#     learnProjection(source, target, method, n)
+#     for gamma in gammas:    
+#         resFile.write("%s, %s, %s, %f, %f\n" % (source, target, method, evaluate_POS(source, target, True, gamma, method, n), gamma))
+#         resFile.flush()
+#     resFile.close()
+#     pass
 
 def choose_param(method,params,gamma,n):
     resFile = open("../work/sim/SCLparams.%s.csv"% method, "w")
@@ -659,26 +675,26 @@ def choose_param(method,params,gamma,n):
     pass
 
 if __name__ == "__main__":
-    # source = "wsj"
-    # target = "answers"
+    source = "wsj"
+    target = "answers"
     # batchNA()
     # batchID()
-    # method = "freq"
+    method = "freq"
     # learnProjection(source, target, method, 500)
     # evaluate_POS_lexical(source, target, True, 1,method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
-    # evaluate_POS_NA(source,target)
+    evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # evaluate_POS_ID(target)
     # evaluate_POS_ID_lexical(target)
-    methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
-    methods += ["ppmi",'un_ppmi']
+    # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
+    # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    n = 500
-    for method in methods:
-        batchEval(method, 1, n)
+    # n = 500
+    # for method in methods:
+    #     batchEval(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
