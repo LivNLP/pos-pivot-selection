@@ -163,7 +163,6 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     print "Took %ss" % str(round(endTime-startTime, 2))   
 
     # Perform SVD on M
-    # print M[0].shape
     print "Perform SVD on the weight matrix...",
     startTime = time.time()
     ut, s, vt = sparsesvd(M.tocsc(), h)
@@ -720,12 +719,12 @@ if __name__ == "__main__":
     # batchID()
     method = "freq"
     # learnProjection(source, target, method, 500)
-    # evaluate_POS_lexical(source, target, True, 1,method, 500)
+    evaluate_POS_lexical(source, target, True, 1,method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_train_NA(source,target)
-    evaluate_POS_ID(target)
+    # evaluate_POS_ID(target)
     # evaluate_POS_ID_lexical(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']

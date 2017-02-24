@@ -326,8 +326,8 @@ def save_loop_obj(obj,dirname,name):
 
 def collect_filtered_features(limit):
     source = 'wsj'
-    domains = ["answers","emails"]
-    domains += ["reviews","newsgroups","weblogs"]
+    domains = ["answers"]
+    # domains += ["weblogs","emails","reviews","newsgroups"]
     for target in domains:
         filtered_features = freq_keys(source,target,limit)
         print 'length: %d'% len(filtered_features)
@@ -363,8 +363,8 @@ def calculate_all_u_pretrained_word2vec():
     model = gensim.models.Word2Vec.load_word2vec_format(path,binary=True)
     # print model.most_similar('very')
     source = 'wsj'
-    domains = ["weblogs"]
-    # domains += ["answers","emails","reviews","newsgroups"]
+    domains = ["answers"]
+    # domains += ["weblogs","emails","reviews","newsgroups"]
     for target in domains:
         print 'calcualting u_pretrained for %s-%s ...' % (source,target)
         u_function_pretrained(source,target,model) 
@@ -376,8 +376,8 @@ def calculate_all_u_pretrained_glove():
     path = '../data/glove.42B.300d.txt'
     # model = load_pretrained_glove(path)
     source = 'wsj'
-    domains = ["weblogs"]
-    # domains += ["answers","emails","reviews","newsgroups"]
+    domains = ["answers"]
+    # domains += ["weblogs","emails","reviews","newsgroups"]
     for target in domains:
         print 'calcualting u_pretrained for %s-%s ...' % (source,target)
         model = load_filtered_glove(source,target,path)
@@ -387,8 +387,8 @@ def calculate_all_u_pretrained_glove():
 
 def compute_all_gamma():
     source = 'wsj'
-    domains = ["answers","emails"]
-    domains += ["reviews","newsgroups","weblogs"]
+    domains = ["answers"]
+    # domains += ["weblogs","emails","reviews","newsgroups"]
     for target in domains:
         print 'computing gamma for %s-%s ...' % (source,target)
         gamma_function(source,target)
@@ -397,8 +397,8 @@ def compute_all_gamma():
 
 def store_all_selections(params,model,pretrained,paramOn):
     source = 'wsj'
-    domains = ["answers","emails"]
-    domains += ["reviews","newsgroups","weblogs"]
+    domains = ["answers"]
+    # domains += ["reviews","newsgroups","weblogs","emails"]
     for target in domains:
         for param in params:
             print 'getting alpha from %s-%s ...' % (source,target)
@@ -417,23 +417,23 @@ def read_word2vec():
 
 # main
 if __name__ == "__main__":
-    # collect_filtered_features(5)
+    collect_filtered_features(5)
     # create_word2vec_models()
     # create_glove_models()
     # calculate_all_u_pretrained_word2vec()
     # calculate_all_u_pretrained_glove()
-    # compute_all_gamma()
+    compute_all_gamma()
     # params = [0,1]
     # model_names = ['word2vec','glove']
     # ######param#########
-    params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
-    params += [10e-3,10e-4,10e-5,10e-6]
-    # model_names = ['word2vec']
-    model_names = ['glove']
-    paramOn = True
-    # paramOn = False
-    for model in model_names:
-        store_all_selections(params,model,1,paramOn)
+    # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
+    # params += [10e-3,10e-4,10e-5,10e-6]
+    # # model_names = ['word2vec']
+    # model_names = ['glove']
+    # paramOn = True
+    # # paramOn = False
+    # for model in model_names:
+    #     store_all_selections(params,model,1,paramOn)
     ######test##########
     # read_word2vec()
     # solve_qp() 
