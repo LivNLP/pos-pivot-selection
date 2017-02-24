@@ -19,6 +19,8 @@ import classify_pos
 import re
 import scipy.stats
 
+import sklearn
+
 def clopper_pearson(k,n,alpha=0.05):
     """
     http://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval
@@ -48,6 +50,8 @@ def trainMultiLBFGS(train_file, model_file):
     retcode = subprocess.call(
         "classias-train -tn -a lbfgs.logistic -pc1=0 -pc2=1 -m %s %s"  %\
         (model_file, train_file), shell=True)
+    # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
+    # model_file= LR.fit(train_file,None)
     return retcode
 
 
@@ -57,7 +61,7 @@ def testLBFGS(test_file, model_file):
     Read the output file and return the classification accuracy.
     """
     output = "../work/output"
-    retcode = subprocess.call("cat %s | classias-tag -m %s -t -fap > %s" %\
+    retcode = subprocess.call("cat %s | classias-tag -m %s -t> %s" %\
                               (test_file, model_file, output), shell=True)
     F = open(output)
     accuracy = 0
@@ -720,8 +724,8 @@ if __name__ == "__main__":
     # evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
-    test_train_NA(source,target)
-    # evaluate_POS_ID(target)
+    # test_train_NA(source,target)
+    evaluate_POS_ID(target)
     # evaluate_POS_ID_lexical(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
