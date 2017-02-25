@@ -417,23 +417,23 @@ def read_word2vec():
 
 # main
 if __name__ == "__main__":
-    collect_filtered_features(5)
+    # collect_filtered_features(5)
     # create_word2vec_models()
     # create_glove_models()
     # calculate_all_u_pretrained_word2vec()
     # calculate_all_u_pretrained_glove()
-    compute_all_gamma()
+    # compute_all_gamma()
     # params = [0,1]
     # model_names = ['word2vec','glove']
     # ######param#########
-    # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
-    # params += [10e-3,10e-4,10e-5,10e-6]
-    # # model_names = ['word2vec']
+    params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
+    params += [10e-3,10e-4,10e-5,10e-6]
+    model_names = ['word2vec']
     # model_names = ['glove']
-    # paramOn = True
-    # # paramOn = False
-    # for model in model_names:
-    #     store_all_selections(params,model,1,paramOn)
+    paramOn = True
+    # paramOn = False
+    for model in model_names:
+        store_all_selections(params,model,1,paramOn)
     ######test##########
     # read_word2vec()
     # solve_qp() 

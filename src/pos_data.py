@@ -75,8 +75,8 @@ def collect_unlabeled_wsj():
 def presets_labeled(source,target):
     # generate a tag list from labeled data for iteration
     src_labeled = load_preprocess_obj('%s-labeled'%source)
-    tags = tag_list(src_labeled)
-    # tags = ['.']
+    # tags = tag_list(src_labeled)
+    tags = ['.']
     # loop tags to divide presets into groups
     for pos_tag in tags:
         print "TAG = %s"% pos_tag
@@ -112,7 +112,8 @@ def presets_labeled_tag(source,target,pos_tag,src_labeled):
     print len(x_src)
 
     # save presets to temp objects
-    # pos_tag="TAG."
+    pos_tag="TAG."
+    # pos_tag = 'TAG.' if pos_tag == '.' else pos_tag
     save_tag_obj(source,target,pos_src_data,pos_tag,"pos_src_data")
     save_tag_obj(source,target,neg_src_data,pos_tag,"neg_src_data")
     save_tag_obj(source,target,pos_src_sentences,pos_tag,"pos_src_sentences")
@@ -551,9 +552,9 @@ if __name__ == "__main__":
     #     collect_unlabeled(domain)
     # collect_unlabeled_wsj()
     source = 'wsj'
-    for target in domains:
-        presets_labeled(source,target)
-        presets_unlabeled(source,target)
+    # for target in domains:
+    #     presets_labeled(source,target)
+        # presets_unlabeled(source,target)
     # print_test()
     # source is just wsj enough, copy to all
     # presets_labeled(source,'answers')
