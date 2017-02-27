@@ -48,7 +48,7 @@ def trainMultiLBFGS(train_file, model_file):
     Read the output file and return the multi-label classification accuracy.
     """
     retcode = subprocess.call(
-        "classias-train -tn -a lbfgs.logistic -pc1=0 -pc2=1 -m %s %s"  %\
+        "classias-train -tn -a lbfgs.logistic -pc1=0 -pc2=1 -m %s %s > /dev/null"  %\
         (model_file, train_file), shell=True)
     # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
     # model_file= LR.fit(train_file,None)
@@ -668,6 +668,23 @@ def batchEval_lexical(method, gamma, n):
     resFile.close()
     pass
 
+def batchEval_ID():
+    """
+    Evaluate on all 5 domain pairs. 
+    """
+    resFile = open("../work/batchSCL_ID.%s.csv"% method, "w")
+    resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
+    # source = 'wsj'
+    domains = ["answers","reviews","newsgroups"]
+    for target in domains:
+        source = target
+        evaluation = evaluate_POS_ID(target)
+        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
+        resFile.flush()
+    resFile.close()
+    pass
+
+
 def batchEval(method, gamma, n):
     """
     Evaluate on all 5 domain pairs. 
@@ -721,10 +738,11 @@ if __name__ == "__main__":
     # learnProjection(source, target, method, 500)
     # evaluate_POS_lexical(source, target, True, 1,method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
-    evaluate_POS_NA(source,target)
+    # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_train_NA(source,target)
     # evaluate_POS_ID(target)
+    batchEval_ID()
     # evaluate_POS_ID_lexical(target)
     # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
     # methods += ["ppmi",'un_ppmi']
