@@ -168,11 +168,11 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     # print "Loading Word Embeddings.."
     # M2 = sp.lil_matrix(len(feats),len(nEmbed))
     # M = np.concatenate((M,M2))
-    performSVD(M, pivotsMethod,sourceDomain, targetDomain)
+    performSVD(M, pivotsMethod,sourceDomain, targetDomain,h)
     pass
 
 # separate the step of perform SVD
-def performSVD(M,method,sourceDomain, targetDomain):
+def performSVD(M,method,sourceDomain, targetDomain,h):
     # Perform SVD on M, M can be weight matrix or can be a combination of weight matrix & embeddings  
     print "Perform SVD on the matrix...",
     startTime = time.time()
@@ -817,8 +817,8 @@ if __name__ == "__main__":
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
     # n = 500
     # for method in methods:
-        # batchEval(method, 1, n)
-        # batchEval_lexical(method, 1, n)
+    #     # batchEval(method, 1, n)
+    #     batchEval_lexical(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
