@@ -232,7 +232,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
 
     # gamma = 1.0
     nEmbed = 1500
-    nLex = 5
+    window_size = 5
     print "Source Domain", source
     print "Target Domain", target
     if project:
@@ -345,7 +345,7 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
 
     # gamma = 1.0
     nEmbed = 1500
-    nLex = 5
+    window_size = 5
     print "Source Domain", source
     print "Target Domain", target
     if project:
@@ -796,12 +796,12 @@ def choose_param(method,params,gamma,n):
     pass
 
 if __name__ == "__main__":
-    # source = "wsj"
-    # target = "answers"
-    # method = "freq"
+    source = "wsj"
+    target = "answers"
+    method = "freq"
     # learnProjection(source, target, method, 500)
     # evaluate_POS_lexical(source, target, True, 1,method, 500)
-    # evaluate_POS(source, target, True, 1,method, 500)
+    evaluate_POS(source, target, True, 1,method, 500)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_train_NA(source,target)
@@ -810,15 +810,15 @@ if __name__ == "__main__":
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
-    methods += ["ppmi",'un_ppmi']
+    # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
+    # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    n = 500
-    for method in methods:
+    # n = 500
+    # for method in methods:
         # batchEval(method, 1, n)
-        batchEval_lexical(method, 1, n)
+        # batchEval_lexical(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
