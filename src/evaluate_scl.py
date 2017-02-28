@@ -116,6 +116,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     Learn the projection matrix and store it to a file. 
     """
     h = 50 # no. of SVD dimensions.
+    nEmbed = 1500
     #n = 500 # no. of pivots.
 
     # Parameters to reduce the number of features in the tail
@@ -160,10 +161,20 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
             i = feats.index(feat)
             M[i,j] = val
     endTime = time.time()
-    print "Took %ss" % str(round(endTime-startTime, 2))   
+    print "Took %ss" % str(round(endTime-startTime, 2)) 
+    # save_M = "../work/%s-%s/%s/proj.mat" % (sourceDomain, targetDomain,pivotsMethod)  
+    # classify_pos.save_loop_obj(M,save_M,"weight_matrix")
 
-    # Perform SVD on M
-    print "Perform SVD on the weight matrix...",
+    # print "Loading Word Embeddings.."
+    # M2 = sp.lil_matrix(len(feats),len(nEmbed))
+    # M = np.concatenate((M,M2))
+    performSVD(M, pivotsMethod,sourceDomain, targetDomain)
+    pass
+
+# separate the step of perform SVD
+def performSVD(M,method,sourceDomain, targetDomain):
+    # Perform SVD on M, M can be weight matrix or can be a combination of weight matrix & embeddings  
+    print "Perform SVD on the matrix...",
     startTime = time.time()
     ut, s, vt = sparsesvd(M.tocsc(), h)
     endTime = time.time()
@@ -270,21 +281,25 @@ def evaluate_POS(source, target, project, gamma, method, n):
             if pos_tag in tag_list:
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = sp.lil_matrix((1, nDS), dtype=np.float64)
-                # x[0,:nEmbed] = train_vectors[nSent][nWord]
-                if w in feats:
-                    x[0,feats.index(w)]=1
-                # x[0,nEmbed:nEmbed+nLex] = train_feats[nSent][nWord]
+                lex = train_feats[nSent][nWord]
+                for ft in lex:
+                    if ft[0]!=0 and ft[0] in feats:
+                        x[0,feats.index(ft[0])] =ft[1] 
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
                         featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-                lex = train_feats[nSent][nWord]
-                for ft in lex:
-                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                z = train_vectors[nSent][nWord]
+                word_vectors=split_list(z,window_size)
+                for word_index,word_vec in enumerate(word_vectors):
+                    for i,num in enumerate(word_vec):
+                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                # lex = train_feats[nSent][nWord]
+                # for ft in lex:
+                #     featFile.write("%s:%f " % (ft[0],ft[1])) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
-    
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
         for nWord,w in enumerate(words):
@@ -292,16 +307,19 @@ def evaluate_POS(source, target, project, gamma, method, n):
             if pos_tag in tag_list:
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = sp.lil_matrix((1, nDS), dtype=np.float64)
-                if w in feats:
-                    x[0,feats.index(w)]=1
-                # x[0,:nEmbed] = test_vectors[nSent][nWord]
+                lex = test_feats[nSent][nWord]
+                for ft in lex:
+                    if ft[0]!=0 and ft[0] in feats:
+                        x[0,feats.index(ft[0])] =ft[1] 
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
                         featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
-                lex = test_feats[nSent][nWord]
-                for ft in lex:
-                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                z = test_vectors[nSent][nWord]
+                word_vectors=split_list(z,window_size)
+                for word_index,word_vec in enumerate(word_vectors):
+                    for i,num in enumerate(word_vec):
+                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -651,39 +669,70 @@ def evaluate_POS_ID_lexical(source):
     return acc,intervals
     pass
 
-def batchEval_lexical(method, gamma, n):
-    """
-    Evaluate on all 5 domain pairs. 
-    """
-    resFile = open("../work/batchSCL_lexical.%s.csv"% method, "w")
-    resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
-    source = 'wsj'
-    domains = ["answers","emails"]
-    domains += ["reviews","newsgroups","weblogs"]
-    for target in domains:
-        learnProjection(source, target, method, n)
-        evaluation = evaluate_POS_lexical(source, target, True, gamma, method, n)
-        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
-        resFile.flush()
-    resFile.close()
-    pass
 
 def batchEval_ID():
     """
-    Evaluate on all 5 domain pairs. 
+    Evaluate on all 3 domains.
     """
-    resFile = open("../work/batchSCL_ID.%s.csv"% method, "w")
+    resFile = open("../work/batchID.csv", "w")
     resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
     # source = 'wsj'
     domains = ["answers","reviews","newsgroups"]
     for target in domains:
         source = target
         evaluation = evaluate_POS_ID(target)
-        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
+        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, 'ID', evaluation[0], evaluation[1][0],evaluation[1][1]))
         resFile.flush()
     resFile.close()
     pass
 
+def batchEval_ID_lexical():
+    """
+    Evaluate on all 3 domains.
+    """
+    resFile = open("../work/batchID_lexical.csv", "w")
+    resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
+    # source = 'wsj'
+    domains = ["answers","reviews","newsgroups"]
+    for target in domains:
+        source = target
+        evaluation = evaluate_POS_ID_lexical(target)
+        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, 'ID_lexical', evaluation[0], evaluation[1][0],evaluation[1][1]))
+        resFile.flush()
+    resFile.close()
+    pass
+
+def batchEval_NA():
+    """
+    Evaluate on all 5 domain pairs. 
+    """
+    resFile = open("../work/batchNA.csv", "w")
+    resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
+    source = 'wsj'
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for target in domains:
+        evaluation = evaluate_POS_NA(source, target)
+        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, 'NA', evaluation[0], evaluation[1][0],evaluation[1][1]))
+        resFile.flush()
+    resFile.close()
+    pass
+
+def batchEval_NA_lexical():
+    """
+    Evaluate on all 5 domain pairs. 
+    """
+    resFile = open("../work/batchNA_lexical.csv", "w")
+    resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
+    source = 'wsj'
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for target in domains:
+        evaluation = evaluate_POS_NA_lexical(source, target)
+        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, 'NA_lexical', evaluation[0], evaluation[1][0],evaluation[1][1]))
+        resFile.flush()
+    resFile.close()
+    pass
 
 def batchEval(method, gamma, n):
     """
@@ -702,6 +751,22 @@ def batchEval(method, gamma, n):
     resFile.close()
     pass
 
+def batchEval_lexical(method, gamma, n):
+    """
+    Evaluate on all 5 domain pairs. 
+    """
+    resFile = open("../work/sim/batchSCL_lexical.%s.csv"% method, "w")
+    resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
+    source = 'wsj'
+    domains = ["answers","emails"]
+    domains += ["reviews","newsgroups","weblogs"]
+    for target in domains:
+        learnProjection(source, target, method, n)
+        evaluation = evaluate_POS_lexical(source, target, True, gamma, method, n)
+        resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
+        resFile.flush()
+    resFile.close()
+    pass
 
 # def choose_gamma(source, target, method, gammas, n):
 #     resFile = open("../work/gamma/%s-%s/SCLgamma.%s.csv"% (source, target, method), "w")
@@ -723,18 +788,17 @@ def choose_param(method,params,gamma,n):
         test_method = "test_%s_%f"% (method,param)
         for target in domains:
             learnProjection(source, target, test_method, n)
-            evaluation = evaluate_POS(source, target, True, gamma, test_method, n)
+            # evaluation = evaluate_POS(source, target, True, gamma, test_method, n)
+            evaluation = evaluate_POS_lexical(source, target, True, gamma, test_method, n)
             resFile.write("%s, %s, %s, %f, %f, %f, %f\n" % (source, target, method , evaluation[0], evaluation[1][0],evaluation[1][1],param))
             resFile.flush()
     resFile.close()
     pass
 
 if __name__ == "__main__":
-    source = "wsj"
-    target = "answers"
-    # batchNA()
-    # batchID()
-    method = "freq"
+    # source = "wsj"
+    # target = "answers"
+    # method = "freq"
     # learnProjection(source, target, method, 500)
     # evaluate_POS_lexical(source, target, True, 1,method, 500)
     # evaluate_POS(source, target, True, 1,method, 500)
@@ -742,16 +806,19 @@ if __name__ == "__main__":
     # evaluate_POS_NA_lexical(source,target)
     # test_train_NA(source,target)
     # evaluate_POS_ID(target)
-    batchEval_ID()
+    # batchEval_ID()
+    # batchEval_ID_lexical()
+    # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
-    # methods += ["ppmi",'un_ppmi']
+    methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
+    methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    # n = 500
-    # for method in methods:
-    #     batchEval(method, 1, n)
+    n = 500
+    for method in methods:
+        # batchEval(method, 1, n)
+        batchEval_lexical(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
