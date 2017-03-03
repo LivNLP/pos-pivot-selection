@@ -48,7 +48,7 @@ def trainMultiLBFGS(train_file, model_file):
     Read the output file and return the multi-label classification accuracy.
     """
     retcode = subprocess.call(
-        "classias-train -tn -a lbfgs.logistic -pc1=0 -pc2=1 -m %s %s > /dev/null"  %\
+        "classias-train -tn -a truncated_gradient.logistic -m %s %s > /dev/null"  %\
         (model_file, train_file), shell=True)
     # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
     # model_file= LR.fit(train_file,None)
@@ -228,6 +228,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
     Report the cross-domain POS classification accuracy. 
     """
     # Parameters to reduce the number of features in the tail
+    print "lexical features+word embeddings for %s-%s" % (source,target)
     domainTh = {'wsj':5, 'answers':5, 'emails':5, 'reviews':5, 'weblogs':5,'newsgroups':5}
 
     # gamma = 1.0
@@ -293,7 +294,8 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 word_vectors=split_list(z,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
-                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                        if num != 0:
+                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 # lex = train_feats[nSent][nWord]
                 # for ft in lex:
                 #     featFile.write("%s:%f " % (ft[0],ft[1])) 
@@ -319,7 +321,8 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 word_vectors=split_list(z,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
-                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                        if num != 0:
+                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -341,6 +344,7 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
     not using word embeddings
     """
     # Parameters to reduce the number of features in the tail
+    print "lexical features for %s-%s" % (source,target)
     domainTh = {'wsj':5, 'answers':5, 'emails':5, 'reviews':5, 'weblogs':5,'newsgroups':5}
 
     # gamma = 1.0
@@ -439,6 +443,7 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
 
 
 def evaluate_POS_NA(source,target):
+    print "word embeddings for %s-%s noAdapt" % (source,target)
     trainFileName = "../work/%s-%s/trainVects.NA" % (source, target)
     testFileName = "../work/%s-%s/testVects.NA" % (source, target)
     featFile = open(trainFileName, 'w')
@@ -462,7 +467,8 @@ def evaluate_POS_NA(source,target):
                 word_vectors=split_list(x,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
-                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                        if num != 0:
+                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -477,7 +483,8 @@ def evaluate_POS_NA(source,target):
                 word_vectors=split_list(x,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
-                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                        if num != 0:
+                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -511,6 +518,7 @@ def test_train_NA(source,target):
     pass
 
 def evaluate_POS_NA_lexical(source,target):
+    print "lexical features for %s-%s noAdapt" % (source,target)
     trainFileName = "../work/%s-%s/trainVects_lexical.NA" % (source, target)
     testFileName = "../work/%s-%s/testVects_lexical.NA" % (source, target)
     featFile = open(trainFileName, 'w')
@@ -531,7 +539,8 @@ def evaluate_POS_NA_lexical(source,target):
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = train_feats[nSent][nWord]
                 for ft in x:
-                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                    if ft[1] != 0:
+                        featFile.write("%s:%f " % (ft[0],ft[1])) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -544,7 +553,8 @@ def evaluate_POS_NA_lexical(source,target):
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = test_feats[nSent][nWord]
                 for ft in x:
-                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                    if ft[1] != 0:
+                        featFile.write("%s:%f " % (ft[0],ft[1])) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -564,6 +574,7 @@ def evaluate_POS_NA_lexical(source,target):
 
 
 def evaluate_POS_ID(source):
+    print "word embeddings for %s inDomain" % (source)
     trainFileName = "../work/%s/trainVects.ID" % (source)
     testFileName = "../work/%s/testVects.ID" % (source)
     featFile = open(trainFileName, 'w')
@@ -587,7 +598,8 @@ def evaluate_POS_ID(source):
                 word_vectors=split_list(x,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
-                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                        if num != 0:
+                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -602,7 +614,8 @@ def evaluate_POS_ID(source):
                 word_vectors=split_list(x,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
-                        featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                        if num != 0:
+                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -619,6 +632,7 @@ def evaluate_POS_ID(source):
 
 
 def evaluate_POS_ID_lexical(source):
+    print "lexical features for %s inDomain" % (source)
     trainFileName = "../work/%s/trainVects_lexical.ID" % (source)
     testFileName = "../work/%s/testVects_lexical.ID" % (source)
     featFile = open(trainFileName, 'w')
@@ -639,7 +653,8 @@ def evaluate_POS_ID_lexical(source):
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = train_feats[nSent][nWord]
                 for ft in x:
-                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                    if ft[1] != 0:
+                        featFile.write("%s:%f " % (ft[0],ft[1])) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -652,7 +667,8 @@ def evaluate_POS_ID_lexical(source):
                 featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
                 x = test_feats[nSent][nWord]
                 for ft in x:
-                    featFile.write("%s:%f " % (ft[0],ft[1])) 
+                    if ft[1] != 0:
+                        featFile.write("%s:%f " % (ft[0],ft[1])) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -801,8 +817,8 @@ if __name__ == "__main__":
     method = "freq"
     # learnProjection(source, target, method, 500)
     # evaluate_POS_lexical(source, target, True, 1,method, 500)
-    evaluate_POS(source, target, True, 1,method, 500)
-    # evaluate_POS_NA(source,target)
+    # evaluate_POS(source, target, True, 1,method, 500)
+    evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_train_NA(source,target)
     # evaluate_POS_ID(target)
