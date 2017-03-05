@@ -636,7 +636,6 @@ def evaluate_POS_ID_lexical(source):
     trainFileName = "../work/%s/trainVects_lexical.ID" % (source)
     testFileName = "../work/%s/testVects_lexical.ID" % (source)
     featFile = open(trainFileName, 'w')
-    count = 0
     train_sentences = pos_data.load_preprocess_obj("%s-dev"%source)
     train_feats = classify_pos.load_classify_obj("%s-dev-lexical"%source)
     print "training features = ", len(pos_data.feature_list(train_sentences))
@@ -684,6 +683,66 @@ def evaluate_POS_ID_lexical(source):
     print "###########################################\n\n"
     return acc,intervals
     pass
+
+
+
+def evaluate_POS_pivots(source,target,method,n):
+    features = pos_data.load_obj(source,target,method) if "landmark" not in method else pos_data.load_obj(source,target,"/test/"+method)
+    pivots = dict(features[:n]).keys()
+    print "pivots for %s-%s, %s top-%d" % (source,target,method,n)
+    trainFileName = "../work/%s-%s/trainVects.PV" % (source, target)
+    testFileName = "../work/%s-%s/testVects.PV" % (source, target)
+
+    featFile = open(trainFileName, 'w')
+    train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
+    train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
+    print "training features = ", len(pos_data.feature_list(train_sentences))
+    test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
+    test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
+    print "test features = ", len(pos_data.feature_list(test_sentences))
+    tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
+    print "number of tags = ",len(tag_list)
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            if pos_tag in tag_list:               
+                x = train_feats[nSent][nWord]
+                if x[len(x)/2][0] in pivots:
+                    featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                    # print x[len(x)/2][0], 'is a pivot!'
+                    for ft in x:
+                        if ft[1] != 0: #features.get(ft[0],0)
+                            featFile.write("%s:%f " % (ft[0],ft[1])) 
+                    featFile.write("\n")
+    featFile.close()
+    featFile = open(testFileName, 'w')
+    
+    for nSent,sent in enumerate(test_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            if pos_tag in tag_list:
+                featFile.write("%d "%pos_data.tag_to_number(pos_tag,tag_list))
+                x = test_feats[nSent][nWord]
+                for ft in x:
+                    if ft[1] != 0:
+                        featFile.write("%s:%f " % (ft[0],ft[1])) 
+                featFile.write("\n")
+    featFile.close()
+    modelFileName = "../work/%s-%s/model.PV" % (source,target)
+    print "Training..."
+    trainMultiLBFGS(trainFileName, modelFileName)
+    # Test using classias.
+    print "Testing..."
+    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
+    intervals = clopper_pearson(correct,total)
+    print "Accuracy =", acc
+    print "Intervals=", intervals
+    print "###########################################\n\n"
+    return acc,intervals
+    pass
+
 
 
 def batchEval_ID():
@@ -815,13 +874,15 @@ if __name__ == "__main__":
     source = "wsj"
     target = "answers"
     method = "freq"
-    # learnProjection(source, target, method, 500)
-    # evaluate_POS_lexical(source, target, True, 1,method, 500)
-    # evaluate_POS(source, target, True, 1,method, 500)
-    evaluate_POS_NA(source,target)
+    n = 500
+    # learnProjection(source, target, method, n)
+    # evaluate_POS_lexical(source, target, True, 1,method, n)
+    # evaluate_POS(source, target, True, 1,method, n)
+    # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_train_NA(source,target)
     # evaluate_POS_ID(target)
+    evaluate_POS_pivots(source,target,method,n)
     # batchEval_ID()
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
@@ -831,7 +892,6 @@ if __name__ == "__main__":
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    # n = 500
     # for method in methods:
     #     # batchEval(method, 1, n)
     #     batchEval_lexical(method, 1, n)
