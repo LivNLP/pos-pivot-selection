@@ -289,16 +289,17 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
-                        featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+                        featFile.write("%d:%f " % (i, gamma * y[0,i])) 
                 z = train_vectors[nSent][nWord]
                 word_vectors=split_list(z,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
                         if num != 0:
-                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                            featFile.write("%d:%f " % (((word_index+1)*1000+i),num)) 
                 # lex = train_feats[nSent][nWord]
                 # for ft in lex:
                 #     featFile.write("%s:%f " % (ft[0],ft[1])) 
+                print "word %d of %d, sentence %d of %d..."%(nWord,len(words),nSent,len(train_sentences))
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -316,13 +317,13 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
-                        featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+                        featFile.write("%d:%f " % (i, gamma * y[0,i])) 
                 z = test_vectors[nSent][nWord]
                 word_vectors=split_list(z,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
                         if num != 0:
-                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                            featFile.write("%d:%f " % (((word_index+1)*1000+i),num)) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -405,7 +406,7 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
-                        featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+                        featFile.write("%d:%f " % (i, gamma * y[0,i])) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -424,7 +425,7 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
-                        featFile.write("proj_%d:%f " % (i, gamma * y[0,i])) 
+                        featFile.write("%d:%f " % (i, gamma * y[0,i])) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -451,10 +452,10 @@ def evaluate_POS_NA(source,target):
 
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_vectors = classify_pos.load_classify_obj("%s-labeled-classify"%source)
-    print "training features = ", len(pos_data.feature_list(train_sentences))
+    print "training features = ", len([word for sent in train_sentences for word in sent])
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_vectors = classify_pos.load_classify_obj("%s-test-classify"%target)
-    print "test features = ", len(pos_data.feature_list(test_sentences))
+    print "test features =", len([word for sent in test_sentences for word in sent])
     tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
     print "number of tags = ",len(tag_list)
     for nSent,sent in enumerate(train_sentences):
@@ -468,7 +469,7 @@ def evaluate_POS_NA(source,target):
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
                         if num != 0:
-                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                            featFile.write("%d:%f " % (((word_index+1)*1000+i),num)) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -484,7 +485,7 @@ def evaluate_POS_NA(source,target):
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
                         if num != 0:
-                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                            featFile.write("%d:%f " % (((word_index+1)*1000+i),num)) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -525,10 +526,10 @@ def evaluate_POS_NA_lexical(source,target):
     window_size = 5
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
-    print "training features = ", len(pos_data.feature_list(train_sentences))
+    print "training features = ", len([word for sent in train_sentences for word in sent])
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
-    print "test features = ", len(pos_data.feature_list(test_sentences))
+    print "test features = ", len([word for sent in test_sentences for word in sent])
     tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
     print "number of tags = ",len(tag_list)
     for nSent,sent in enumerate(train_sentences):
@@ -581,10 +582,10 @@ def evaluate_POS_ID(source):
     window_size = 5 
     train_sentences = pos_data.load_preprocess_obj("%s-dev"%source)
     train_vectors = classify_pos.load_classify_obj("%s-dev-classify"%source)
-    print "training features = ", len(pos_data.feature_list(train_sentences))
+    print "training features = ", len([word for sent in train_sentences for word in sent])
     test_sentences = pos_data.load_preprocess_obj("%s-test"%source)
     test_vectors = classify_pos.load_classify_obj("%s-test-classify"%source)
-    print "test features = ", len(pos_data.feature_list(test_sentences))
+    print "test features = ", len([word for sent in test_sentences for word in sent])
     tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
     print "number of tags = ",len(tag_list)
     print "Loading training vectors..."
@@ -638,10 +639,10 @@ def evaluate_POS_ID_lexical(source):
     featFile = open(trainFileName, 'w')
     train_sentences = pos_data.load_preprocess_obj("%s-dev"%source)
     train_feats = classify_pos.load_classify_obj("%s-dev-lexical"%source)
-    print "training features = ", len(pos_data.feature_list(train_sentences))
+    print "training features = ", len([word for sent in train_sentences for word in sent])
     test_sentences = pos_data.load_preprocess_obj("%s-test"%source)
     test_feats = classify_pos.load_classify_obj("%s-test-lexical"%source)
-    print "test features = ", len(pos_data.feature_list(test_sentences))
+    print "test features = ", len([word for sent in test_sentences for word in sent])
     tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
     print "number of tags = ",len(tag_list)
     for nSent,sent in enumerate(train_sentences):
@@ -696,10 +697,10 @@ def evaluate_POS_pivots(source,target,method,n):
     featFile = open(trainFileName, 'w')
     train_sentences = pos_data.load_preprocess_obj("%s-labeled"%source)
     train_feats = classify_pos.load_classify_obj("%s-labeled-lexical"%source)
-    print "training features = ", len(pos_data.feature_list(train_sentences))
+    print "training features = ", len([word for sent in train_sentences for word in sent])
     test_sentences = pos_data.load_preprocess_obj("%s-test"%target)
     test_feats = classify_pos.load_classify_obj("%s-test-lexical"%target)
-    print "test features = ", len(pos_data.feature_list(test_sentences))
+    print "test features = ", len([word for sent in test_sentences for word in sent])
     tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
     print "number of tags = ",len(tag_list)
     for nSent,sent in enumerate(train_sentences):
@@ -878,11 +879,11 @@ if __name__ == "__main__":
     # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1,method, n)
     # evaluate_POS(source, target, True, 1,method, n)
-    # evaluate_POS_NA(source,target)
+    evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_train_NA(source,target)
     # evaluate_POS_ID(target)
-    evaluate_POS_pivots(source,target,method,n)
+    # evaluate_POS_pivots(source,target,method,n)
     # batchEval_ID()
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
