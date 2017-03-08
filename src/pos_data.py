@@ -74,13 +74,36 @@ def collect_unlabeled_wsj():
 
 def presets_labeled(source,target):
     # generate a tag list from labeled data for iteration
+    print "#######%s-%s########"%(source,target)
     src_labeled = load_preprocess_obj('%s-labeled'%source)
-    # tags = tag_list(src_labeled)
-    tags = ['.']
+    tags = tag_list(src_labeled)
+    # tags = ['.']
     # loop tags to divide presets into groups
     for pos_tag in tags:
         print "TAG = %s"% pos_tag
         presets_labeled_tag(source,target,pos_tag,src_labeled)
+    pass
+
+def compute_dist(source):
+    src_labeled = load_preprocess_obj('%s-labeled'%source)
+    tags = tag_list(src_labeled)
+    words = float(len([word for sent in src_labeled for word in sent]))
+    dists = []
+    for pos_tag in tags:
+        tag_words=float(len([word for sent in src_labeled for word in sent if word[1]==pos_tag]))
+        dists+=[float(tag_words/words)]
+    s = dict(zip(tags,dists))
+    L = s.items()
+    # descending order
+    L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+    f = open("tmp","w")
+    f.write('%f\n\n'% (np.percentile(dists, 50)))
+
+    for (x,v) in L:
+        # if v > np.percentile(dists, 50):
+            # print x,v
+        f.write('%s %f\n'%(x,v))
+    f.close()
     pass
 
 # different from SA, for each pos_tag, the source labeled data is divided into
@@ -112,8 +135,8 @@ def presets_labeled_tag(source,target,pos_tag,src_labeled):
     print len(x_src)
 
     # save presets to temp objects
-    pos_tag="TAG."
-    # pos_tag = 'TAG.' if pos_tag == '.' else pos_tag
+    # pos_tag="TAG."
+    pos_tag = 'TAG.' if pos_tag == '.' else pos_tag
     save_tag_obj(source,target,pos_src_data,pos_tag,"pos_src_data")
     save_tag_obj(source,target,neg_src_data,pos_tag,"neg_src_data")
     save_tag_obj(source,target,pos_src_sentences,pos_tag,"pos_src_sentences")
@@ -545,22 +568,23 @@ if __name__ == "__main__":
     # for domain in domains:
     #     collect_labeled(domain)
     # target domain unlabeled datasets
-    domains = ["answers"]
+    # domains = ["answers"]
     # domains += ["reviews","newsgroups","weblogs","emails"]
     # domain = "answers"
     # for domain in domains:
     #     collect_unlabeled(domain)
     # collect_unlabeled_wsj()
     source = 'wsj'
+    compute_dist(source)
     # for target in domains:
     #     presets_labeled(source,target)
         # presets_unlabeled(source,target)
     # print_test()
     # source is just wsj enough, copy to all
     # presets_labeled(source,'answers')
-    for target in domains:
-        select_pivots_freq_unlabeled(source,target)
-        select_pivots_mi_unlabeled(source,target)
-        select_pivots_pmi_unlabeled(source,target)
-        select_pivots_ppmi_unlabeled(source,target)
-        sum_up_labeled_scores(source,target)
+    # for target in domains:
+    #     select_pivots_freq_unlabeled(source,target)
+    #     select_pivots_mi_unlabeled(source,target)
+    #     select_pivots_pmi_unlabeled(source,target)
+    #     select_pivots_ppmi_unlabeled(source,target)
+    #     sum_up_labeled_scores(source,target)
