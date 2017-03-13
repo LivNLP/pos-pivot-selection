@@ -47,9 +47,11 @@ def trainMultiLBFGS(train_file, model_file):
     Train lbfgs on train file. and evaluate on test file. different from the previous one!
     Read the output file and return the multi-label classification accuracy.
     """
-    retcode = subprocess.call(
-        "classias-train -tn -a truncated_gradient.logistic -m %s %s > /dev/null"  %\
-        (model_file, train_file), shell=True)
+    # retcode = subprocess.call(
+    #     "classias-train -tn -a truncated_gradient.logistic -m %s %s > /dev/null"  %\
+    #     (model_file, train_file), shell=True)
+    retcode = subprocess.call("liblinear-train -s 0 -n 4 %s %s" %\
+        (train_file,model_file), shell=True)
     # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
     # model_file= LR.fit(train_file,None)
     return retcode
@@ -61,8 +63,10 @@ def testLBFGS(test_file, model_file):
     Read the output file and return the classification accuracy.
     """
     output = "../work/output"
-    retcode = subprocess.call("cat %s | classias-tag -m %s -t> %s" %\
-                              (test_file, model_file, output), shell=True)
+    # retcode = subprocess.call("cat %s | classias-tag -m %s -t> %s" %\
+    #                           (test_file, model_file, output), shell=True)
+    retcode = subprocess.call("liblinear-predict -b -n 4 %s %s" %\
+        (model_file, test_file), shell=True)
     F = open(output)
     accuracy = 0
     correct = 0
@@ -289,7 +293,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
-                        featFile.write("%d:%f " % (i, gamma * y[0,i])) 
+                        featFile.write("%d:%f " % (i+1, gamma * y[0,i])) 
                 z = train_vectors[nSent][nWord]
                 word_vectors=split_list(z,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
@@ -317,7 +321,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
-                        featFile.write("%d:%f " % (i, gamma * y[0,i])) 
+                        featFile.write("%d:%f " % (i+1, gamma * y[0,i])) 
                 z = test_vectors[nSent][nWord]
                 word_vectors=split_list(z,window_size)
                 for word_index,word_vec in enumerate(word_vectors):
@@ -406,7 +410,7 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
-                        featFile.write("%d:%f " % (i, gamma * y[0,i])) 
+                        featFile.write("%d:%f " % (i+1, gamma * y[0,i])) 
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -425,7 +429,7 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
                 if project:
                     y = x.tocsr().dot(M)
                     for i in range(0, h):
-                        featFile.write("%d:%f " % (i, gamma * y[0,i])) 
+                        featFile.write("%d:%f " % (i+1, gamma * y[0,i])) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -878,8 +882,8 @@ if __name__ == "__main__":
     n = 500
     # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1,method, n)
-    # evaluate_POS(source, target, True, 1,method, n)
-    evaluate_POS_NA(source,target)
+    evaluate_POS(source, target, True, 1,method, n)
+    # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_train_NA(source,target)
     # evaluate_POS_ID(target)
