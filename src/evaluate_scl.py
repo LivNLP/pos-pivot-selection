@@ -20,6 +20,7 @@ import re
 import scipy.stats
 
 import sklearn
+import os
 
 def clopper_pearson(k,n,alpha=0.05):
     """
@@ -50,8 +51,9 @@ def trainMultiLBFGS(train_file, model_file):
     # retcode = subprocess.call(
     #     "classias-train -tn -a truncated_gradient.logistic -m %s %s > /dev/null"  %\
     #     (model_file, train_file), shell=True)
-    retcode = subprocess.call("liblinear-train -s 0 -n 4 %s %s" %\
-        (train_file,model_file), shell=True)
+
+    retcode = subprocess.call(['/bin/bash', '-i', '-c', "liblinear-train -s 0 -n 8 %s %s" %\
+        (train_file,model_file)])
     # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
     # model_file= LR.fit(train_file,None)
     return retcode
@@ -65,18 +67,16 @@ def testLBFGS(test_file, model_file):
     output = "../work/output"
     # retcode = subprocess.call("cat %s | classias-tag -m %s -t> %s" %\
     #                           (test_file, model_file, output), shell=True)
-    retcode = subprocess.call("liblinear-predict -b -n 4 %s %s" %\
-        (model_file, test_file), shell=True)
-    F = open(output)
+    retcode = subprocess.check_output(['/bin/bash', '-i', '-c', "liblinear-predict -b 1 %s %s %s" %\
+        (test_file,model_file,output)])
+    line = retcode
     accuracy = 0
     correct = 0
     total = 0
-    for line in F:
-        if line.startswith("Accuracy"):
-            p = line.strip().split()
-            accuracy = float(p[1])
-            [correct, total]=[int(s) for s in re.findall(r'\b\d+\b',p[2])]
-    F.close()
+    p = line.strip().split()
+    accuracy = float(p[2].strip('%'))/100
+    [correct, total]=[int(s) for s in re.findall(r'\b\d+\b',p[3])]
+    # print accuracy,correct,total
     return accuracy,correct,total
 
 
@@ -510,9 +510,8 @@ def test_train_NA(source,target):
     trainFileName = "../work/%s-%s/trainVects.NA" % (source, target)
     testFileName = "../work/%s-%s/testVects.NA" % (source, target)
     modelFileName = "../work/%s-%s/model.NA" % (source, target)
-    print "Training..."
-    trainMultiLBFGS(trainFileName, modelFileName)
-    # Test using classias.
+    # print "Training..."
+    # trainMultiLBFGS(trainFileName, modelFileName)
     print "Testing..."
     [acc,correct,total] = testLBFGS(testFileName, modelFileName)
     intervals = clopper_pearson(correct,total)
@@ -876,13 +875,13 @@ def choose_param(method,params,gamma,n):
     pass
 
 if __name__ == "__main__":
-    source = "wsj"
-    target = "answers"
-    method = "freq"
+    # source = "wsj"
+    # target = "answers"
+    # method = "freq"
     n = 500
     # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1,method, n)
-    evaluate_POS(source, target, True, 1,method, n)
+    # evaluate_POS(source, target, True, 1,method, n)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_train_NA(source,target)
@@ -892,14 +891,14 @@ if __name__ == "__main__":
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
-    # methods += ["ppmi",'un_ppmi']
+    methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
+    methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    # for method in methods:
-    #     # batchEval(method, 1, n)
-    #     batchEval_lexical(method, 1, n)
+    for method in methods:
+        batchEval(method, 1, n)
+        # batchEval_lexical(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
         # choose_gamma(source, target, method,gammas,n)
