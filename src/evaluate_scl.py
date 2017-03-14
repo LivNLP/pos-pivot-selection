@@ -52,7 +52,7 @@ def trainMultiLBFGS(train_file, model_file):
     #     "classias-train -tn -a truncated_gradient.logistic -m %s %s > /dev/null"  %\
     #     (model_file, train_file), shell=True)
 
-    retcode = subprocess.call(['/bin/bash', '-i', '-c', "liblinear-train -s 0 -n 8 %s %s" %\
+    retcode = subprocess.call(['/bin/bash', '-i', '-c', "liblinear-train -s 0 -n 8 -q %s %s" %\
         (train_file,model_file)])
     # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
     # model_file= LR.fit(train_file,None)
@@ -137,7 +137,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     feats = feats.keys()
     if "landmark" in pivotsMethod:
         feats = pos_data.load_obj(sourceDomain,targetDomain,"filtered_features")
-    print "experimental features = ", len(feats)
+    # print "experimental features = ", len(feats)
 
     # DSwords = [item for item in feats if item not in pivots]
 
@@ -506,10 +506,14 @@ def evaluate_POS_NA(source,target):
     return acc,intervals
     pass
 
-def test_train_NA(source,target):
-    trainFileName = "../work/%s-%s/trainVects.NA" % (source, target)
-    testFileName = "../work/%s-%s/testVects.NA" % (source, target)
-    modelFileName = "../work/%s-%s/model.NA" % (source, target)
+def test_results(source,target,method):
+    trainFileName = "../work/%s-%s/trainVects.%s" % (source, target,method)
+    testFileName = "../work/%s-%s/testVects.%s" % (source, target,method)
+    modelFileName = "../work/%s-%s/model.%s" % (source, target,method)
+    if "NA" or "ID" in method:
+        trainFileName = "../work/%s-%s/trainVects.SCL" % (source, target)
+        testFileName = "../work/%s-%s/testVects.SCL" % (source, target)
+        modelFileName = "../work/%s-%s/model.SCL" % (source, target)
     # print "Training..."
     # trainMultiLBFGS(trainFileName, modelFileName)
     print "Testing..."
@@ -603,7 +607,7 @@ def evaluate_POS_ID(source):
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
                         if num != 0:
-                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                            featFile.write("%d:%f " % (((word_index+1)*1000+i),num))  
                 featFile.write("\n")
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -619,7 +623,7 @@ def evaluate_POS_ID(source):
                 for word_index,word_vec in enumerate(word_vectors):
                     for i,num in enumerate(word_vec):
                         if num != 0:
-                            featFile.write("word%d_embed%d:%f " % (word_index,i,num)) 
+                            featFile.write("%d:%f " % (((word_index+1)*1000+i),num)) 
                 featFile.write("\n")
     featFile.close()
     # Train using classias.
@@ -820,11 +824,12 @@ def batchEval(method, gamma, n):
     resFile = open("../work/batchSCL.%s.csv"% method, "w")
     resFile.write("Source, Target, Method, Acc, IntLow, IntHigh\n")
     source = 'wsj'
-    domains = ["answers","emails"]
-    domains += ["reviews","newsgroups","weblogs"]
+    domains = ["answers"]
+    domains += ["emails","reviews","newsgroups","weblogs"]
     for target in domains:
         learnProjection(source, target, method, n)
         evaluation = evaluate_POS(source, target, True, gamma, method, n)
+        # evaluation = test_results(source,target,method)
         resFile.write("%s, %s, %s, %f, %f, %f\n" % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
         resFile.flush()
     resFile.close()
@@ -878,7 +883,8 @@ if __name__ == "__main__":
     # source = "wsj"
     # target = "answers"
     # method = "freq"
-    n = 500
+    # n = 500
+    # batchEval_NA()
     # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1,method, n)
     # evaluate_POS(source, target, True, 1,method, n)
@@ -887,17 +893,17 @@ if __name__ == "__main__":
     # test_train_NA(source,target)
     # evaluate_POS_ID(target)
     # evaluate_POS_pivots(source,target,method,n)
-    # batchEval_ID()
+    batchEval_ID()
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
-    methods += ["ppmi",'un_ppmi']
+    # methods = ["freq","un_freq","mi","un_mi","pmi","un_pmi"]
+    # methods += ["ppmi",'un_ppmi']
     # methods = ["mi","un_mi","pmi","un_pmi"]
     # methods += ["landmark_pretrained_word2vec","landmark_pretrained_word2vec_ppmi","landmark_pretrained_glove","landmark_pretrained_glove_ppmi"]
     # methods = ["landmark_pretrained_word2vec","landmark_pretrained_glove"]
-    for method in methods:
-        batchEval(method, 1, n)
+    # for method in methods:
+    #     batchEval(method, 1, n)
         # batchEval_lexical(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
