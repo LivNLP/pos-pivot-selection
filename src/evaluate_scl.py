@@ -49,7 +49,7 @@ def trainMultiLBFGS(train_file, model_file):
     #     'classias-train -tn -a truncated_gradient.logistic -m %s %s > /dev/null'  %\
     #     (model_file, train_file), shell=True)
 
-    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -n 4 %s %s' %\
+    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -n 8 %s %s' %\
         (train_file,model_file), shell=True)
     # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
     # model_file= LR.fit(train_file,None)
@@ -805,8 +805,9 @@ def batchEval_NA():
     resFile = open('../work/batchNA.csv', 'w')
     resFile.write('Source, Target, Method, Acc, IntLow, IntHigh\n')
     source = 'wsj'
-    domains = ['answers','emails']
-    domains += ['reviews','newsgroups','weblogs']
+    # domains = ['answers','emails']
+    # domains += ['reviews','newsgroups']
+    domains = ['weblogs']
     for target in domains:
         evaluation = evaluate_POS_NA(source, target)
         resFile.write('%s, %s, %s, %f, %f, %f\n' % (source, target, 'NA', evaluation[0], evaluation[1][0],evaluation[1][1]))
@@ -894,19 +895,19 @@ def choose_param(method,params,gamma,n):
 
 if __name__ == '__main__':
     # source = 'wsj'
-    target = 'answers'
+    # target = 'answers'
     # method = 'freq'
     # n = 500
-    # batchEval_NA()
+    batchEval_NA()
     # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1,method, n)
     # evaluate_POS(source, target, True, 1,method, n)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
-    # test_train_NA(source,target)
+    # test_results(source,target)
     # evaluate_POS_ID(target)
     # evaluate_POS_pivots(source,target,method,n)
-    batchEval_ID()
+    # batchEval_ID()
     # test_ID(target)
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
