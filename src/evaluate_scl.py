@@ -40,6 +40,8 @@ def trainLBFGS(train_file, model_file):
     retcode = subprocess.call(
         'classias-train -tb -a lbfgs.logistic -pc1=0 -pc2=1 -m %s %s > /dev/null'  %\
         (model_file, train_file), shell=True)
+    # retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -n 8 %s %s' %\
+    #     (train_file,model_file), shell=True)
     return retcode
 
 
@@ -146,6 +148,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     vects.extend(loadFeatureVecors(pos_data.load_preprocess_obj('%s-unlabeled'%targetDomain), feats))
     endTime = time.time()
     print '%ss' % str(round(endTime-startTime, 2))     
+    # print len([word for v in vects for word in v])
 
     print 'Total no. of documents =', len(vects)
     print 'Total no. of features =', len(feats)
@@ -158,6 +161,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
         print '%d of %d %s' % (j, len(pivots), w)
         for (feat, val) in getWeightVector(w, vects):
             i = feats.index(feat)
+            # i = feat
             M[i,j] = val
     endTime = time.time()
     print 'Took %ss' % str(round(endTime-startTime, 2)) 
@@ -191,6 +195,27 @@ def getWeightVector(word, vects):
     trainFileName = '../work/trainFile'
     modelFileName = '../work/modelFile'
     trainFile = open(trainFileName, 'w')
+    # feats=list(set([word for v in vects for word in v]))
+    
+    # for v in vects:
+    #     fv = v.copy()
+    #     iv = [feats.index(w) for w in fv]
+    #     # print iv 
+    #     iw = feats.index(word)
+    #     # print iw
+    #     if word in fv:
+    #         label = 1
+    #         fv.remove(word)
+    #         iv.remove(iw)
+    #     else:
+    #         label = -1
+    #     trainFile.write('%d %s\n'% label,' '.join(str('%d:1'%idx) for idx in iv))
+    #     # for idx in iv:
+    #     #     trainFile.write('%d:1 '%idx)
+    #     # trainFile.write('\n')
+    # trainFile.close()
+    # trainLBFGS(trainFileName, modelFileName)
+    # return loadClassificationModel(modelFileName)
     for v in vects:
         fv = v.copy()
         if word in fv:
@@ -295,6 +320,8 @@ def evaluate_POS(source, target, project, gamma, method, n):
                     for i,num in enumerate(word_vec):
                         if num != 0:
                             featFile.write('%d:%f ' % (((word_index+1)*1000+i),num)) 
+                    # featFile.write('%s'%(' '.join(str('%d:%d'%(((word_index+1)*1000+i),num)) for i,num in enumerate(word_vec) if num != 0)))
+                        
                 # lex = train_feats[nSent][nWord]
                 # for ft in lex:
                 #     featFile.write('%s:%f ' % (ft[0],ft[1])) 
@@ -838,8 +865,8 @@ def batchEval(method, gamma, n):
     resFile = open('../work/batchSCL.%s.csv'% method, 'w')
     resFile.write('Source, Target, Method, Acc, IntLow, IntHigh\n')
     source = 'wsj'
-    domains = ['answers']
-    domains += ['emails','reviews','newsgroups','weblogs']
+    domains = ['reviews','newsgroups','weblogs']
+    # domains += ['emails','answers']
     for target in domains:
         learnProjection(source, target, method, n)
         evaluation = evaluate_POS(source, target, True, gamma, method, n)
