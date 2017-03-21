@@ -51,7 +51,7 @@ def trainMultiLBFGS(train_file, model_file):
     #     'classias-train -tn -a truncated_gradient.logistic -m %s %s > /dev/null'  %\
     #     (model_file, train_file), shell=True)
 
-    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -n 8 %s %s' %\
+    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -n 8 %s %s > /dev/null' %\
         (train_file,model_file), shell=True)
     # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
     # model_file= LR.fit(train_file,None)
@@ -165,7 +165,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
             M[i,j] = val
     endTime = time.time()
     print 'Took %ss' % str(round(endTime-startTime, 2)) 
-    # save_M = '../work/%s-%s/%s/proj.mat' % (sourceDomain, targetDomain,pivotsMethod)  
+    # save_M = '../work/%s/%s-%s/%s/proj.mat' % (sourceDomain, targetDomain,pivotsMethod)  
     # classify_pos.save_loop_obj(M,save_M,'weight_matrix')
 
     # print 'Loading Word Embeddings..'
@@ -182,7 +182,7 @@ def performSVD(M,method,sourceDomain, targetDomain,h):
     ut, s, vt = sparsesvd(M.tocsc(), h)
     endTime = time.time()
     print '%ss' % str(round(endTime-startTime, 2))     
-    sio.savemat('../work/%s-%s/proj.mat' % (sourceDomain, targetDomain), {'proj':ut.T})
+    sio.savemat('../work/%s/%s-%s/proj.mat' % (method,sourceDomain, targetDomain), {'proj':ut.T})
     pass
 
 
@@ -265,7 +265,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
     else:
         print 'Projection OFF'
     # Load the projection matrix.
-    M = sp.csr_matrix(sio.loadmat('../work/%s-%s/proj.mat' % (source, target))['proj'])
+    M = sp.csr_matrix(sio.loadmat('../work/%s/%s-%s/proj.mat' % (method,source, target))['proj'])
     (nDS, h) = M.shape
 
     # Load pivots.
@@ -284,8 +284,8 @@ def evaluate_POS(source, target, project, gamma, method, n):
 
     
     # write train feature vectors.
-    trainFileName = '../work/%s-%s/trainVects.SCL' % (source, target)
-    testFileName = '../work/%s-%s/testVects.SCL' % (source, target)
+    trainFileName = '../work/%s/%s-%s/trainVects.SCL' % (method, source, target)
+    testFileName = '../work/%s/%s-%s/testVects.SCL' % (method, source, target)
     featFile = open(trainFileName, 'w')
     
     train_sentences = pos_data.load_preprocess_obj('%s-labeled'%source)
@@ -354,7 +354,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
     featFile.close()
     # Train using classias.
     print 'Training...'
-    modelFileName = '../work/%s-%s/model.SCL' % (source, target)
+    modelFileName = '../work/%s/%s-%s/model.SCL' % (method, source, target)
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
     print 'Testing...'
@@ -384,7 +384,7 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
     else:
         print 'Projection OFF'
     # Load the projection matrix.
-    M = sp.csr_matrix(sio.loadmat('../work/%s-%s/proj.mat' % (source, target))['proj'])
+    M = sp.csr_matrix(sio.loadmat('../work/%s/%s-%s/proj.mat' % (method,source, target))['proj'])
     (nDS, h) = M.shape
 
     # Load pivots.
@@ -403,8 +403,8 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
 
     
     # write train feature vectors.
-    trainFileName = '../work/%s-%s/trainVects_lexical.SCL' % (source, target)
-    testFileName = '../work/%s-%s/testVects_lexical.SCL' % (source, target)
+    trainFileName = '../work/%s/%s-%s/trainVects_lexical.SCL' % (method,source, target)
+    testFileName = '../work/%s/%s-%s/testVects_lexical.SCL' % (method,source, target)
     featFile = open(trainFileName, 'w')
     
     train_sentences = pos_data.load_preprocess_obj('%s-labeled'%source)
@@ -456,7 +456,7 @@ def evaluate_POS_lexical(source, target, project, gamma, method, n):
     featFile.close()
     # Train using classias.
     print 'Training...'
-    modelFileName = '../work/%s-%s/model_lexical.SCL' % (source, target)
+    modelFileName = '../work/%s/%s-%s/model_lexical.SCL' % (method,source, target)
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
     print 'Testing...'
@@ -515,7 +515,7 @@ def evaluate_POS_NA(source,target):
                 featFile.write('\n')
     featFile.close()
     # Train using classias.
-    modelFileName = '../work/%s-%s/model.NA' % (source, target)
+    modelFileName = '../work/%s/%s-%s/model.NA' % (source, target)
     print 'Training...'
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
@@ -541,6 +541,7 @@ def evaluate_POS_NA_lexical(source,target):
     test_sentences = pos_data.load_preprocess_obj('%s-test'%target)
     test_feats = classify_pos.load_classify_obj('%s-test-lexical'%target)
     print 'test features = ', len([word for sent in test_sentences for word in sent])
+    feat_list = set([word for sent in train_sentences for word in sent])&set([word for sent in test_sentences for word in sent])
     tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
     print 'number of tags = ',len(tag_list)
     for nSent,sent in enumerate(train_sentences):
@@ -552,7 +553,7 @@ def evaluate_POS_NA_lexical(source,target):
                 x = train_feats[nSent][nWord]
                 for ft in x:
                     if ft[1] != 0:
-                        featFile.write('%s:%f ' % (ft[0],ft[1])) 
+                        featFile.write('%d:%f ' % (feat_list.index(ft[0]),ft[1])) 
                 featFile.write('\n')
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -566,7 +567,7 @@ def evaluate_POS_NA_lexical(source,target):
                 x = test_feats[nSent][nWord]
                 for ft in x:
                     if ft[1] != 0:
-                        featFile.write('%s:%f ' % (ft[0],ft[1])) 
+                        featFile.write('%d:%f ' % (feat_list.index(ft[0]),ft[1])) 
                 featFile.write('\n')
     featFile.close()
     # Train using classias.
@@ -654,6 +655,7 @@ def evaluate_POS_ID_lexical(source):
     test_sentences = pos_data.load_preprocess_obj('%s-test'%source)
     test_feats = classify_pos.load_classify_obj('%s-test-lexical'%source)
     print 'test features = ', len([word for sent in test_sentences for word in sent])
+    feat_list = set([word for sent in train_sentences for word in sent])&set([word for sent in test_sentences for word in sent])
     tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
     print 'number of tags = ',len(tag_list)
     for nSent,sent in enumerate(train_sentences):
@@ -665,7 +667,7 @@ def evaluate_POS_ID_lexical(source):
                 x = train_feats[nSent][nWord]
                 for ft in x:
                     if ft[1] != 0:
-                        featFile.write('%s:%f ' % (ft[0],ft[1])) 
+                        featFile.write('%d:%f ' % (feat_list.index(ft[0]),ft[1])) 
                 featFile.write('\n')
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -679,7 +681,7 @@ def evaluate_POS_ID_lexical(source):
                 x = test_feats[nSent][nWord]
                 for ft in x:
                     if ft[1] != 0:
-                        featFile.write('%s:%f ' % (ft[0],ft[1])) 
+                        featFile.write('%d:%f ' % (feat_list.index(ft[0]),ft[1])) 
                 featFile.write('\n')
     featFile.close()
     # Train using classias.
@@ -702,8 +704,8 @@ def evaluate_POS_pivots(source,target,method,n):
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
     pivots = dict(features[:n]).keys()
     print 'pivots for %s-%s, %s top-%d' % (source,target,method,n)
-    trainFileName = '../work/%s-%s/trainVects.PV' % (source, target)
-    testFileName = '../work/%s-%s/testVects.PV' % (source, target)
+    trainFileName = '../work/%s/%s-%s/trainVects.PV' % (method,source, target)
+    testFileName = '../work/%s/%s-%s/testVects.PV' % (method,source, target)
 
     featFile = open(trainFileName, 'w')
     train_sentences = pos_data.load_preprocess_obj('%s-labeled'%source)
@@ -712,6 +714,7 @@ def evaluate_POS_pivots(source,target,method,n):
     test_sentences = pos_data.load_preprocess_obj('%s-test'%target)
     test_feats = classify_pos.load_classify_obj('%s-test-lexical'%target)
     print 'test features = ', len([word for sent in test_sentences for word in sent])
+    feat_list = set([word for sent in train_sentences for word in sent])&set([word for sent in test_sentences for word in sent])
     tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
     print 'number of tags = ',len(tag_list)
     for nSent,sent in enumerate(train_sentences):
@@ -725,7 +728,7 @@ def evaluate_POS_pivots(source,target,method,n):
                     # print x[len(x)/2][0], 'is a pivot!'
                     for ft in x:
                         if ft[1] != 0: #features.get(ft[0],0)
-                            featFile.write('%s:%f ' % (ft[0],ft[1])) 
+                            featFile.write('%d:%f ' % (feat_list.index(ft[0]),ft[1])) 
                     featFile.write('\n')
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -739,10 +742,10 @@ def evaluate_POS_pivots(source,target,method,n):
                 x = test_feats[nSent][nWord]
                 for ft in x:
                     if ft[1] != 0:
-                        featFile.write('%s:%f ' % (ft[0],ft[1])) 
+                        featFile.write('%d:%f ' % (feat_list.index(ft[0]),ft[1])) 
                 featFile.write('\n')
     featFile.close()
-    modelFileName = '../work/%s-%s/model.PV' % (source,target)
+    modelFileName = '../work/%s/%s-%s/model.PV' % (source,target)
     print 'Training...'
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
@@ -762,9 +765,9 @@ def test_results(source,target,method):
     testFileName = '../work/%s-%s/testVects.%s' % (source, target,method)
     modelFileName = '../work/%s-%s/model.%s' % (source, target,method)
     if 'NA' not in method:
-        trainFileName = '../work/%s-%s/trainVects.SCL' % (source, target)
-        testFileName = '../work/%s-%s/testVects.SCL' % (source, target)
-        modelFileName = '../work/%s-%s/model.SCL' % (source, target)
+        trainFileName = '../work/%s/%s-%s/trainVects.SCL' % (method,source, target)
+        testFileName = '../work/%s/%s-%s/testVects.SCL' % (method,source, target)
+        modelFileName = '../work/%s/%s-%s/model.SCL' % (method,source, target)
     # print 'Training...'
     # trainMultiLBFGS(trainFileName, modelFileName)
     print 'Testing...'
@@ -865,8 +868,8 @@ def batchEval(method, gamma, n):
     resFile = open('../work/batchSCL.%s.csv'% method, 'w')
     resFile.write('Source, Target, Method, Acc, IntLow, IntHigh\n')
     source = 'wsj'
-    domains = ['reviews','newsgroups','weblogs']
-    # domains += ['emails','answers']
+    domains = ['answers','emails']
+    domains += ['reviews','newsgroups','weblogs']
     for target in domains:
         learnProjection(source, target, method, n)
         evaluation = evaluate_POS(source, target, True, gamma, method, n)
@@ -923,8 +926,10 @@ def choose_param(method,params,gamma,n):
 if __name__ == '__main__':
     # source = 'wsj'
     # target = 'answers'
-    # method = 'freq'
+    # target = 'reviews'
+    # method = 'un_freq'
     n = 500
+    # batchEval(method, 1, n)
     # batchEval_NA()
     # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1,method, n)
@@ -939,9 +944,9 @@ if __name__ == '__main__':
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    methods = ['freq','un_freq','mi','un_mi','pmi','un_pmi']
+    methods = ['mi','un_mi','pmi','un_pmi']
     methods += ['ppmi','un_ppmi']
-    # methods = ['mi','un_mi','pmi','un_pmi']
+    # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
     for method in methods:
