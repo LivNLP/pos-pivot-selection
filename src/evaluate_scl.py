@@ -19,7 +19,7 @@ import classify_pos
 import re
 import scipy.stats
 
-import sklearn
+# import sklearn
 import os
 
 def clopper_pearson(k,n,alpha=0.05):
@@ -51,7 +51,7 @@ def trainMultiLBFGS(train_file, model_file):
     #     'classias-train -tn -a truncated_gradient.logistic -m %s %s > /dev/null'  %\
     #     (model_file, train_file), shell=True)
 
-    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -n 8 %s %s > /dev/null' %\
+    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -n 8 %s %s' %\
         (train_file,model_file), shell=True)
     # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
     # model_file= LR.fit(train_file,None)
@@ -64,7 +64,7 @@ def testLBFGS(test_file, model_file):
     #                           (test_file, model_file, output), shell=True)
     # retcode = subprocess.check_output(['/bin/bash','-i', '-c', 'liblinear-predict -b 1 %s %s %s' %\
     #     (test_file,model_file,output)])
-    retcode = subprocess.check_output('~/liblinear-multicore-2.11-1/predict -b 1 %s %s %s' %\
+    retcode = subprocess.check_output('~/liblinear-multicore-2.11-1/predict %s %s %s' %\
         (test_file,model_file,output), shell=True)
     line = retcode
     accuracy = 0
@@ -181,8 +181,15 @@ def performSVD(M,method,sourceDomain, targetDomain,h):
     startTime = time.time()
     ut, s, vt = sparsesvd(M.tocsc(), h)
     endTime = time.time()
-    print '%ss' % str(round(endTime-startTime, 2))     
-    sio.savemat('../work/%s/%s-%s/proj.mat' % (method,sourceDomain, targetDomain), {'proj':ut.T})
+    print '%ss' % str(round(endTime-startTime, 2))   
+    filename = '../work/%s/%s-%s/proj.mat' % (method,sourceDomain, targetDomain)
+    if not os.path.exists(os.path.dirname(filename)):
+        try:
+            os.makedirs(os.path.dirname(filename))
+        except OSError as exc:
+            if exc.errno != errno.EEXIST:
+                raise
+    sio.savemat(filename, {'proj':ut.T})
     pass
 
 
@@ -944,9 +951,9 @@ if __name__ == '__main__':
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    methods = ['mi','un_mi','pmi','un_pmi']
-    methods += ['ppmi','un_ppmi']
-    # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq']
+    methods = ['pmi','un_pmi']
+    methods += ['ppmi','un_ppmi','freq','un_freq']
+    # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
     for method in methods:
