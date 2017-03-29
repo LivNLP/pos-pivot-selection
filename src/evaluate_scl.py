@@ -66,6 +66,8 @@ def testLBFGS(test_file, model_file):
     #     (test_file,model_file,output)])
     retcode = subprocess.check_output('~/liblinear-multicore-2.11-1/predict %s %s %s' %\
         (test_file,model_file,output), shell=True)
+    # retcode = subprocess.check_output('~/liblinear-new/predict %s %s %s' %\
+    #     (test_file,model_file,output), shell=True)
     line = retcode
     accuracy = 0
     correct = 0
@@ -934,7 +936,7 @@ if __name__ == '__main__':
     # source = 'wsj'
     # target = 'answers'
     # target = 'reviews'
-    # method = 'un_freq'
+    # method = 'mi'
     n = 500
     # batchEval(method, 1, n)
     # batchEval_NA()
@@ -943,7 +945,7 @@ if __name__ == '__main__':
     # evaluate_POS(source, target, True, 1,method, n)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
-    # test_results(source,target)
+    # test_results(source,target,method)
     # evaluate_POS_ID(target)
     # evaluate_POS_pivots(source,target,method,n)
     # batchEval_ID()
@@ -951,8 +953,9 @@ if __name__ == '__main__':
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    methods = ['pmi','un_pmi']
-    methods += ['ppmi','un_ppmi','freq','un_freq']
+    # methods = ['pmi','un_pmi']
+    # methods = ['ppmi']
+    methods = ['un_ppmi','freq','un_freq']
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
@@ -961,7 +964,7 @@ if __name__ == '__main__':
         # batchEval_lexical(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
-        # choose_gamma(source, target, method,gammas,n)
+    #     choose_gamma(source, target, method,gammas,n)
     # params = [1]
     # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
     # params += [10e-3,10e-4,10e-5,10e-6]
