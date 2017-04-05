@@ -11,7 +11,9 @@ def read_labels(source,target,method,fname):
     return labels
 
 def compare_labels(predict_labels,target_labels):
-    
+    tag_list = set(predict_labels)&set(target_labels)
+    for pos_tag in tag_list:
+        
     return tp,tn,fp,fn
 
 def precision(tp,fp):
