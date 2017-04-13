@@ -898,7 +898,7 @@ def batchEval_lexical(method, gamma, n):
     domains = ['answers','emails']
     domains += ['reviews','newsgroups','weblogs']
     for target in domains:
-        learnProjection(source, target, method, n)
+        # learnProjection(source, target, method, n)
         evaluation = evaluate_POS_lexical(source, target, True, gamma, method, n)
         resFile.write('%s, %s, %s, %f, %f, %f\n' % (source, target, method, evaluation[0], evaluation[1][0],evaluation[1][1]))
         resFile.flush()
@@ -955,21 +955,21 @@ if __name__ == '__main__':
     # evaluate_POS_ID_lexical(target)
     # methods = ['pmi','un_pmi']
     # methods = ['ppmi']
-    methods = ['un_ppmi','freq','un_freq']
-    # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi']
+    # methods = ['un_mi']
+    # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
-    # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
-    for method in methods:
-        batchEval(method, 1, n)
+    methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
+    # for method in methods:
+    #     batchEval(method, 1, n)
         # batchEval_lexical(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
     #     choose_gamma(source, target, method,gammas,n)
     # params = [1]
-    # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
-    # params += [10e-3,10e-4,10e-5,10e-6]
-    # params.sort()
+    params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
+    params += [10e-3,10e-4,10e-5,10e-6]
+    params.sort()
     # params = [1,50,100,1000,10000]
     # params = [0,1,50,100,1000,10000]
-    # for method in methods:
-    #     choose_param(method,params,1,n)
+    for method in methods:
+        choose_param(method,params,1,n)
