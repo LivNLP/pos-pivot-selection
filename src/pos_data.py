@@ -568,23 +568,23 @@ if __name__ == "__main__":
     # for domain in domains:
     #     collect_labeled(domain)
     # target domain unlabeled datasets
-    # domains = ["answers"]
-    # domains += ["reviews","newsgroups","weblogs","emails"]
+    domains = ["answers"]
+    domains += ["reviews","newsgroups","weblogs","emails"]
     # domain = "answers"
     # for domain in domains:
     #     collect_unlabeled(domain)
     # collect_unlabeled_wsj()
     source = 'wsj'
-    compute_dist(source)
+    # compute_dist(source)
     # for target in domains:
     #     presets_labeled(source,target)
         # presets_unlabeled(source,target)
     # print_test()
     # source is just wsj enough, copy to all
     # presets_labeled(source,'answers')
-    # for target in domains:
+    for target in domains:
     #     select_pivots_freq_unlabeled(source,target)
-    #     select_pivots_mi_unlabeled(source,target)
+        select_pivots_mi_unlabeled(source,target)
     #     select_pivots_pmi_unlabeled(source,target)
     #     select_pivots_ppmi_unlabeled(source,target)
     #     sum_up_labeled_scores(source,target)

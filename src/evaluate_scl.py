@@ -924,9 +924,9 @@ def choose_param(method,params,gamma,n):
     for param in params:
         test_method = 'test_%s_%f'% (method,param)
         for target in domains:
-            learnProjection(source, target, test_method, n)
-            # evaluation = evaluate_POS(source, target, True, gamma, test_method, n)
-            evaluation = evaluate_POS_lexical(source, target, True, gamma, test_method, n)
+            # learnProjection(source, target, test_method, n)
+            evaluation = evaluate_POS(source, target, True, gamma, test_method, n)
+            # evaluation = evaluate_POS_lexical(source, target, True, gamma, test_method, n)
             resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, method , evaluation[0], evaluation[1][0],evaluation[1][1],param))
             resFile.flush()
     resFile.close()
