@@ -932,12 +932,34 @@ def choose_param(method,params,gamma,n):
     resFile.close()
     pass
 
+
+# for one domain pair, for each pivot selection method,
+# evaluate explicit, implicit and explicit+implicit
+def batchEval_one_domain_pair(source,target,method,gamma,n):
+    resFile = open('../work/a_sim/SCL%s-%s.%s.csv'% (source,target, method), 'w')
+    resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots\n')
+    # learnProjection(source, target, method, n)
+    evaluation = evaluate_POS_lexical(source, target, True, gamma, method, n)
+    resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'implicit' , evaluation[0], evaluation[1][0],evaluation[1][1],param))
+    resFile.flush()
+    evaluation = evaluate_POS_NA(source, target)
+    resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'explicit' , evaluation[0], evaluation[1][0],evaluation[1][1],param))
+    resFile.flush()
+    evaluation = evaluate_POS(source, target, True, gamma, method, n)
+    resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'combined' , evaluation[0], evaluation[1][0],evaluation[1][1],param))
+    resFile.flush()
+    resFile.close()
+
+    pass
+
+
 if __name__ == '__main__':
-    # source = 'wsj'
-    # target = 'answers'
+    source = 'wsj'
+    target = 'answers'
     # target = 'reviews'
-    # method = 'mi'
+    method = 'freq'
     n = 500
+    batchEval_one_domain_pair(source,target,method,1,n)
     # batchEval(method, 1, n)
     # batchEval_NA()
     # learnProjection(source, target, method, n)
@@ -958,7 +980,7 @@ if __name__ == '__main__':
     # methods = ['un_mi']
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
-    methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
+    # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
     # for method in methods:
     #     batchEval(method, 1, n)
         # batchEval_lexical(method, 1, n)
@@ -966,10 +988,10 @@ if __name__ == '__main__':
     # for method in methods:
     #     choose_gamma(source, target, method,gammas,n)
     # params = [1]
-    params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
-    params += [10e-3,10e-4,10e-5,10e-6]
-    params.sort()
+    # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
+    # params += [10e-3,10e-4,10e-5,10e-6]
+    # params.sort()
     # params = [1,50,100,1000,10000]
     # params = [0,1,50,100,1000,10000]
-    for method in methods:
-        choose_param(method,params,1,n)
+    # for method in methods:
+    #     choose_param(method,params,1,n)
