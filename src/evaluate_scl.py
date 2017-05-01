@@ -524,7 +524,7 @@ def evaluate_POS_NA(source,target):
                 featFile.write('\n')
     featFile.close()
     # Train using classias.
-    modelFileName = '../work/%s/%s-%s/model.NA' % (source, target)
+    modelFileName = '../work/%s-%s/model.NA' % (source, target)
     print 'Training...'
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
