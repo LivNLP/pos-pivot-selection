@@ -957,9 +957,10 @@ if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # target = 'reviews'
-    method = 'freq'
+    # method = 'freq'
+    # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
-    batchEval_one_domain_pair(source,target,method,1,n)
+    
     # batchEval(method, 1, n)
     # batchEval_NA()
     # learnProjection(source, target, method, n)
@@ -981,8 +982,10 @@ if __name__ == '__main__':
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
-    # for method in methods:
+    methods = ['mi','un_mi','pmi','un_pmi','un_freq','mi','un_mi','ppmi','un_ppmi']
+    for method in methods:
     #     batchEval(method, 1, n)
+        batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
     # gammas = [1,5,10,20,50,100]
     # for method in methods:
