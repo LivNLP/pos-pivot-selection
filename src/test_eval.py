@@ -78,10 +78,10 @@ def evaluate_table(source,target,pv_method,train_model):
     # test the trained model to generate output: predict_labels
     model_file = '../work/%s/%s-%s/model.SCL' % (pv_method,source,target)
     test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
-    if train_model == "explicit":
+    if train_model == "implicit":
         model_file = '../work/%s-%s/model.NA' % (source, target)
         test_file = '../work/%s-%s/testVects.NA' % (source, target)
-    if train_model == "implicit":
+    if train_model == "explicit":
         model_file = '../work/%s/%s-%s/model_lexical.SCL' % (pv_method,source,target)
         test_file = '../work/%s/%s-%s/testVects_lexical.SCL' % (pv_method,source,target)
     testLBFGS(test_file,model_file)
