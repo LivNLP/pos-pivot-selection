@@ -67,6 +67,9 @@ def create_table(result_list):
     table.append(['avg']+avg_list)
     
     print tabulate(table,headers,floatfmt=".4f")
+    # f = open("table","w")
+    # f.write(tabulate(table,headers,floatfmt=".4f"))
+    # f.close()
     pass
 
 def evaluate_table(source,target,pv_method,train_model):
