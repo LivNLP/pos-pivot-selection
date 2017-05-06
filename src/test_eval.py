@@ -65,7 +65,7 @@ def create_table(result_list):
         tmp = [x[i] for x in result_list]
         # print numpy.mean(tmp)
         avg_list.append(numpy.mean(tmp))
-    table.append(['avg']+avg_list)
+    table.append(['AVG']+avg_list)
     
     tab = tabulate(table,headers,floatfmt=".4f")
     print tab
