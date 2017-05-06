@@ -1,5 +1,5 @@
 import numpy
-# import pos_data
+import pos_data
 # import classify_pos
 import re
 import sys, math, subprocess, time
@@ -13,7 +13,7 @@ def read_labels(fname):
     return labels
 
 # compare the labels between predicted from trained model and test data
-def compare_labels(predict_labels,target_labels):
+def compare_labels(predict_labels,target_labels,old_tag_list):
     tag_list = set(predict_labels)&set(target_labels)
     result_list = []
     for pos_tag in tag_list:
@@ -39,7 +39,8 @@ def compare_labels(predict_labels,target_labels):
         r = recall(tp,fn)
         f1 = f1_score(p,r)
         acc = accuracy(tp,tn,fp,fn)
-        result_list.append([pos_tag,p,r,f1,acc])
+        new_tag=number_to_tag(int(pos_tag),old_tag_list) 
+        result_list.append([new_tag,p,r,f1,acc])
     return result_list
 
 def precision(tp,fp):
@@ -66,11 +67,9 @@ def create_table(result_list):
         avg_list.append(numpy.mean(tmp))
     table.append(['avg']+avg_list)
     
-    print tabulate(table,headers,floatfmt=".4f")
-    # f = open("table","w")
-    # f.write(tabulate(table,headers,floatfmt=".4f"))
-    # f.close()
-    pass
+    tab = tabulate(table,headers,floatfmt=".4f")
+    print tab
+    return tab
 
 def evaluate_table(source,target,pv_method,train_model):
     print "source = ", source
@@ -93,8 +92,13 @@ def evaluate_table(source,target,pv_method,train_model):
     target_labels = read_labels(test_file)
     # print predict_labels
     # print target_labels
-    create_table(compare_labels(predict_labels,target_labels))
-
+    # tag_list = pos_data.load_obj(source,target,"tag_list")
+    tag_list = generate_tag_list(source,target)
+    print tag_list
+    tab = create_table(compare_labels(predict_labels,target_labels,tag_list))
+    f = open("%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
+    f.write(tab)
+    f.close()
     pass
 
 def testLBFGS(test_file, model_file):
@@ -102,6 +106,17 @@ def testLBFGS(test_file, model_file):
     retcode = subprocess.check_output('~/liblinear-multicore-2.11-1/predict %s %s %s' %\
         (test_file,model_file,output), shell=True)
     return retcode
+
+
+def number_to_tag(number,tag_list):
+    return tag_list[number-1] if number-1 <= len(tag_list) else -1
+
+def generate_tag_list(source,target):
+    train_sentences = pos_data.load_preprocess_obj('%s-labeled'%source)
+    test_sentences = pos_data.load_preprocess_obj('%s-test'%target)
+    tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
+    # pos_data.save_obj(source,target,tag_list,"tag_list")
+    return tag_list
 
 
 if __name__ == '__main__':
