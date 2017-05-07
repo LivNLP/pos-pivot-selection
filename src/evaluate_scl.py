@@ -938,7 +938,7 @@ def choose_param(method,params,gamma,n):
 def batchEval_one_domain_pair(source,target,method,gamma,n):
     resFile = open('../work/a_sim/SCL%s-%s.%s.csv'% (source,target, method), 'w')
     resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots\n')
-    learnProjection(source, target, method, n)
+    # learnProjection(source, target, method, n)
     evaluation = evaluate_POS_lexical(source, target, True, gamma, method, n)
     resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'explicit' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
     resFile.flush()
@@ -954,8 +954,8 @@ def batchEval_one_domain_pair(source,target,method,gamma,n):
 
 if __name__ == '__main__':
     source = 'wsj'
-    # target = 'answers'
-    target = 'reviews'
+    target = 'answers'
+    # target = 'reviews'
     # method = 'freq'
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
@@ -977,11 +977,11 @@ if __name__ == '__main__':
     # evaluate_POS_ID_lexical(target)
     # methods = ['pmi','un_pmi']
     # methods = ['ppmi']
-    methods = ['un_mi']
+    # methods = ['un_mi']
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
-    # methods = ['pmi','un_pmi','ppmi','un_ppmi']
+    methods = ['pmi','un_pmi','ppmi','un_ppmi']
     for method in methods:
     #     batchEval(method, 1, n)
         batchEval_one_domain_pair(source,target,method,1,n)
