@@ -13,7 +13,7 @@ def read_labels(fname):
     return labels
 
 # compare the labels between predicted from trained model and test data
-def compare_labels(predict_labels,target_labels,old_tag_list):
+def compare_labels(predict_labels,target_labels,old_tag_list,tag_dist):
     tag_list = set(predict_labels)&set(target_labels)
     result_list = []
     for pos_tag in tag_list:
@@ -21,6 +21,7 @@ def compare_labels(predict_labels,target_labels,old_tag_list):
         tn=0
         fp=0
         fn=0
+        dist = dict(tag_dist).get(pos_tag,0)
         for i,predict_label in enumerate(predict_labels):
             target_label = target_labels[i]
             # true positive
@@ -40,7 +41,7 @@ def compare_labels(predict_labels,target_labels,old_tag_list):
         f1 = f1_score(p,r)
         acc = accuracy(tp,tn,fp,fn)
         new_tag=number_to_tag(int(pos_tag),old_tag_list) 
-        result_list.append([new_tag,p,r,f1,acc])
+        result_list.append([new_tag,dist,p,r,f1,acc])
     return result_list
 
 def precision(tp,fp):
@@ -57,7 +58,7 @@ def accuracy(tp,tn,fp,fn):
 
 def create_table(result_list):
     table = result_list
-    headers = ["pos_tag","Precision","Recall","F1 Score","Accuracy"]
+    headers = ["POS_tag","Distribution","Precision","Recall","F1 Score","Accuracy"]
     # print result_list
     # add the avg as last line
     avg_list = []
@@ -91,8 +92,9 @@ def evaluate_table(source,target,pv_method,train_model):
     predict_labels = read_labels(output)
     target_labels = read_labels(test_file)
     tag_list = generate_tag_list(source,target)
-    print tag_list
-    tab = create_table(compare_labels(predict_labels,target_labels,tag_list))
+    # print tag_list
+    tag_dist = pos_data.compute_dist(source)
+    tab = create_table(compare_labels(predict_labels,target_labels,tag_list,tag_dist))
     f = open("%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
     f.write(tab)
     f.close()

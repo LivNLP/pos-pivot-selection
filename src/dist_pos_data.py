@@ -1,4 +1,7 @@
 import pos_data
+import os
+import pickle
+
 
 # add distribution when sum up the scores
 def sum_up_dist_labeled_scores(source,target):
