@@ -104,7 +104,7 @@ def compute_dist(source):
             # print x,v
         f.write('%s %f\n'%(x,v))
     f.close()
-    pass
+    return L
 
 # different from SA, for each pos_tag, the source labeled data is divided into
 # sentences HAVE pos_tag and NOT pos_tag, so this is a single method for a single pos_tag

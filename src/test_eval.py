@@ -90,9 +90,6 @@ def evaluate_table(source,target,pv_method,train_model):
     output = '../work/output_eval'
     predict_labels = read_labels(output)
     target_labels = read_labels(test_file)
-    # print predict_labels
-    # print target_labels
-    # tag_list = pos_data.load_obj(source,target,"tag_list")
     tag_list = generate_tag_list(source,target)
     print tag_list
     tab = create_table(compare_labels(predict_labels,target_labels,tag_list))
