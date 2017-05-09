@@ -21,7 +21,6 @@ def compare_labels(predict_labels,target_labels,old_tag_list,tag_dist):
         tn=0
         fp=0
         fn=0
-        dist = dict(tag_dist).get(pos_tag,0)
         for i,predict_label in enumerate(predict_labels):
             target_label = target_labels[i]
             # true positive
@@ -41,6 +40,7 @@ def compare_labels(predict_labels,target_labels,old_tag_list,tag_dist):
         f1 = f1_score(p,r)
         acc = accuracy(tp,tn,fp,fn)
         new_tag=number_to_tag(int(pos_tag),old_tag_list) 
+        dist = dict(tag_dist).get(new_tag,0)
         result_list.append([new_tag,dist,p,r,f1,acc])
     return result_list
 
@@ -56,8 +56,12 @@ def f1_score(precision,recall):
 def accuracy(tp,tn,fp,fn):
     return float(tp+tn)/float(tp+tn+fp+fn)
 
-def create_table(result_list):
-    table = result_list
+def sort_results(index,result_list):
+    # return result_list.sort(lambda x,y: -1 if x[index] > y[index] else 1)
+    return sorted(result_list,key=lambda x: x[index],reverse = True)
+
+def create_table(index,result_list):
+    table = sort_results(index,result_list)
     headers = ["POS_tag","Distribution","Precision","Recall","F1 Score","Accuracy"]
     # print result_list
     # add the avg as last line
@@ -72,7 +76,7 @@ def create_table(result_list):
     print tab
     return tab
 
-def evaluate_table(source,target,pv_method,train_model):
+def evaluate_table(source,target,pv_method,train_model,index):
     print "source = ", source
     print "target = ", target
     print "pv_method: ", pv_method
@@ -94,7 +98,7 @@ def evaluate_table(source,target,pv_method,train_model):
     tag_list = generate_tag_list(source,target)
     # print tag_list
     tag_dist = pos_data.compute_dist(source)
-    tab = create_table(compare_labels(predict_labels,target_labels,tag_list,tag_dist))
+    tab = create_table(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
     f = open("%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
     f.write(tab)
     f.close()
@@ -117,10 +121,17 @@ def generate_tag_list(source,target):
     # pos_data.save_obj(source,target,tag_list,"tag_list")
     return tag_list
 
+# test methods
+def test():
+    result_list = [['a',3,2,1],['b',1,2,2],['c',2,3,1]]
+    print sort_results(1,result_list)
+    pass
 
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     pv_method = 'freq'
     train_model = 'combined'
-    evaluate_table(source,target,pv_method,train_model)
+    index = 1
+    evaluate_table(source,target,pv_method,train_model,index)
+    # test()
