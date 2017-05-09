@@ -12,7 +12,7 @@ def sum_up_dist_labeled_scores(source,target):
     ppmi_dict={}
     for pos_tag in tags:
         print "TAG = %s"% pos_tag
-        dist = tag_dist[pos_tag]
+        dist = dict(tag_dist).get(pos_tag,0)
         print "dist = %f" % dist
         # print "FREQ-L"
         tmp = pos_data.select_pivots_freq_labeled_tag(source,target,pos_tag)
@@ -48,7 +48,8 @@ def sum_up_dist_labeled_scores(source,target):
 
 
 def multiply_dist(L,dist):
-    return [(x,dist*v) for (x,v) in L]
+    # print L
+    return dict([(x,dist*v) for (x,v) in L.iteritems()])
 
 # save and load dist obj
 def save_dist_obj(source,target,obj,name):
