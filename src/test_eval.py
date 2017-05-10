@@ -14,7 +14,7 @@ def read_labels(fname):
 
 # compare the labels between predicted from trained model and test data
 def compare_labels(predict_labels,target_labels,old_tag_list,tag_dist):
-    tag_list = set(predict_labels)&set(target_labels)
+    tag_list = set(predict_labels)|set(target_labels)
     result_list = []
     for pos_tag in tag_list:
         tp=0
