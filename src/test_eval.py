@@ -39,22 +39,30 @@ def compare_labels(predict_labels,target_labels,old_tag_list,tag_dist):
         r = recall(tp,fn)
         f1 = f1_score(p,r)
         acc = accuracy(tp,tn,fp,fn)
+        auc = area_under_curve(r,inverse_recall(tn,fp))
         new_tag=number_to_tag(int(pos_tag),old_tag_list) 
         dist = dict(tag_dist).get(new_tag,0)
-        result_list.append([new_tag,dist,p,r,f1,acc])
+        result_list.append([new_tag,dist,p,r,f1,acc,auc])
     return result_list
 
 def precision(tp,fp):
-    return float(tp)/(float)(tp+fp) if tp+fp != 0 else 0
+    return float(tp)/float(tp+fp) if tp+fp != 0 else 0
 
 def recall(tp,fn):
-    return float(tp)/(float)(tp+fn) if tp+fn != 0 else 0
+    return float(tp)/float(tp+fn) if tp+fn != 0 else 0
+
+def inverse_recall(tn,fp):
+    return float(tn)/float(tn+fp) if tn+fp != 0 else 0
 
 def f1_score(precision,recall):
-    return float(2*(precision*recall))/(float)(precision+recall) if precision+recall != 0 else 0
+    return float(2.0*(precision*recall))/(float)(precision+recall) if precision+recall != 0 else 0
 
 def accuracy(tp,tn,fp,fn):
     return float(tp+tn)/float(tp+tn+fp+fn)
+
+def area_under_curve(recall,inverse_recall):
+    # Recall = TPR, Inverse Recall = TNR 
+    return float(recall+inverse_recall)/2.0
 
 def sort_results(index,result_list):
     # return result_list.sort(lambda x,y: -1 if x[index] > y[index] else 1)
@@ -62,7 +70,7 @@ def sort_results(index,result_list):
 
 def create_table(index,result_list):
     table = sort_results(index,result_list)
-    headers = ["POS_tag","Distribution","Precision","Recall","F1 Score","Accuracy"]
+    headers = ["POS_tag","Distribution","Precision","Recall","F1 Score","Accuracy","AUC"]
     # print result_list
     # add the avg as last line
     avg_list = []
@@ -130,8 +138,8 @@ def test():
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
-    # pv_method = 'freq'
-    pv_method = 'un_freq'
+    pv_method = 'freq'
+    # pv_method = 'un_freq'
     # train_model = 'implicit'
     train_models = ['implicit','explicit','combined']
     # train_model = 'explicit'
