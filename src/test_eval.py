@@ -27,13 +27,13 @@ def compare_labels(predict_labels,target_labels,old_tag_list,tag_dist):
             if predict_label == pos_tag and target_label == pos_tag:
                 tp+=1
             # true negative
-            if predict_label != pos_tag and target_label != pos_tag:
+            elif predict_label != pos_tag and target_label != pos_tag:
                 tn+=1
             # false positive
-            if predict_label == pos_tag and target_label != pos_tag:
+            elif predict_label == pos_tag and target_label != pos_tag:
                 fp+=1
             # false negative
-            if predict_label != pos_tag and target_label == pos_tag:
+            elif predict_label != pos_tag and target_label == pos_tag:
                 fn+=1
         p = precision(tp,fp)
         r = recall(tp,fn)
@@ -99,7 +99,7 @@ def evaluate_table(source,target,pv_method,train_model,index):
     # print tag_list
     tag_dist = pos_data.compute_dist(source)
     tab = create_table(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
-    f = open("%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
+    f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
     f.write(tab)
     f.close()
     pass
@@ -130,8 +130,13 @@ def test():
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
-    pv_method = 'freq'
-    train_model = 'combined'
+    # pv_method = 'freq'
+    pv_method = 'un_freq'
+    # train_model = 'implicit'
+    train_models = ['implicit','explicit','combined']
+    # train_model = 'explicit'
+    # train_model = 'combined'
     index = 1
-    evaluate_table(source,target,pv_method,train_model,index)
+    for train_model in train_models:
+        evaluate_table(source,target,pv_method,train_model,index)
     # test()
