@@ -4,6 +4,7 @@ import pos_data
 import re
 import sys, math, subprocess, time
 from tabulate import tabulate
+import roc_curve
 # from decimal import *
 
 # return a list of all the labels from a output file or test file
@@ -38,21 +39,28 @@ def compare_labels(predict_labels,target_labels,old_tag_list,tag_dist):
         p = precision(tp,fp)
         r = recall(tp,fn)
         f1 = f1_score(p,r)
-        acc = accuracy(tp,tn,fp,fn)
+        #acc = accuracy(tp,tn,fp,fn)
+        fpr = fallout(tn,fp)
         auc = area_under_curve(r,inverse_recall(tn,fp))
         new_tag=number_to_tag(int(pos_tag),old_tag_list) 
         dist = dict(tag_dist).get(new_tag,0)
-        result_list.append([new_tag,dist,p,r,f1,acc,auc])
+        result_list.append([new_tag,dist,p,r,fpr,f1,auc])
     return result_list
 
 def precision(tp,fp):
     return float(tp)/float(tp+fp) if tp+fp != 0 else 0
 
+# tpr
 def recall(tp,fn):
     return float(tp)/float(tp+fn) if tp+fn != 0 else 0
 
+# tnr
 def inverse_recall(tn,fp):
     return float(tn)/float(tn+fp) if tn+fp != 0 else 0
+
+# fpr
+def fallout(tn,fp):
+    return float(fp)/float(tn+fp) if tn+fp != 0 else 0
 
 def f1_score(precision,recall):
     return float(2.0*(precision*recall))/(float)(precision+recall) if precision+recall != 0 else 0
@@ -70,7 +78,7 @@ def sort_results(index,result_list):
 
 def create_table(index,result_list):
     table = sort_results(index,result_list)
-    headers = ["POS_tag","Distribution","Precision","Recall","F1 Score","Accuracy","AUC"]
+    headers = ["POS_tag","Distribution","Precision","Recall","Fallout","F1 Score","AUC"]
     # print result_list
     # add the avg as last line
     avg_list = []
@@ -129,6 +137,18 @@ def generate_tag_list(source,target):
     # pos_data.save_obj(source,target,tag_list,"tag_list")
     return tag_list
 
+# draw methods
+def draw_roc(result_list):
+    # get list of tpr and fpr from the result_list
+
+    pass
+
+def draw_auc(result_list):
+    # get distribution and auc from the result_list
+    
+    pass
+
+
 # test methods
 def test():
     result_list = [['a',3,2,1],['b',1,2,2],['c',2,3,1]]
@@ -138,8 +158,8 @@ def test():
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
-    pv_method = 'freq'
-    # pv_method = 'un_freq'
+    # pv_method = 'freq'
+    pv_method = 'un_freq'
     # train_model = 'implicit'
     train_models = ['implicit','explicit','combined']
     # train_model = 'explicit'
