@@ -363,7 +363,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
     featFile.close()
     # Train using classias.
     print 'Training...'
-    modelFileName = '../work/%s/%s-%s/model.SCL' % (method, source, target)
+    modelFileName = '../work/%s/%s-%s/model.SCL.%f' % (method, source, target,gamma)
     trainMultiLBFGS(trainFileName, modelFileName)
     # Test using classias.
     print 'Testing...'
@@ -905,15 +905,16 @@ def batchEval_lexical(method, gamma, n):
     resFile.close()
     pass
 
-# def choose_gamma(source, target, method, gammas, n):
-#     resFile = open('../work/gamma/%s-%s/SCLgamma.%s.csv'% (source, target, method), 'w')
-#     resFile.write('Source, Target, Method, Proj, Gamma\n')
-#     learnProjection(source, target, method, n)
-#     for gamma in gammas:    
-#         resFile.write('%s, %s, %s, %f, %f\n' % (source, target, method, evaluate_POS(source, target, True, gamma, method, n), gamma))
-#         resFile.flush()
-#     resFile.close()
-#     pass
+def choose_gamma_one_domain_pair(source,target,method,gammas,n):
+    resFile = open('../work/a_sim/SCLgamma%s-%s.%s.csv'% (source, target, method), 'w')
+    resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots, gamma\n')
+    learnProjection(source, target, method, n)
+    for gamma in gammas:    
+        evaluation = evaluate_POS(source, target, True, gamma, method, n)
+        resFile.write('%s, %s, %s, %f, %f, %f, %f,%f\n' % (source, target, 'combined' , evaluation[0], evaluation[1][0],evaluation[1][1],n,gamma))
+        resFile.flush()
+    resFile.close()
+    pass
 
 def choose_param(method,params,gamma,n):
     resFile = open('../work/sim/SCLparams.%s.csv'% method, 'w')
@@ -956,7 +957,7 @@ if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # target = 'reviews'
-    # method = 'freq'
+    method = 'freq'
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
     
@@ -981,14 +982,14 @@ if __name__ == '__main__':
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
-    methods = ['pmi','un_pmi','ppmi','un_ppmi']
-    for method in methods:
-    #     batchEval(method, 1, n)
-        batchEval_one_domain_pair(source,target,method,1,n)
-        # batchEval_lexical(method, 1, n)
-    # gammas = [1,5,10,20,50,100]
+    # methods = ['pmi','un_pmi','ppmi','un_ppmi']
     # for method in methods:
-    #     choose_gamma(source, target, method,gammas,n)
+    #     batchEval(method, 1, n)
+        # batchEval_one_domain_pair(source,target,method,1,n)
+        # batchEval_lexical(method, 1, n)
+    gammas = [0.01,0.1,1,10,100]
+    # for method in methods:
+    choose_gamma_one_domain_pair(source, target, method,gammas,n)
     # params = [1]
     # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
     # params += [10e-3,10e-4,10e-5,10e-6]
