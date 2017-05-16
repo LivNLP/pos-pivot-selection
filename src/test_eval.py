@@ -76,14 +76,14 @@ def sort_results(index,result_list):
     # return result_list.sort(lambda x,y: -1 if x[index] > y[index] else 1)
     return sorted(result_list,key=lambda x: x[index],reverse = True)
 
-def create_table(index,result_list):
-    table = sort_results(index,result_list)
+def create_table(table):
+    # table = sort_results(index,result_list)
     headers = ["POS_tag","Distribution","Precision","Recall","Fallout","F1 Score","AUC"]
     # print result_list
     # add the avg as last line
     avg_list = []
     for i in range(1,len(headers)):
-        tmp = [x[i] for x in result_list]
+        tmp = [x[i] for x in table]
         # print numpy.mean(tmp)
         avg_list.append(numpy.mean(tmp))
     table.append(['AVG']+avg_list)
@@ -92,11 +92,19 @@ def create_table(index,result_list):
     print tab
     return tab
 
+"""
+input: 
+source_domain, target_domain, 
+pivot_selection_method, train_model, 
+order_by_index: 1-distribution,
+gamma: mixing parameter for SCL pivot predictors.
+"""
 def evaluate_table(source,target,pv_method,train_model,index):
     print "source = ", source
     print "target = ", target
     print "pv_method: ", pv_method
     print "model: ", train_model
+    print
 
     # test the trained model to generate output: predict_labels
     model_file = '../work/%s/%s-%s/model.SCL' % (pv_method,source,target)
@@ -114,11 +122,18 @@ def evaluate_table(source,target,pv_method,train_model,index):
     tag_list = generate_tag_list(source,target)
     # print tag_list
     tag_dist = pos_data.compute_dist(source)
-    tab = create_table(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
-    f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
-    f.write(tab)
-    f.close()
+    res_list = sort_results(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
+    tab = create_table(res_list)
+    # draw_roc(res_list)
+    draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model)
+    for i in range(2,7):
+        draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model)
+    # draw(res_list[:len(tag_list)],6,source,target,pv_method,train_model)
+    # f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
+    # f.write(tab)
+    # f.close()
     pass
+
 
 def testLBFGS(test_file, model_file):
     output = '../work/output_eval'
@@ -140,22 +155,41 @@ def generate_tag_list(source,target):
 # draw methods
 def draw_roc(result_list):
     # get list of tpr and fpr from the result_list
-
+    tpr = [x[3] for x in result_list]
+    fpr = [x[4] for x in result_list]
+    auc = [x[6] for x in result_list]
+    roc_curve.draw_roc(tpr,fpr,auc)
+    # roc_curve.compute_roc_and_auc(tpr,fpr)
     pass
 
-def draw_auc(result_list):
-    # get distribution and auc from the result_list
-    
+# 1- dist, 2-p, 3-r(tpr), 4-fo(fpr), 5-f1, 6-auc
+def draw(result_list,index,source,target,pv_method,train_model):
+    # get distribution and values from the result_list
+    # dist = [x[1] for x in result_list]
+    tags = [x[0] for x in result_list]
+    y_scores = [x[index] for x in result_list]
+    y_labels = ["POS_tag","Distribution","Precision","Recall","Fallout","F1 Score","AUC"]
+    y_label = y_labels[index]
+    roc_curve.draw(tags,y_scores,y_label,source,target,pv_method,train_model)
     pass
 
-
+def draw_prf(result_list,source,target,pv_method,train_model):
+    tags = [x[0] for x in result_list]
+    p = [x[2] for x in result_list]
+    r = [x[3] for x in result_list]
+    f1= [x[5] for x in result_list]
+    ys=[p,r,f1]
+    y = ["POS_tag","Distribution","Precision","Recall","Fallout","F1 Score","AUC"]
+    y_labels=[y[2],y[3],y[5]]
+    roc_curve.draw_prf(tags,ys,y_labels,source,target,pv_method,train_model)
+    pass
 # test methods
 def test():
     result_list = [['a',3,2,1],['b',1,2,2],['c',2,3,1]]
     print sort_results(1,result_list)
     pass
 
-if __name__ == '__main__':
+def print_results():
     source = 'wsj'
     target = 'answers'
     # pv_method = 'freq'
@@ -167,4 +201,12 @@ if __name__ == '__main__':
     index = 1
     for train_model in train_models:
         evaluate_table(source,target,pv_method,train_model,index)
+    pass
+
+def draw_results():
+
+    pass
+
+if __name__ == '__main__':
+    print_results()
     # test()
