@@ -1,3 +1,7 @@
+"""
+Only apply to pivot selection methods using labelled datasets:
+FREQ_L, MI_L, PMI_L, PPMI_L
+"""
 import pos_data
 import os
 import pickle

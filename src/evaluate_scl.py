@@ -4,7 +4,8 @@ Implementation of SCL following steps after pivot selection
 Used for evaluation of pivot selection methods
 -----------
 
-Change log: make some changes to do a multilabel classification
+Change log: made some changes to do a multilabel classification
+for Cross-domain POS tagging, and evaluation on selection of training features
 '''
 
 import numpy as np
@@ -769,39 +770,6 @@ def evaluate_POS_pivots(source,target,method,n):
 
 
 
-def test_results(source,target,method):
-    trainFileName = '../work/%s-%s/trainVects.%s' % (source, target,method)
-    testFileName = '../work/%s-%s/testVects.%s' % (source, target,method)
-    modelFileName = '../work/%s-%s/model.%s' % (source, target,method)
-    if 'NA' not in method:
-        trainFileName = '../work/%s/%s-%s/trainVects.SCL' % (method,source, target)
-        testFileName = '../work/%s/%s-%s/testVects.SCL' % (method,source, target)
-        modelFileName = '../work/%s/%s-%s/model.SCL' % (method,source, target)
-    # print 'Training...'
-    # trainMultiLBFGS(trainFileName, modelFileName)
-    print 'Testing...'
-    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
-    intervals = clopper_pearson(correct,total)
-    print 'Accuracy =', acc
-    print 'Intervals=', intervals
-    print '###########################################\n\n'
-    return acc,intervals
-    pass
-
-def test_ID(source):
-    trainFileName = '../work/%s/trainVects.ID' % (source)
-    testFileName = '../work/%s/testVects.ID' % (source)
-    modelFileName = '../work/%s/model.ID' % (source)
-    # print 'Training...'
-    # trainMultiLBFGS(trainFileName, modelFileName)
-    print 'Testing...'
-    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
-    intervals = clopper_pearson(correct,total)
-    print 'Accuracy =', acc
-    print 'Intervals=', intervals
-    print '###########################################\n\n'
-    return acc,intervals
-    pass
 
 def batchEval_ID():
     '''
@@ -953,11 +921,70 @@ def batchEval_one_domain_pair(source,target,method,gamma,n):
     pass
 
 
+
+
+### test methods ###
+def test_results(source,target,method):
+    trainFileName = '../work/%s-%s/trainVects.%s' % (source, target,method)
+    testFileName = '../work/%s-%s/testVects.%s' % (source, target,method)
+    modelFileName = '../work/%s-%s/model.%s' % (source, target,method)
+    if 'NA' not in method:
+        trainFileName = '../work/%s/%s-%s/trainVects.SCL' % (method,source, target)
+        testFileName = '../work/%s/%s-%s/testVects.SCL' % (method,source, target)
+        modelFileName = '../work/%s/%s-%s/model.SCL' % (method,source, target)
+    # print 'Training...'
+    # trainMultiLBFGS(trainFileName, modelFileName)
+    print 'Testing...'
+    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
+    intervals = clopper_pearson(correct,total)
+    print 'Accuracy =', acc
+    print 'Intervals=', intervals
+    print '###########################################\n\n'
+    return acc,intervals
+    pass
+
+def test_ID(source):
+    trainFileName = '../work/%s/trainVects.ID' % (source)
+    testFileName = '../work/%s/testVects.ID' % (source)
+    modelFileName = '../work/%s/model.ID' % (source)
+    # print 'Training...'
+    # trainMultiLBFGS(trainFileName, modelFileName)
+    print 'Testing...'
+    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
+    intervals = clopper_pearson(correct,total)
+    print 'Accuracy =', acc
+    print 'Intervals=', intervals
+    print '###########################################\n\n'
+    return acc,intervals
+    pass
+
+# evaluation on balanced score function, basically modify the directory
+def dist_evaluate_one_domain_pair(source,target,method,gamma,n):
+    # create dir to store scores for different settings
+    dist_method = "dist/"+method
+    # others remain the same
+    resFile = open('../work/dist_sim/SCLdist%s-%s.%s.csv'% (source,target,method), 'w')
+    resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots\n')
+    learnProjection(source, target, dist_method, n)
+    evaluation = evaluate_POS_lexical(source, target, True, gamma, dist_method, n)
+    resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'explicit' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
+    resFile.flush()
+    evaluation = evaluate_POS_NA(source, target)
+    resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'implicit' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
+    resFile.flush()
+    evaluation = evaluate_POS(source, target, True, gamma, dist_method, n)
+    resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'combined' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
+    resFile.flush()
+    resFile.close()
+    pass
+
+
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # target = 'reviews'
-    method = 'un_freq'
+    method = 'freq'
+    # method = 'un_freq'
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
     
@@ -987,9 +1014,10 @@ if __name__ == '__main__':
     #     batchEval(method, 1, n)
         # batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
-    gammas = [0.01,0.1,1,10,100]
+    dist_evaluate_one_domain_pair(source,target,method,1,n)
+    # gammas = [0.01,0.1,1,10,100]
     # for method in methods:
-    choose_gamma_one_domain_pair(source, target, method,gammas,n)
+    # choose_gamma_one_domain_pair(source, target, method,gammas,n)
     # params = [1]
     # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
     # params += [10e-3,10e-4,10e-5,10e-6]
