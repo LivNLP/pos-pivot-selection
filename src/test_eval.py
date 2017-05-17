@@ -99,7 +99,7 @@ pivot_selection_method, train_model,
 order_by_index: 1-distribution,
 gamma: mixing parameter for SCL pivot predictors.
 """
-def evaluate_table(source,target,pv_method,train_model,index):
+def evaluate_table(source,target,pv_method,train_model,index,gamma):
     print "source = ", source
     print "target = ", target
     print "pv_method: ", pv_method
@@ -107,11 +107,14 @@ def evaluate_table(source,target,pv_method,train_model,index):
     print
 
     # test the trained model to generate output: predict_labels
-    model_file = '../work/%s/%s-%s/model.SCL' % (pv_method,source,target)
+    # combine
+    model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
     test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
+    # implicit: word embeddings
     if train_model == "implicit":
         model_file = '../work/%s-%s/model.NA' % (source, target)
         test_file = '../work/%s-%s/testVects.NA' % (source, target)
+    # explicit: SCL pivot predictors
     if train_model == "explicit":
         model_file = '../work/%s/%s-%s/model_lexical.SCL' % (pv_method,source,target)
         test_file = '../work/%s/%s-%s/testVects_lexical.SCL' % (pv_method,source,target)
@@ -125,9 +128,9 @@ def evaluate_table(source,target,pv_method,train_model,index):
     res_list = sort_results(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
     tab = create_table(res_list)
     # draw_roc(res_list)
-    draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model)
+    draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
     for i in range(2,7):
-        draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model)
+        draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model,gamma)
     # draw(res_list[:len(tag_list)],6,source,target,pv_method,train_model)
     # f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
     # f.write(tab)
@@ -163,17 +166,17 @@ def draw_roc(result_list):
     pass
 
 # 1- dist, 2-p, 3-r(tpr), 4-fo(fpr), 5-f1, 6-auc
-def draw(result_list,index,source,target,pv_method,train_model):
+def draw(result_list,index,source,target,pv_method,train_model,gamma):
     # get distribution and values from the result_list
     # dist = [x[1] for x in result_list]
     tags = [x[0] for x in result_list]
     y_scores = [x[index] for x in result_list]
     y_labels = ["POS_tag","Distribution","Precision","Recall","Fallout","F1 Score","AUC"]
     y_label = y_labels[index]
-    roc_curve.draw(tags,y_scores,y_label,source,target,pv_method,train_model)
+    roc_curve.draw(tags,y_scores,y_label,source,target,pv_method,train_model,gamma)
     pass
 
-def draw_prf(result_list,source,target,pv_method,train_model):
+def draw_prf(result_list,source,target,pv_method,train_model,gamma):
     tags = [x[0] for x in result_list]
     p = [x[2] for x in result_list]
     r = [x[3] for x in result_list]
@@ -181,10 +184,11 @@ def draw_prf(result_list,source,target,pv_method,train_model):
     ys=[p,r,f1]
     y = ["POS_tag","Distribution","Precision","Recall","Fallout","F1 Score","AUC"]
     y_labels=[y[2],y[3],y[5]]
-    roc_curve.draw_prf(tags,ys,y_labels,source,target,pv_method,train_model)
+    roc_curve.draw_prf(tags,ys,y_labels,source,target,pv_method,train_model,gamma)
     pass
+
 # test methods
-def test():
+def test_sort():
     result_list = [['a',3,2,1],['b',1,2,2],['c',2,3,1]]
     print sort_results(1,result_list)
     pass
@@ -199,14 +203,16 @@ def print_results():
     # train_model = 'explicit'
     # train_model = 'combined'
     index = 1
+    gamma = 1
     for train_model in train_models:
-        evaluate_table(source,target,pv_method,train_model,index)
+        evaluate_table(source,target,pv_method,train_model,index,gamma)
     pass
 
-def draw_results():
-
+def batch_gamma_results():
+    f = open('../work/a_sim/%s-%s_gamma_F1.csv', 'w')
+    print "Generating results for different gamma values..."
     pass
 
 if __name__ == '__main__':
     print_results()
-    # test()
+    # test_sort()

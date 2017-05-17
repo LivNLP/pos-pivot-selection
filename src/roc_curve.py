@@ -34,10 +34,13 @@ def draw_roc(tpr,fpr,auc):
     pass
 
 # draw others vs distribution
-def draw(x,y,y_label,source,target,pv_method,train_model):
+def draw(x,y,y_label,source,target,pv_method,train_model,gamma):
     plt.figure(figsize=(12,5.5))
     index = np.arange(len(x))
-    plt.title('%s-%s:%s,%s'%(source,target,convert(pv_method),train_model))
+    if train_model == 'combined':
+        plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,convert(pv_method),train_model,gamma))
+    else:
+        plt.title('%s-%s:%s,%s'%(source,target,convert(pv_method),train_model))
     plt.plot(index,y)
     pylab.xticks(index,x,rotation='vertical')
     plt.ylabel(y_label)
@@ -45,10 +48,13 @@ def draw(x,y,y_label,source,target,pv_method,train_model):
     plt.savefig('../work/a_sim/pic/%s-%s_%s_%s_%s.png'%(source,target,pv_method,train_model,y_label))
     pass
 
-def draw_prf(x,ys,y_labels,source,target,pv_method,train_model):
+def draw_prf(x,ys,y_labels,source,target,pv_method,train_model,gamma):
     plt.figure(figsize=(12,5.5))
     index = np.arange(len(x))
-    plt.title('%s-%s:%s,%s'%(source,target,convert(pv_method),train_model))
+    if train_model == 'combined':
+        plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,convert(pv_method),train_model,gamma))
+    else:
+        plt.title('%s-%s:%s,%s'%(source,target,convert(pv_method),train_model))
     i = 0
     for y in ys:
         plt.plot(index,y,label = y_labels[i])

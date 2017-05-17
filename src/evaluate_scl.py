@@ -966,12 +966,15 @@ def dist_evaluate_one_domain_pair(source,target,method,gamma,n):
     resFile = open('../work/dist_sim/SCLdist%s-%s.%s.csv'% (source,target,method), 'w')
     resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots\n')
     learnProjection(source, target, dist_method, n)
+    # explicit: SCL pivot predictors 
     evaluation = evaluate_POS_lexical(source, target, True, gamma, dist_method, n)
     resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'explicit' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
     resFile.flush()
+    # implicit: word embeddings
     evaluation = evaluate_POS_NA(source, target)
     resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'implicit' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
     resFile.flush()
+    # combined = explicit + implicit
     evaluation = evaluate_POS(source, target, True, gamma, dist_method, n)
     resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'combined' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
     resFile.flush()
