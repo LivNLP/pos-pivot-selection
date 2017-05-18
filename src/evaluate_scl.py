@@ -1006,7 +1006,7 @@ if __name__ == '__main__':
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    methods = ['ppmi','un_ppmi','un_freq']
+    methods = ['un_ppmi','un_freq']
     # methods = ['ppmi']
     # methods = ['un_mi']
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
@@ -1015,9 +1015,9 @@ if __name__ == '__main__':
     # methods = ['pmi','un_pmi','ppmi','un_ppmi']
     for method in methods:
     #     batchEval(method, 1, n)
-        # batchEval_one_domain_pair(source,target,method,1,n)
+        batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
-        dist_evaluate_one_domain_pair(source,target,method,1,n)
+        # dist_evaluate_one_domain_pair(source,target,method,1,n)
     # gammas = [0.01,0.1,1,10,100]
     # for method in methods:
     # choose_gamma_one_domain_pair(source, target, method,gammas,n)
