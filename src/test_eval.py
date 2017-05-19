@@ -211,6 +211,7 @@ def print_results():
 def batch_gamma_results():
     f = open('../work/a_sim/%s-%s_gamma_F1.csv', 'w')
     print "Generating results for different gamma values..."
+    
     pass
 
 if __name__ == '__main__':
