@@ -124,7 +124,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     #n = 500 # no. of pivots.
 
     # Parameters to reduce the number of features in the tail
-    domainTh = {'wsj':5, 'answers':5, 'emails':5, 'reviews':5, 'weblogs':5,'newsgroups':5}
+    domainTh = {'wsj':4, 'answers':4, 'emails':5, 'reviews':5, 'weblogs':5,'newsgroups':5}
 
     # Load pivots.
     features = pos_data.load_obj(sourceDomain,targetDomain,pivotsMethod) if 'landmark' not in pivotsMethod else pos_data.load_obj(sourceDomain,targetDomain,'/test/'+pivotsMethod)
@@ -133,8 +133,10 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
 
     # Load features and get domain specific features
     features = pos_data.load_obj(sourceDomain,targetDomain,'un_freq') if 'un_' in pivotsMethod else pos_data.load_obj(sourceDomain,targetDomain,'freq')
+    print len(features)
     feats = selectTh(dict(features),domainTh[sourceDomain])
     feats = feats.keys()
+    print len(feats)
     if 'landmark' in pivotsMethod:
         feats = pos_data.load_obj(sourceDomain,targetDomain,'filtered_features')
     # print 'experimental features = ', len(feats)
@@ -166,6 +168,12 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
             i = feats.index(feat)
             # i = feat
             M[i,j] = val
+        if np.sum(M[:,j])==0:
+            print "zero column!"
+    print M.shape
+    # f = open("temp","w")
+    # f.write(M)
+    # f.close()
     endTime = time.time()
     print 'Took %ss' % str(round(endTime-startTime, 2)) 
     # save_M = '../work/%s/%s-%s/%s/proj.mat' % (sourceDomain, targetDomain,pivotsMethod)  
@@ -174,7 +182,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     # print 'Loading Word Embeddings..'
     # M2 = sp.lil_matrix(len(feats),len(nEmbed))
     # M = np.concatenate((M,M2))
-    
+
     performSVD(M, pivotsMethod,sourceDomain, targetDomain,h)
     pass
 
@@ -990,12 +998,13 @@ if __name__ == '__main__':
     # target = 'reviews'
     # method = 'freq'
     # method = 'un_freq'
+    method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
     
     # batchEval(method, 1, n)
     # batchEval_NA()
-    # learnProjection(source, target, method, n)
+    learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1,method, n)
     # evaluate_POS(source, target, True, 1,method, n)
     # evaluate_POS_NA(source,target)
@@ -1009,8 +1018,8 @@ if __name__ == '__main__':
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
     # methods = ['un_ppmi','un_freq']
-    # methods = ['ppmi']
-    methods = ['mi','un_mi']
+    # methods = ['un_mi']
+    # methods = ['pmi']
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
@@ -1020,9 +1029,9 @@ if __name__ == '__main__':
         # batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
-    gammas = [0.01,0.1,1,10,100]
-    for method in methods:
-        choose_gamma_one_domain_pair(source, target, method,gammas,n)
+    # gammas = [0.01,0.1,1,10,100]
+    # for method in methods:
+    #     choose_gamma_one_domain_pair(source, target, method,gammas,n)
     # params = [1]
     # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
     # params += [10e-3,10e-4,10e-5,10e-6]
