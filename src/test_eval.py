@@ -135,7 +135,7 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     # f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
     # f.write(tab)
     # f.close()
-    pass
+    return tab
 
 
 def testLBFGS(test_file, model_file):
@@ -211,7 +211,9 @@ def print_results():
 def batch_gamma_results():
     f = open('../work/a_sim/%s-%s_gamma_F1.csv', 'w')
     print "Generating results for different gamma values..."
-    
+    f.write()
+    gammas = [0.01,0.1,0,1,10,100]
+    f.write()
     pass
 
 if __name__ == '__main__':
