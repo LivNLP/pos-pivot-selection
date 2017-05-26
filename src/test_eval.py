@@ -128,13 +128,15 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     res_list = sort_results(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
     tab = create_table(res_list)
     # draw_roc(res_list)
-    draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
-    for i in range(2,7):
-        draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model,gamma)
+    # draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
+    # for i in range(2,7):
+    #     draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model,gamma)
     # draw(res_list[:len(tag_list)],6,source,target,pv_method,train_model)
-    # f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
-    # f.write(tab)
-    # f.close()
+    f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
+    # pv_method = pv_method.replace("dist/","")
+    # f = open("../work/dist_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
+    f.write(tab)
+    f.close()
     return tab
 
 
@@ -197,7 +199,7 @@ def print_results():
     source = 'wsj'
     target = 'answers'
     # pv_method = 'freq'
-    pv_method = 'un_freq'
+    pv_method = 'mi'
     # train_model = 'implicit'
     train_models = ['implicit','explicit','combined']
     # train_model = 'explicit'
