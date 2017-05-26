@@ -210,14 +210,38 @@ def print_results():
         evaluate_table(source,target,pv_method,train_model,index,gamma)
     pass
 
-def batch_gamma_results():
+def batch_gamma_results(source,target,pv_method):
     f = open('../work/a_sim/%s-%s_gamma_F1.csv', 'w')
     print "Generating results for different gamma values..."
-    f.write()
+    f.write("gamma","F1 score")
     gammas = [0.01,0.1,0,1,10,100]
-    f.write()
+    for gamma in gammas:
+        model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
+        test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
+        testLBFGS(test_file,model_file)
+        output = '../work/output_eval'
+        predict_labels = read_labels(output)
+        target_labels = read_labels(test_file)
+        tag_list = generate_tag_list(source,target)
+        # print tag_list
+        tag_dist = pos_data.compute_dist(source)
+        res_list = sort_results(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
+        tab = create_table(res_list)
+        avg_f1 = res_list[len(res_list)-1][5]
+        print gamma,avg_f1
+        f.write("%f,%f"%(gamma,avg_f1))
+        f.flush()
+    f.close()
+    pass
+
+def print_gamma_results():
+    source = "wsj"
+    target = "answers"
+    pv_method = "freq"
+    batch_gamma_results(source,target,pv_method)
     pass
 
 if __name__ == '__main__':
-    print_results()
+    # print_results()
+    print_gamma_results()
     # test_sort()
