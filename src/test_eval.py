@@ -214,7 +214,7 @@ def batch_gamma_results(source,target,pv_method):
     f = open('../work/a_sim/%s-%sgamma_F1.%s.csv'%(source,target,pv_method), 'w')
     print "Generating results for different gamma values..."
     f.write("gamma,F1 score\n")
-    gammas = [0.01,0.1,0,1,10,100]
+    gammas = [0.01,0.1,1,10,100]
     for gamma in gammas:
         model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
         test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
