@@ -225,7 +225,8 @@ def batch_gamma_results(source,target,pv_method):
         tag_list = generate_tag_list(source,target)
         # print tag_list
         tag_dist = pos_data.compute_dist(source)
-        res_list = sort_results(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
+        # default sort by distribution
+        res_list = sort_results(1,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
         tab = create_table(res_list)
         avg_f1 = res_list[len(res_list)-1][5]
         print gamma,avg_f1
