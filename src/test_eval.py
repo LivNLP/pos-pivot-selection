@@ -230,7 +230,7 @@ def batch_gamma_results(source,target,pv_method):
         tab = create_table(res_list)
         avg_f1 = res_list[len(res_list)-1][5]
         print gamma,avg_f1
-        f.write("%f,%f"%(gamma,avg_f1))
+        f.write("%f, %f\n"%(gamma,avg_f1))
         f.flush()
     f.close()
     pass
