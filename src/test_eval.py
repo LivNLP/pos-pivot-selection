@@ -210,8 +210,36 @@ def print_results():
         evaluate_table(source,target,pv_method,train_model,index,gamma)
     pass
 
+# gamma results for unbalanced function
 def batch_gamma_results(source,target,pv_method):
     f = open('../work/a_sim/%s-%sgamma_F1.%s.csv'%(source,target,pv_method), 'w')
+    print "Generating results for different gamma values..."
+    f.write("gamma,F1 score\n")
+    gammas = [0.01,0.1,1,10,100]
+    for gamma in gammas:
+        model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
+        test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
+        testLBFGS(test_file,model_file)
+        output = '../work/output_eval'
+        predict_labels = read_labels(output)
+        target_labels = read_labels(test_file)
+        tag_list = generate_tag_list(source,target)
+        # print tag_list
+        tag_dist = pos_data.compute_dist(source)
+        # default sort by distribution
+        res_list = sort_results(1,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
+        tab = create_table(res_list)
+        avg_f1 = res_list[len(res_list)-1][5]
+        print gamma,avg_f1
+        f.write("%f, %f\n"%(gamma,avg_f1))
+        f.flush()
+    f.close()
+    pass
+
+# gamma results for dist (balanced) function
+def batch_dist_gamma_results(source,target,pv_method):
+    method = pv_method.replace("dist/","")
+    f = open('../work/dist_sim/%s-%sdistgamma_F1.%s.csv'%(source,target,method), 'w')
     print "Generating results for different gamma values..."
     f.write("gamma,F1 score\n")
     gammas = [0.01,0.1,1,10,100]
@@ -239,7 +267,11 @@ def print_gamma_results():
     source = "wsj"
     target = "answers"
     pv_method = "freq"
-    batch_gamma_results(source,target,pv_method)
+    # pv_method = "un_freq"
+    if "dist" in pv_method:
+        batch_dist_gamma_results(source,target,pv_method)
+    else:
+        batch_gamma_results(source,target,pv_method)
     pass
 
 if __name__ == '__main__':
