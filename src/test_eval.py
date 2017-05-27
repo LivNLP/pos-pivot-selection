@@ -266,7 +266,7 @@ def batch_dist_gamma_results(source,target,pv_method):
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    pv_method = "freq"
+    pv_method = "dist/freq"
     # pv_method = "un_freq"
     if "dist" in pv_method:
         batch_dist_gamma_results(source,target,pv_method)
