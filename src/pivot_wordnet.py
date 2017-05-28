@@ -4,9 +4,11 @@ import pos_data
 # determine whether given word is noun (1) or not (0)
 def is_noun(word):
     syns=wordnet.synsets(word)
-    
     # if the word is in the datasets
-    return 1 if str(syns[0].name()).split('.')[1]=='n' else 0
+    if syns:
+        return 1 if str(syns[0].name()).split('.')[1]=='n' else 0
+    else:
+        return 0
 
 # read a list of words 
 # to decide how many nouns (distribution) in the selected pivots 
