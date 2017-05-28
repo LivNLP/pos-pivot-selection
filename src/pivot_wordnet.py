@@ -13,7 +13,7 @@ def is_noun(word):
 # read a list of words 
 # to decide how many nouns (distribution) in the selected pivots 
 def count_nouns(selected_pivots):
-    return float(sum(1 for word in selected_pivots if is_noun(word)==1))/float(len(pivots))
+    return float(sum(1 for word in selected_pivots if is_noun(word)==1))/float(len(selected_pivots))
 
 def runner(source,target,method,n):
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
