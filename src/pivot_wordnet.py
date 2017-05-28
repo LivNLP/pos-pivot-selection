@@ -14,8 +14,9 @@ def count_nouns(selected_pivots):
 
 def runner(source,target,method,n):
 	features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
-    pivots = dict(features[:n]).keys()
-    print count_nouns(pivots)
+    print features[:n]
+    # pivots = dict(features[:n]).keys()
+    # print count_nouns(pivots)
     pass
 
 # different methods
