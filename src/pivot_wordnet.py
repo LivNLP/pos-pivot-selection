@@ -19,6 +19,24 @@ def runner(source,target,method,n):
     print count_nouns(pivots)
     pass
 
+# different methods
+def batch_results_from_methods(source,target,methods,n):
+	print "source = ", source
+	print "target = ", target
+	for method in methods:
+		print "method = ", method
+		runner(source,target,method,n)
+	pass
+
+# different number of pivots
+def batch_reuslts_from_numbers(source,target,method,nums):
+	print "source = ", source
+	print "target = ", target
+	for n in nums:
+		print "#pivots = ", n
+		runner(source,target,method,n)	
+	pass
+
 if __name__ == '__main__':
 	source = "wsj"
 	target = "answers"
