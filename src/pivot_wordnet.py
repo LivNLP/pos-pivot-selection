@@ -1,4 +1,5 @@
 from nltk.corpus import wordnet
+import pos_data
 
 # determine whether given word is noun (1) or not (0)
 def is_noun(word):
@@ -14,9 +15,8 @@ def count_nouns(selected_pivots):
 
 def runner(source,target,method,n):
 	features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
-    print features
-    # pivots = dict(features[:n]).keys()
-    # print count_nouns(pivots)
+    pivots = dict(features[:n]).keys()
+    print count_nouns(pivots)
     pass
 
 # different methods
