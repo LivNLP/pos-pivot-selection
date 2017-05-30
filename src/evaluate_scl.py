@@ -195,7 +195,11 @@ def performSVD(M,method,sourceDomain, targetDomain,h):
     # Perform SVD on M, M can be weight matrix or can be a combination of weight matrix & embeddings  
     print 'Perform SVD on the matrix...',
     startTime = time.time()
-    ut, s, vt = sparsesvd(M.tocsc(), h)
+    # ut, s, vt = sparsesvd(M.tocsc(), h)
+    ut, s, vt = numpy.linalg.svd(M.tocsc())
+    print ut.shape
+    ut = ut[:h]
+    print ut.shape
     endTime = time.time()
     print '%ss' % str(round(endTime-startTime, 2))   
     filename = '../work/%s/%s-%s/proj.mat' % (method,sourceDomain, targetDomain)
@@ -1012,20 +1016,20 @@ if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # target = 'reviews'
-    method = 'freq'
-    # method = 'un_ppmi'
+    # method = 'freq'
+    method = 'un_ppmi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
     
     # batchEval(method, 1, n)
     # batchEval_NA()
-    # learnProjection(source, target, method, n)
-    # evaluate_POS_lexical(source, target, True, 1,method, n)
-    # evaluate_POS(source, target, True, 1,method, n)
+    learnProjection(source, target, method, n)
+    # evaluate_POS_lexical(source, target, True, 1, method, n)
+    evaluate_POS(source, target, True, 1,method, n)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
-    test_results(source,target,method,0.01)
+    # test_results(source,target,method,1)
     # evaluate_POS_ID(target)
     # evaluate_POS_pivots(source,target,method,n)
     # batchEval_ID()
