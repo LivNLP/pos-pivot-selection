@@ -1025,7 +1025,7 @@ if __name__ == '__main__':
     # evaluate_POS(source, target, True, 1,method, n)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
-    test_results(source,target,method,100)
+    test_results(source,target,method,0.1)
     # evaluate_POS_ID(target)
     # evaluate_POS_pivots(source,target,method,n)
     # batchEval_ID()
