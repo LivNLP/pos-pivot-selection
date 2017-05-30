@@ -295,6 +295,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
     # Load the projection matrix.
     M = sp.csr_matrix(sio.loadmat('../work/%s/%s-%s/proj.mat' % (method,source, target))['proj'])
     (nDS, h) = M.shape
+    print M.shape
 
     # Load pivots.
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
@@ -727,7 +728,6 @@ def evaluate_POS_ID_lexical(source):
     pass
 
 
-
 def evaluate_POS_pivots(source,target,method,n):
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
     pivots = dict(features[:n]).keys()
@@ -785,9 +785,6 @@ def evaluate_POS_pivots(source,target,method,n):
     print '###########################################\n\n'
     return acc,intervals
     pass
-
-
-
 
 def batchEval_ID():
     '''
