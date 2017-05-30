@@ -1020,7 +1020,7 @@ if __name__ == '__main__':
     method = 'un_ppmi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
-    n = 500
+    n = 100
     
     # batchEval(method, 1, n)
     # batchEval_NA()
