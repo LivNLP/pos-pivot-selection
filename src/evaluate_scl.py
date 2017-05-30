@@ -164,7 +164,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     startTime = time.time()
     M = sp.lil_matrix((len(feats), len(pivots)), dtype=np.float)
     for (j, w) in enumerate(pivots):
-        print '%d of %d %s' % (j, len(pivots), w)
+        # print '%d of %d %s' % (j, len(pivots), w)
         for (feat, val) in getWeightVector(w, vects):
             i = feats.index(feat)
             # i = feat
@@ -196,7 +196,7 @@ def performSVD(M,method,sourceDomain, targetDomain,h):
     print 'Perform SVD on the matrix...',
     startTime = time.time()
     # ut, s, vt = sparsesvd(M.tocsc(), h)
-    ut, s, vt = numpy.linalg.svd(M.tocsc())
+    ut, s, vt = np.linalg.svd(M.tocsc())
     print ut.shape
     ut = ut[:h]
     print ut.shape
