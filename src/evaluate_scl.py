@@ -194,7 +194,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
 # separate the step of perform SVD
 def performSVD(M,method,sourceDomain, targetDomain,h):
     # Perform SVD on M, M can be weight matrix or can be a combination of weight matrix & embeddings  
-    print 'Perform SVD on the matrix...',
+    print 'Perform SVD on the matrix...'
     startTime = time.time()
     # ut, s, vt = sparsesvd(M.tocsc(), h)
     ut, s, vt = np.linalg.svd(M)
@@ -1018,16 +1018,16 @@ if __name__ == '__main__':
     target = 'answers'
     # target = 'reviews'
     # method = 'freq'
-    method = 'un_ppmi'
+    method = 'un_mi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
-    n = 50
+    n = 500
     
     # batchEval(method, 1, n)
     # batchEval_NA()
     learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1, method, n)
-    evaluate_POS(source, target, True, 1,method, n)
+    evaluate_POS(source, target, True, 1 ,method, n)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_results(source,target,method,1)
