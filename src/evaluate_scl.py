@@ -196,7 +196,7 @@ def performSVD(M,method,sourceDomain, targetDomain,h):
     print 'Perform SVD on the matrix...',
     startTime = time.time()
     # ut, s, vt = sparsesvd(M.tocsc(), h)
-    ut, s, vt = np.linalg.svd(M.tocsc())
+    ut, s, vt = np.linalg.svd(M)
     print ut.shape
     ut = ut[:h]
     print ut.shape
