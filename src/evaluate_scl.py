@@ -163,7 +163,7 @@ def learnProjection(sourceDomain, targetDomain, pivotsMethod, n):
     print 'Learning Pivot Predictors..'
     startTime = time.time()
     # M = sp.lil_matrix((len(feats), len(pivots)), dtype=np.float)
-    M = numpy.zeros(shape=(len(feats), len(pivots)))
+    M = np.zeros(shape=(len(feats), len(pivots)))
     for (j, w) in enumerate(pivots):
         # print '%d of %d %s' % (j, len(pivots), w)
         for (feat, val) in getWeightVector(w, vects):
@@ -1021,7 +1021,7 @@ if __name__ == '__main__':
     method = 'un_ppmi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
-    n = 100
+    n = 50
     
     # batchEval(method, 1, n)
     # batchEval_NA()
