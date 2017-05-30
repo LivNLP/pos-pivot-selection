@@ -937,14 +937,14 @@ def batchEval_one_domain_pair(source,target,method,gamma,n):
 
 
 ### test methods ###
-def test_results(source,target,method):
+def test_results(source,target,method,gamma):
     trainFileName = '../work/%s-%s/trainVects.%s' % (source, target,method)
     testFileName = '../work/%s-%s/testVects.%s' % (source, target,method)
     modelFileName = '../work/%s-%s/model.%s' % (source, target,method)
     if 'NA' not in method:
         trainFileName = '../work/%s/%s-%s/trainVects.SCL' % (method,source, target)
         testFileName = '../work/%s/%s-%s/testVects.SCL' % (method,source, target)
-        modelFileName = '../work/%s/%s-%s/model.SCL' % (method,source, target)
+        modelFileName = '../work/%s/%s-%s/model.SCL.%f' % (method,source, target,gamma)
     # print 'Training...'
     # trainMultiLBFGS(trainFileName, modelFileName)
     print 'Testing...'
@@ -1013,7 +1013,7 @@ if __name__ == '__main__':
     target = 'answers'
     # target = 'reviews'
     # method = 'freq'
-    # method = 'un_freq'
+    method = 'un_ppmi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
@@ -1025,7 +1025,7 @@ if __name__ == '__main__':
     # evaluate_POS(source, target, True, 1,method, n)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
-    # test_results(source,target,method)
+    test_results(source,target,method,1)
     # evaluate_POS_ID(target)
     # evaluate_POS_pivots(source,target,method,n)
     # batchEval_ID()
@@ -1033,7 +1033,7 @@ if __name__ == '__main__':
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    methods = ['un_pmi','pmi']
+    # methods = ['un_pmi','pmi']
     # methods = ['un_mi']
     # methods = ['freq','mi','pmi','ppmi']
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
@@ -1045,10 +1045,10 @@ if __name__ == '__main__':
         # batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
-    gammas = [0.01,0.1,1,10,100]
-    for method in methods:
-    #     dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
-        choose_gamma_one_domain_pair(source, target, method,gammas,n)
+    # gammas = [0.01,0.1,1,10,100]
+    # for method in methods:
+        # dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
+        # choose_gamma_one_domain_pair(source, target, method,gammas,n)
     # params = [1]
     # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
     # params += [10e-3,10e-4,10e-5,10e-6]
