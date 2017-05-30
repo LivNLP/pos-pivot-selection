@@ -19,15 +19,35 @@ def runner(source,target,method,n):
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
     pivots = dict(features[:n]).keys()
     print count_nouns(pivots)
-    pass
+    return count_nouns(pivots)
 
 # different methods
 def batch_results_from_methods(source,target,methods,n):
+    f = open('../work/a_sim/%s-%s_nouns.csv'%(source,target), 'w')
     print "source = ", source
     print "target = ", target
+    f.write("Source, Target, Method, Nouns, #pivots\n")
     for method in methods:
         print "method = ", method
-        runner(source,target,method,n)
+        nouns = runner(source,target,method,n)
+        f.write("%s, %S, %s, %f, %f\n"%(source,target,method,nouns,n))
+        f.flush()
+    f.close()
+    pass
+
+# different dist methods
+def batch_dist_results_from_methods(source,target,methods,n):
+    f = open('../work/dist_sim/%s-%sdist_nouns.csv'%(source,target), 'w')
+    print "source = ", source
+    print "target = ", target
+    pv_method = "dist/"+method
+    f.write("Source, Target, Method, Nouns, #pivots\n")
+    for method in methods:
+        print "method = ", method
+        nouns = runner(source,target,pv_method,n)
+        f.write("%s, %S, %s, %f, %f\n"%(source,target,method,nouns,n))
+        f.flush()
+    f.close()
     pass
 
 # different number of pivots

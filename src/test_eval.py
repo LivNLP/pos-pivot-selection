@@ -210,6 +210,10 @@ def print_results():
         evaluate_table(source,target,pv_method,train_model,index,gamma)
     pass
 
+# batch f1 score for method implict,explicit and combined
+def batch_f1_results(source,target,pv_method):
+    pass
+
 # gamma results for unbalanced function
 def batch_gamma_results(source,target,pv_method):
     f = open('../work/a_sim/%s-%sgamma_F1.%s.csv'%(source,target,pv_method), 'w')
