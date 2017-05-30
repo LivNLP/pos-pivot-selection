@@ -52,7 +52,7 @@ def trainMultiLBFGS(train_file, model_file):
     #     'classias-train -tn -a truncated_gradient.logistic -m %s %s > /dev/null'  %\
     #     (model_file, train_file), shell=True)
 
-    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -n 8 %s %s' %\
+    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -n 8 %s %s > /dev/null' %\
         (train_file,model_file), shell=True)
     # LR = sklearn.linear_model.LogisticRegression(penalty='l2', dual=False, tol=0.0001, C=1.0, fit_intercept=True, intercept_scaling=1, class_weight=None, random_state=None, solver='lbfgs', max_iter=100, multi_class='ovr', verbose=0, warm_start=False, n_jobs=-1)
     # model_file= LR.fit(train_file,None)
@@ -348,7 +348,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 # lex = train_feats[nSent][nWord]
                 # for ft in lex:
                 #     featFile.write('%s:%f ' % (ft[0],ft[1])) 
-                print 'word %d of %d, sentence %d of %d...'%(nWord,len(words),nSent,len(train_sentences))
+                # print 'word %d of %d, sentence %d of %d...'%(nWord,len(words),nSent,len(train_sentences))
                 featFile.write('\n')
     featFile.close()
     featFile = open(testFileName, 'w')
@@ -1012,8 +1012,8 @@ if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # target = 'reviews'
-    # method = 'freq'
-    method = 'un_ppmi'
+    method = 'freq'
+    # method = 'un_ppmi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
