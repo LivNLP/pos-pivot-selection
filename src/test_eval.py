@@ -212,13 +212,26 @@ def print_results():
 
 # batch f1 score for method implict,explicit and combined
 def batch_f1_results(source,target,pv_method):
+    f = open('../work/a_sim/%s-%s_F1.%s.csv'%(source,target,pv_method), 'w')
+    print "Sum up results..."
+    f.write("model, F1 score\n")
+    train_models = ['implicit','explicit','combined']
+    index = 1
+    gamma = 1
+    for train_model in train_models:
+        tab = evaluate_table(source,target,pv_method,train_model,index,gamma)
+        avg_f1 = tab[len(tab)-1][5]
+        print train_model,avg_f1
+        f.write("%s, %f\n"%(train_model,avg_f1))
+        f.flush()
+    f.close()
     pass
 
 # gamma results for unbalanced function
 def batch_gamma_results(source,target,pv_method):
     f = open('../work/a_sim/%s-%sgamma_F1.%s.csv'%(source,target,pv_method), 'w')
     print "Generating results for different gamma values..."
-    f.write("gamma,F1 score\n")
+    f.write("gamma, F1 score\n")
     gammas = [0.01,0.1,1,10,100]
     for gamma in gammas:
         model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
@@ -232,7 +245,7 @@ def batch_gamma_results(source,target,pv_method):
         tag_dist = pos_data.compute_dist(source)
         # default sort by distribution
         res_list = sort_results(1,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
-        tab = create_table(res_list)
+        # tab = create_table(res_list)
         avg_f1 = res_list[len(res_list)-1][5]
         print gamma,avg_f1
         f.write("%f, %f\n"%(gamma,avg_f1))
@@ -259,7 +272,7 @@ def batch_dist_gamma_results(source,target,pv_method):
         tag_dist = pos_data.compute_dist(source)
         # default sort by distribution
         res_list = sort_results(1,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
-        tab = create_table(res_list)
+        # tab = create_table(res_list)
         avg_f1 = res_list[len(res_list)-1][5]
         print gamma,avg_f1
         f.write("%f, %f\n"%(gamma,avg_f1))
