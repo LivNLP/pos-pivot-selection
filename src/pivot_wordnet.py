@@ -52,16 +52,21 @@ def batch_dist_results_from_methods(source,target,methods,n):
 
 # different number of pivots
 def batch_reuslts_from_numbers(source,target,method,nums):
+    f = open('../work/a_sim/%s-%s_nouns_by_nums.csv'%(source,target), 'w')
     print "source = ", source
     print "target = ", target
+    f.write("Source, Target, Method, Nouns, #pivots\n")
     for n in nums:
         print "#pivots = ", n
-        runner(source,target,method,n)    
+        nouns = runner(source,target,method,n) 
+        f.write("%s, %S, %s, %f, %f\n"%(source,target,method,nouns,n))
+        f.flush()
+    f.close()
     pass
 
 if __name__ == '__main__':
-    source = "wsj"
-    target = "answers"
-    method = "freq"
-    n = 500
-    runner(source,target,method,n)
+    # source = "wsj"
+    # target = "answers"
+    # method = "freq"
+    # n = 500
+    # runner(source,target,method,n)
