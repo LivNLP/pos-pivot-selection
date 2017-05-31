@@ -1015,16 +1015,16 @@ if __name__ == '__main__':
     target = 'answers'
     # target = 'reviews'
     # method = 'freq'
-    method = 'un_mi'
+    # method = 'un_mi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
     
     # batchEval(method, 1, n)
     # batchEval_NA()
-    learnProjection(source, target, method, n)
+    # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1, method, n)
-    evaluate_POS(source, target, True, 1 ,method, n)
+    # evaluate_POS(source, target, True, 1 ,method, n)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_results(source,target,method,1)
@@ -1035,7 +1035,7 @@ if __name__ == '__main__':
     # batchEval_ID_lexical()
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
-    # methods = ['un_pmi','pmi']
+    methods = ['un_mi','pmi']
     # methods = ['un_mi']
     # methods = ['freq','mi','pmi','ppmi']
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
@@ -1047,10 +1047,10 @@ if __name__ == '__main__':
         # batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
-    # gammas = [0.01,0.1,1,10,100]
-    # for method in methods:
+    gammas = [0.01,0.1,1,10,100]
+    for method in methods:
         # dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
-        # choose_gamma_one_domain_pair(source, target, method,gammas,n)
+        choose_gamma_one_domain_pair(source, target, method,gammas,n)
     # params = [1]
     # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
     # params += [10e-3,10e-4,10e-5,10e-6]
