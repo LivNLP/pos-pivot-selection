@@ -1009,6 +1009,11 @@ def dist_choose_gamma_one_domain_pair(source,target,method,gammas,n):
     resFile.close()
     pass
 
+# number of pivots
+def evaluate_numbers_of_pivots(source,target,method,gamma,nums):
+
+    pass
+
 
 if __name__ == '__main__':
     source = 'wsj'
