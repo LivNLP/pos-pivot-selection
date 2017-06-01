@@ -246,8 +246,8 @@ def batch_gamma_results(source,target,pv_method):
         # default sort by distribution
         res_list = sort_results(1,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
         tab = create_table(res_list)
-        print len(tab)-1
-        avg_f1 = tab[len(tab)-1][5]
+        print len(res_list)-1
+        avg_f1 = tab[len(res_list)-1][5]
         print gamma,avg_f1
         f.write("%f, %f\n"%(gamma,avg_f1))
         f.flush()
