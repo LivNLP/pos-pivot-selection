@@ -126,18 +126,18 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     # print tag_list
     tag_dist = pos_data.compute_dist(source)
     res_list = sort_results(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
-    tab = create_table(res_list)
+    # tab = create_table(res_list)
     # draw_roc(res_list)
     # draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
     # for i in range(2,7):
     #     draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model,gamma)
     # draw(res_list[:len(tag_list)],6,source,target,pv_method,train_model)
-    f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
+    # f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
     # pv_method = pv_method.replace("dist/","")
     # f = open("../work/dist_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
-    f.write(tab)
-    f.close()
-    return tab
+    # f.write(tab)
+    # f.close()
+    return res_list
 
 
 def testLBFGS(test_file, model_file):
@@ -219,8 +219,9 @@ def batch_f1_results(source,target,pv_method):
     index = 1
     gamma = 1
     for train_model in train_models:
-        tab = evaluate_table(source,target,pv_method,train_model,index,gamma)
-        avg_f1 = tab[len(tab)-1][5]
+        res_list = evaluate_table(source,target,pv_method,train_model,index,gamma)
+        tmp = [x[5] for x in res_list]
+        avg_f1 = numpy.mean(tmp)
         print train_model,avg_f1
         f.write("%s, %f\n"%(train_model,avg_f1))
         f.flush()
@@ -283,8 +284,8 @@ def batch_dist_gamma_results(source,target,pv_method):
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    pv_method = "mi"
-    # pv_method = "dist/mi"
+    # pv_method = "mi"
+    pv_method = "dist/mi"
     # pv_method = "un_mi"
     if "dist" in pv_method:
         batch_dist_gamma_results(source,target,pv_method)
