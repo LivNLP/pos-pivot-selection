@@ -245,8 +245,8 @@ def batch_gamma_results(source,target,pv_method):
         tag_dist = pos_data.compute_dist(source)
         # default sort by distribution
         res_list = sort_results(1,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
-        # tab = create_table(res_list)
-        avg_f1 = res_list[len(res_list)-1][5]
+        tab = create_table(res_list)
+        avg_f1 = tab[len(tab)-1][5]
         print gamma,avg_f1
         f.write("%f, %f\n"%(gamma,avg_f1))
         f.flush()
@@ -272,8 +272,8 @@ def batch_dist_gamma_results(source,target,pv_method):
         tag_dist = pos_data.compute_dist(source)
         # default sort by distribution
         res_list = sort_results(1,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
-        # tab = create_table(res_list)
-        avg_f1 = res_list[len(res_list)-1][5]
+        tab = create_table(res_list)
+        avg_f1 = tab[len(tab)-1][5]
         print gamma,avg_f1
         f.write("%f, %f\n"%(gamma,avg_f1))
         f.flush()
@@ -283,8 +283,8 @@ def batch_dist_gamma_results(source,target,pv_method):
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    # pv_method = "mi"
-    pv_method = "dist/mi"
+    pv_method = "mi"
+    # pv_method = "dist/mi"
     # pv_method = "un_mi"
     if "dist" in pv_method:
         batch_dist_gamma_results(source,target,pv_method)
