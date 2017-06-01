@@ -283,8 +283,8 @@ def batch_dist_gamma_results(source,target,pv_method):
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    pv_method = "mi"
-    # pv_method = "dist/mi"
+    # pv_method = "mi"
+    pv_method = "dist/mi"
     # pv_method = "un_mi"
     if "dist" in pv_method:
         batch_dist_gamma_results(source,target,pv_method)
