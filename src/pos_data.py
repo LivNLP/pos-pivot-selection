@@ -561,6 +561,20 @@ def print_test():
     pass
 
 
+########### score for single pos_tag ##########
+def score_labeled_single_tag(source,target,pos_tag):
+    # generate a tag list from labeled data for iteration
+    print "#######%s-%s########"%(source,target)
+    src_labeled = load_preprocess_obj('%s-labeled'%source)
+    print "TAG = %s"% pos_tag
+    freq_dict=select_pivots_freq_labeled_tag(source,target,pos_tag)
+    freq_list = freq_dict.items()
+    freq_list.sort(lambda x, y: -1 if x[1] > y[1] else 1)
+    print "FREQ-L:%s" %pos_tag
+    print freq_list[:10]
+    save_obj(source,target,freq_list,"freq.%s"%pos_tag)
+    pass
+
 if __name__ == "__main__":
     # domains = ["answers-dev","answers-test","emails-test","reviews-dev"]
     # domains += ["reviews-test","newsgroups-dev","newsgroups-test","weblogs-test"]
@@ -569,12 +583,13 @@ if __name__ == "__main__":
     #     collect_labeled(domain)
     # target domain unlabeled datasets
     domains = ["answers"]
-    domains += ["reviews","newsgroups","weblogs","emails"]
+    # domains += ["reviews","newsgroups","weblogs","emails"]
     # domain = "answers"
     # for domain in domains:
     #     collect_unlabeled(domain)
     # collect_unlabeled_wsj()
     source = 'wsj'
+    pos_tag = 'NN'
     # compute_dist(source)
     # for target in domains:
     #     presets_labeled(source,target)
@@ -583,8 +598,9 @@ if __name__ == "__main__":
     # source is just wsj enough, copy to all
     # presets_labeled(source,'answers')
     for target in domains:
+        score_labeled_single_tag(source,target,pos_tag)
     #     select_pivots_freq_unlabeled(source,target)
-        select_pivots_mi_unlabeled(source,target)
+        # select_pivots_mi_unlabeled(source,target)
     #     select_pivots_pmi_unlabeled(source,target)
     #     select_pivots_ppmi_unlabeled(source,target)
     #     sum_up_labeled_scores(source,target)
