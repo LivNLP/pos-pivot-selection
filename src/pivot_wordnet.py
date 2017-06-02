@@ -65,8 +65,8 @@ def batch_reuslts_from_numbers(source,target,method,nums):
     pass
 
 if __name__ == '__main__':
-    # source = "wsj"
-    # target = "answers"
-    # method = "freq"
-    # n = 500
-    # runner(source,target,method,n)
+    source = "wsj"
+    target = "answers"
+    method = "freq.NN"
+    n = 500
+    runner(source,target,method,n)
