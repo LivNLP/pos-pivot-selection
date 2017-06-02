@@ -578,7 +578,7 @@ def score_labeled_single_tag(source,target,pos_tag,method):
     elif method == "ppmi":
         temp_dict = select_pivots_ppmi_labeled_tag(source,target,pos_tag)
     else:
-        break
+        continue
     temp_list = temp_dict.items()
     temp_list.sort(lambda x, y: -1 if x[1] > y[1] else 1)
     print "%s:%s" % (method,pos_tag)
