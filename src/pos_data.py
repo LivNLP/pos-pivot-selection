@@ -580,8 +580,8 @@ def score_labeled_single_tag(source,target,pos_tag,method):
     temp_list = temp_dict.items()
     temp_list.sort(lambda x, y: -1 if x[1] > y[1] else 1)
     print "%s:%s" % (method,pos_tag)
-    print freq_list[:10]
-    save_obj(source,target,freq_list,"freq.%s"%pos_tag)
+    print temp_list[:10]
+    save_obj(source,target,temp_list,"%s.%s"%(method,pos_tag))
     pass
 
 if __name__ == "__main__":
