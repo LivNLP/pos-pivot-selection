@@ -29,9 +29,9 @@ def sum_up_f1_labeled_scores(source,target,opt):
         print f1s
 
         for idx,pos_tag in enumerate(tags):
-            print "TAG = %s"% pos_tag
+            # print "TAG = %s"% pos_tag
             f1 = f1s[idx]
-            print "f1 = %f" % f1
+            # print "f1 = %f" % f1
             if method == 'freq':
                 # print "FREQ-L"
                 tmp = pos_data.select_pivots_freq_labeled_tag(source,target,pos_tag)
