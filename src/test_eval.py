@@ -39,12 +39,14 @@ def compare_labels(predict_labels,target_labels,old_tag_list,tag_dist):
         p = precision(tp,fp)
         r = recall(tp,fn)
         f1 = f1_score(p,r)
+        inverse_f1 = inverse_f1(f1)
+        w = weight_score(f1)
         #acc = accuracy(tp,tn,fp,fn)
-        fpr = fallout(tn,fp)
-        auc = area_under_curve(r,inverse_recall(tn,fp))
+        # fpr = fallout(tn,fp)
+        # auc = area_under_curve(r,inverse_recall(tn,fp))
         new_tag=number_to_tag(int(pos_tag),old_tag_list) 
         dist = dict(tag_dist).get(new_tag,0)
-        result_list.append([new_tag,dist,p,r,fpr,f1,auc])
+        result_list.append([new_tag,dist,p,r,inverse_f1,f1,w])
     return result_list
 
 def precision(tp,fp):
@@ -65,12 +67,13 @@ def fallout(tn,fp):
 def f1_score(precision,recall):
     return float(2.0*(precision*recall))/(float)(precision+recall) if precision+recall != 0 else 0
 
+# r
 def inverse_f1(f1_score):
     return float(1.0/f1_score)
 
 #  1 / (1 + exp(-r)) - 0.5
 def weight_score(f1_score):
-    return float(1.0/(1.0+numpy.exp(-f1_score)))-0.5
+    return float(1.0/(1.0+numpy.exp(-inverse_f1(f1_score))))-0.5
 
 def accuracy(tp,tn,fp,fn):
     return float(tp+tn)/float(tp+tn+fp+fn)
@@ -85,7 +88,7 @@ def sort_results(index,result_list):
 
 def create_table(table):
     # table = sort_results(index,result_list)
-    headers = ["POS_tag","Distribution","Precision","Recall","Fallout","F1 Score","AUC"]
+    headers = ["POS_tag","Distribution","Precision","Recall","Inverse F1","F1","W"]
     # print result_list
     # add the avg as last line
     avg_list = []
@@ -235,7 +238,9 @@ def batch_f1_results(source,target,pv_method):
     f.close()
     pass
 
-#
+#batch f1 score by pivot selection methods
+def bathc_f1_pv_methods():
+    pass
 
 
 # gamma results for unbalanced function
