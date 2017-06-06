@@ -1,5 +1,6 @@
 from nltk.corpus import wordnet
 import pos_data
+import random
 
 # determine whether given word is noun (1) or not (0)
 def is_noun(word):
@@ -18,6 +19,12 @@ def count_nouns(selected_pivots):
 def runner(source,target,method,n):
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
     pivots = dict(features[:n]).keys() if n >0 else dict(features[n:]).keys()
+    print count_nouns(pivots),n
+    return count_nouns(pivots)
+
+def random_runner(source,target,method,n):
+    features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
+    pivots = dict(random.sample(features),n).keys()
     print count_nouns(pivots),n
     return count_nouns(pivots)
 
@@ -69,4 +76,5 @@ if __name__ == '__main__':
     target = "answers"
     method = "freq.NN"
     n = 500
-    runner(source,target,method,n)
+    # runner(source,target,method,n)
+    random_runner(source,target,method,n)
