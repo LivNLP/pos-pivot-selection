@@ -39,14 +39,14 @@ def compare_labels(predict_labels,target_labels,old_tag_list,tag_dist):
         p = precision(tp,fp)
         r = recall(tp,fn)
         f1 = f1_score(p,r)
-        inverse_f1 = inverse_f1(f1)
+        inv_f1 = inverse_f1(f1)
         w = weight_score(f1)
         #acc = accuracy(tp,tn,fp,fn)
         # fpr = fallout(tn,fp)
         # auc = area_under_curve(r,inverse_recall(tn,fp))
         new_tag=number_to_tag(int(pos_tag),old_tag_list) 
         dist = dict(tag_dist).get(new_tag,0)
-        result_list.append([new_tag,dist,p,r,inverse_f1,f1,w])
+        result_list.append([new_tag,dist,p,r,inv_f1,f1,w])
     return result_list
 
 def precision(tp,fp):
