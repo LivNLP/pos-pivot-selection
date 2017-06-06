@@ -23,10 +23,14 @@ def runner(source,target,method,n):
     return count_nouns(pivots)
 
 def random_runner(source,target,method,n):
+    sum_nouns=0
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
-    pivots = dict(random.sample(features,n)).keys()
-    print count_nouns(pivots),n
-    return count_nouns(pivots)
+    pivots_loop = [dict(random.sample(features,n)).keys() for i in range(10)]
+    for pivots in pivots_loop:
+        print count_nouns(pivots),n
+        sum_nouns+=count_nouns(pivots)
+    print "average = ", sum_nouns/len(pivots_loop)
+    return sum_nouns/len(pivots_loop)
 
 # different methods
 def batch_results_from_methods(source,target,methods,n):
