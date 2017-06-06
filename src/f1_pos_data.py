@@ -24,9 +24,9 @@ def sum_up_f1_labeled_scores(source,target,opt):
     for method in methods:
         res_list=test_eval.evaluate_table(source,target,method,'combined',1,1)
         tags = [x[0] for x in res_list]
-        print tags
+        # print tags
         f1s = [x[4] for x in res_list] if opt=='r' else [x[6] for x in res_list]
-        print f1s
+        # print f1s
 
         for idx,pos_tag in enumerate(tags):
             # print "TAG = %s"% pos_tag
