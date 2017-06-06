@@ -11,31 +11,43 @@ import pickle
 import test_eval
 
 # add f1 when sum up the scores
-def sum_up_f1_labeled_scores(source,target):
+def sum_up_f1_labeled_scores(source,target,opt):
     src_labeled = pos_data.load_preprocess_obj('%s-labeled'%source)
-    tags = pos_data.tag_list(src_labeled)
-    tag_f1 = pos_data.compute_f1(source)
-    # loop tags to divide presets into groups
-    freq_dict={}
-    mi_dict={}
-    pmi_dict={}
-    ppmi_dict={}
-    for pos_tag in tags:
-        print "TAG = %s"% pos_tag
-        f1 = dict(tag_f1).get(pos_tag,0)
-        print "f1 = %f" % f1
-        # print "FREQ-L"
-        tmp = pos_data.select_pivots_freq_labeled_tag(source,target,pos_tag)
-        freq_dict = pos_data.combine_dicts(freq_dict,multiply_f1(tmp,f1))
-        # print "MI-L"
-        tmp = pos_data.select_pivots_mi_labeled_tag(source,target,pos_tag)
-        mi_dict = pos_data.combine_dicts(mi_dict,multiply_f1(tmp,f1))
-        # print "PMI-L"
-        tmp = pos_data.select_pivots_pmi_labeled_tag(source,target,pos_tag)
-        pmi_dict = pos_data.combine_dicts(pmi_dict,multiply_f1(tmp,f1))
-        # print "PPMI-L"
-        tmp = pos_data.select_pivots_ppmi_labeled_tag(source,target,pos_tag)
-        ppmi_dict = pos_data.combine_dicts(ppmi_dict,multiply_f1(tmp,f1))
+    # tags = pos_data.tag_list(src_labeled)
+    # all the labeled methods
+    methods = ['freq','mi','pmi','ppmi']
+    for method in methods:
+        res_list=test_eval.evaluate_table(source,target,method,'combined',1,1)
+        tags = [x[0] for x in res_list]
+        print tags
+        f1s = [x[4] for x in res_list] if opt=='r' else [x[6] for x in res_list]
+        print f1s
+
+        # loop tags to divide presets into groups
+        freq_dict={}
+        mi_dict={}
+        pmi_dict={}
+        ppmi_dict={}
+        for idx,pos_tag in enumerate(tags):
+            print "TAG = %s"% pos_tag
+            f1 = f1s[idx]
+            print "f1 = %f" % f1
+            if method == 'freq':
+                # print "FREQ-L"
+                tmp = pos_data.select_pivots_freq_labeled_tag(source,target,pos_tag)
+                freq_dict = pos_data.combine_dicts(freq_dict,multiply_f1(tmp,f1))
+            elif method == 'mi':
+                # print "MI-L"
+                tmp = pos_data.select_pivots_mi_labeled_tag(source,target,pos_tag)
+                mi_dict = pos_data.combine_dicts(mi_dict,multiply_f1(tmp,f1))           
+            elif method == 'pmi':
+                # print "PMI-L"
+                tmp = pos_data.select_pivots_pmi_labeled_tag(source,target,pos_tag)
+                pmi_dict = pos_data.combine_dicts(pmi_dict,multiply_f1(tmp,f1))           
+            else:
+                # print "PPMI-L"
+                tmp = pos_data.select_pivots_ppmi_labeled_tag(source,target,pos_tag)
+                ppmi_dict = pos_data.combine_dicts(ppmi_dict,multiply_f1(tmp,f1))
     freq_list = freq_dict.items()
     mi_list = mi_dict.items()
     pmi_list = pmi_dict.items()
@@ -50,10 +62,10 @@ def sum_up_f1_labeled_scores(source,target):
     print "MI", mi_list[:10]
     print "PMI", pmi_list[:10]
     print "PPMI", ppmi_list[:10]
-    save_f1_obj(source,target,freq_list,"freq")
-    save_f1_obj(source,target,mi_list,"mi")
-    save_f1_obj(source,target,pmi_list,"pmi")
-    save_f1_obj(source,target,ppmi_list,"ppmi")
+    save_f1_obj(source,target,freq_list,"%s/freq"%opt)
+    save_f1_obj(source,target,mi_list,"%s/mi"%opt)
+    save_f1_obj(source,target,pmi_list,"%s/pmi"%opt)
+    save_f1_obj(source,target,ppmi_list,"%s/ppmi"%opt)
     pass
 
 def multiply_f1(L,f1):
@@ -84,4 +96,5 @@ def load_f1_obj(source,target,name):
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
-    sum_up_f1_labeled_scores(source,target)
+    sum_up_f1_labeled_scores(source,target,'r')
+    # sum_up_f1_labeled_scores(source,target,'w')

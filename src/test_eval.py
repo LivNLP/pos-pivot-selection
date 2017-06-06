@@ -88,7 +88,7 @@ def sort_results(index,result_list):
 
 def create_table(table):
     # table = sort_results(index,result_list)
-    headers = ["POS_tag","Distribution","Precision","Recall","Inverse F1","F1","W"]
+    headers = ["POS_tag","Distribution","Precision","Recall","Inverse_F1","F1","w"]
     # print result_list
     # add the avg as last line
     avg_list = []
@@ -117,7 +117,7 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     print
 
     # test the trained model to generate output: predict_labels
-    # combine
+    # combined
     model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
     test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
     # implicit: word embeddings
@@ -183,7 +183,7 @@ def draw(result_list,index,source,target,pv_method,train_model,gamma):
     # dist = [x[1] for x in result_list]
     tags = [x[0] for x in result_list]
     y_scores = [x[index] for x in result_list]
-    y_labels = ["POS_tag","Distribution","Precision","Recall","Fallout","F1 Score","AUC"]
+    y_labels = ["POS_tag","Distribution","Precision","Recall","Inverse_F1","F1","w"]
     y_label = y_labels[index]
     roc_curve.draw(tags,y_scores,y_label,source,target,pv_method,train_model,gamma)
     pass
@@ -194,7 +194,7 @@ def draw_prf(result_list,source,target,pv_method,train_model,gamma):
     r = [x[3] for x in result_list]
     f1= [x[5] for x in result_list]
     ys=[p,r,f1]
-    y = ["POS_tag","Distribution","Precision","Recall","Fallout","F1 Score","AUC"]
+    y = ["POS_tag","Distribution","Precision","Recall","Inverse_F1","F1","w"]
     y_labels=[y[2],y[3],y[5]]
     roc_curve.draw_prf(tags,ys,y_labels,source,target,pv_method,train_model,gamma)
     pass
