@@ -9,12 +9,12 @@ import pos_data
 import os
 import pickle
 import test_eval
+import numpy
 
-# add f1 when sum up the scores
-def sum_up_f1_labeled_scores(source,target,opt):
-    src_labeled = pos_data.load_preprocess_obj('%s-labeled'%source)
+# add f1 when sum up the scores, using test data and results obtained from model
+def sum_up_f1_labeled_scores_test(source,target,opt):
+    # src_labeled = pos_data.load_preprocess_obj('%s-labeled'%source)
     # tags = pos_data.tag_list(src_labeled)
-    # loop tags to divide presets into groups
     freq_dict={}
     mi_dict={}
     pmi_dict={}
@@ -22,6 +22,7 @@ def sum_up_f1_labeled_scores(source,target,opt):
     # all the labeled methods
     methods = ['freq','mi','pmi','ppmi']
     for method in methods:
+
         res_list=test_eval.evaluate_table(source,target,method,'combined',1,1)
         tags = [x[0] for x in res_list]
         # print tags
@@ -72,9 +73,33 @@ def multiply_f1(L,f1):
     # print L
     return dict([(x,f1*v) for (x,v) in L.iteritems()])
 
-def compute_f1(opt):
-    
+def sum_up_f1_labeled_scores:
+    original_train = '../work/%s-%s/trainVects.NA' % (source,target)
+    n_splits = 5
+    original_labels = test_eval.read_labels(original_train)
+    det_idx = int(len(original_labels)/n_splits)
+    print det_idx,len(original_labels)
+    # random split train and test data
+    random_labels = numpy.random.shuffle(original_labels)
+    new_train = random_labels[det_idx:]
+    new_test = random_labels[:det_idx]
+    tag_list = test_eval.generate_tag_list(source,target)
+    tag_dist = pos_data.compute_dist(source)
+    res_list = compare_labels(predict_labels,target_labels,tag_list,tag_dist)
+    # order might be different, so generate a tag_list
+    tags = [x[0] for x in res_list]
+    print tags==tag_list
+    f1s = [x[4] for x in res_list] if opt=='r' else [x[6] for x in res_list]
+
     pass
+
+
+def read_file(fname):
+    input_file = open(fname,'r')
+    lines = [line.strip().split() for line in input_file]
+    print lines
+    return lines
+
 
 # save and load f1 obj
 def save_f1_obj(source,target,obj,name):
@@ -96,5 +121,6 @@ def load_f1_obj(source,target,name):
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
-    sum_up_f1_labeled_scores(source,target,'r')
-    sum_up_f1_labeled_scores(source,target,'w')
+    # sum_up_f1_labeled_scores(source,target,'r')
+    # sum_up_f1_labeled_scores(source,target,'w')
+    read_file('../work/%s-%s/trainVects.NA'%(source,target))
