@@ -1019,7 +1019,7 @@ if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # target = 'reviews'
-    method = 'freq'
+    method = 'pmi'
     # method = 'un_mi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
