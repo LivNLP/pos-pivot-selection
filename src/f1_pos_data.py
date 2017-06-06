@@ -14,6 +14,11 @@ import test_eval
 def sum_up_f1_labeled_scores(source,target,opt):
     src_labeled = pos_data.load_preprocess_obj('%s-labeled'%source)
     # tags = pos_data.tag_list(src_labeled)
+    # loop tags to divide presets into groups
+    freq_dict={}
+    mi_dict={}
+    pmi_dict={}
+    ppmi_dict={}
     # all the labeled methods
     methods = ['freq','mi','pmi','ppmi']
     for method in methods:
@@ -23,11 +28,6 @@ def sum_up_f1_labeled_scores(source,target,opt):
         f1s = [x[4] for x in res_list] if opt=='r' else [x[6] for x in res_list]
         print f1s
 
-        # loop tags to divide presets into groups
-        freq_dict={}
-        mi_dict={}
-        pmi_dict={}
-        ppmi_dict={}
         for idx,pos_tag in enumerate(tags):
             print "TAG = %s"% pos_tag
             f1 = f1s[idx]
@@ -97,4 +97,4 @@ if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     sum_up_f1_labeled_scores(source,target,'r')
-    # sum_up_f1_labeled_scores(source,target,'w')
+    sum_up_f1_labeled_scores(source,target,'w')
