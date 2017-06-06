@@ -1019,7 +1019,7 @@ if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # target = 'reviews'
-    # method = 'freq'
+    method = 'freq'
     # method = 'un_mi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
@@ -1042,7 +1042,7 @@ if __name__ == '__main__':
     # evaluate_POS_ID_lexical(target)
     # methods = ['un_mi','pmi']
     pos_tag = 'NN'
-    methods = ['mi.%s'%pos_tag]
+    methods = ['%s.%s'%(method,pos_tag)]
     # methods = ['un_mi']
     # methods = ['freq','mi','pmi','ppmi']
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']

@@ -17,8 +17,8 @@ def count_nouns(selected_pivots):
 
 def runner(source,target,method,n):
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
-    pivots = dict(features[:n]).keys()
-    print count_nouns(pivots)
+    pivots = dict(features[:n]).keys() if n >0 else dict(features[n:]).keys()
+    print count_nouns(pivots),n
     return count_nouns(pivots)
 
 # different methods
@@ -67,6 +67,6 @@ def batch_reuslts_from_numbers(source,target,method,nums):
 if __name__ == '__main__':
     source = "wsj"
     target = "answers"
-    method = "dist/freq"
-    n = 500
+    method = "freq.NN"
+    n = -500
     runner(source,target,method,n)

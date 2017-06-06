@@ -65,6 +65,13 @@ def fallout(tn,fp):
 def f1_score(precision,recall):
     return float(2.0*(precision*recall))/(float)(precision+recall) if precision+recall != 0 else 0
 
+def inverse_f1(f1_score):
+    return float(1.0/f1_score)
+
+#  1 / (1 + exp(-r)) - 0.5
+def weight_score(f1_score):
+    return float(1.0/(1.0+numpy.exp(-f1_score)))-0.5
+
 def accuracy(tp,tn,fp,fn):
     return float(tp+tn)/float(tp+tn+fp+fn)
 
@@ -227,6 +234,9 @@ def batch_f1_results(source,target,pv_method):
         f.flush()
     f.close()
     pass
+
+#
+
 
 # gamma results for unbalanced function
 def batch_gamma_results(source,target,pv_method):
