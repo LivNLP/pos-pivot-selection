@@ -73,7 +73,7 @@ def multiply_f1(L,f1):
     # print L
     return dict([(x,f1*v) for (x,v) in L.iteritems()])
 
-def sum_up_f1_labeled_scores:
+def sum_up_f1_labeled_scores(source,target,opt):
     original_train = '../work/%s-%s/trainVects.NA' % (source,target)
     n_splits = 5
     original_labels = test_eval.read_labels(original_train)
