@@ -11,6 +11,9 @@ import pickle
 import test_eval
 import numpy
 
+from sklearn.externals.joblib import Memory
+from sklearn.datasets import load_svmlight_file
+
 # add f1 when sum up the scores, using test data and results obtained from model
 def sum_up_f1_labeled_scores_test(source,target,opt):
     # src_labeled = pos_data.load_preprocess_obj('%s-labeled'%source)
@@ -152,10 +155,20 @@ def load_f1_obj(source,target,name):
     with open('../work/%s-%s/f1/%s.pkl'%(source,target,name), 'rb') as f:
         return pickle.load(f)
 
+
+def load(source,target):
+    train_file = '../work/%s-%s/trainVects.NA' % (source,target)
+    data = load_svmlight_file(train_file,multilabel=True)
+    X, y = data[0], data[1]
+    print X
+    print y
+    pass
+
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # sum_up_f1_labeled_scores(source,target,'r')
     # sum_up_f1_labeled_scores(source,target,'w')
     # read_file('../work/%s-%s/trainVects.NA'%(source,target))
-    train_cv(source,target)
+    # train_cv(source,target)
+    load(source,target)
