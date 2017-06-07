@@ -74,15 +74,20 @@ def multiply_f1(L,f1):
     return dict([(x,f1*v) for (x,v) in L.iteritems()])
 
 def sum_up_f1_labeled_scores(source,target,opt):
-    original_train = '../work/%s-%s/trainVects.NA' % (source,target)
-    n_splits = 5
-    original_labels = test_eval.read_labels(original_train)
-    det_idx = int(len(original_labels)/n_splits)
-    print det_idx,len(original_labels)
-    # random split train and test data
-    random_labels = numpy.random.shuffle(original_labels)
-    new_train = random_labels[det_idx:]
-    new_test = random_labels[:det_idx]
+    
+    # test_file = 
+    # testLBFGS(test_file,model_file)
+    
+    # n_splits = 5
+    # original_data = read_file(original_train)
+    # det_idx = int(len(original_data)/n_splits)
+    # print det_idx,len(original_data)
+    # # random split train and test data
+    # random_data = numpy.random.shuffle(original_data)
+    # new_train = random_data[det_idx:]
+    # new_test = random_data[:det_idx]
+    
+
     tag_list = test_eval.generate_tag_list(source,target)
     tag_dist = pos_data.compute_dist(source)
     res_list = compare_labels(predict_labels,target_labels,tag_list,tag_dist)
@@ -94,11 +99,39 @@ def sum_up_f1_labeled_scores(source,target,opt):
     pass
 
 
-def read_file(fname):
-    input_file = open(fname,'r')
-    lines = [line.strip().split() for line in input_file]
-    print lines
-    return lines
+def train_cv(source,target):
+    train_file = '../work/%s-%s/trainVects.NA' % (source,target)
+    model_file = '../work/%s-%s/model5fold.NA' % (source,target)
+    print "Training...5-fold cross-validation..."
+    train5fold(train_file,model_file)
+    pass
+
+# def read_file(fname):
+#     input_file = open(fname,'r')
+#     lines = input_file.readlines()
+#     print len(lines)
+#     return lines
+
+# 5-fold cross-validation
+def train5fold(train_file, model_file):
+    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -v 5 -n 8 %s %s > /dev/null' %\
+        (train_file,model_file), shell=True)
+    return retcode
+
+
+def testLBFGS(test_file, model_file):
+    output = '../work/output_f1'
+    retcode = subprocess.check_output('~/liblinear-multicore-2.11-1/predict %s %s %s' %\
+        (test_file,model_file,output), shell=True)
+    line = retcode
+    accuracy = 0
+    correct = 0
+    total = 0
+    p = line.strip().split()
+    accuracy = float(p[2].strip('%'))/100
+    [correct, total]=[int(s) for s in re.findall(r'\b\d+\b',p[3])]
+    # print accuracy,correct,total
+    return accuracy,correct,total
 
 
 # save and load f1 obj
@@ -123,4 +156,5 @@ if __name__ == '__main__':
     target = 'answers'
     # sum_up_f1_labeled_scores(source,target,'r')
     # sum_up_f1_labeled_scores(source,target,'w')
-    read_file('../work/%s-%s/trainVects.NA'%(source,target))
+    # read_file('../work/%s-%s/trainVects.NA'%(source,target))
+    train_cv(source,target)
