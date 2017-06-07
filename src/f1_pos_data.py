@@ -6,7 +6,7 @@ Difference between f1:
 q(x), q is not distribution, it's a normalized f1 weight
 """
 import pos_data
-import os
+import os,subprocess
 import pickle
 import test_eval
 import numpy
