@@ -149,7 +149,6 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     # f.close()
     return res_list
 
-
 def testLBFGS(test_file, model_file):
     output = '../work/output_eval'
     retcode = subprocess.check_output('~/liblinear-multicore-2.11-1/predict %s %s %s' %\
