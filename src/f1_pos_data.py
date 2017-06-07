@@ -114,8 +114,9 @@ def train_cv(source,target):
 
 # 5-fold cross-validation
 def train5fold(train_file, model_file):
-    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -v 5 -n 8 %s %s > /dev/null' %\
+    retcode = subprocess.call('~/liblinear-multicore-2.11-1/train -s 0 -v 5 -n 8 %s %s' %\
         (train_file,model_file), shell=True)
+    #> /dev/null
     return retcode
 
 
