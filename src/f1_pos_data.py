@@ -158,7 +158,7 @@ def load_f1_obj(source,target,name):
 
 def load(source,target):
     train_file = '../work/%s-%s/trainVects.NA' % (source,target)
-    data = load_svmlight_file(train_file,multilabel=True)
+    data = load_svmlight_file(train_file)
     X, y = data[0], data[1]
     print X
     print y
