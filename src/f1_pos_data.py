@@ -160,8 +160,8 @@ def load(source,target):
     train_file = '../work/%s-%s/trainVects.NA' % (source,target)
     data = load_svmlight_file(train_file)
     X, y = data[0], data[1]
-    print X
-    print y
+    print X.shape
+    print y.shape
     pass
 
 if __name__ == '__main__':
