@@ -155,13 +155,16 @@ def load_f1_obj(source,target,name):
     with open('../work/%s-%s/f1/%s.pkl'%(source,target,name), 'rb') as f:
         return pickle.load(f)
 
-
+mem = Memory("./mycache")
+@mem.cache
 def load(source,target):
     train_file = '../work/%s-%s/trainVects.NA' % (source,target)
     data = load_svmlight_file(train_file)
     X, y = data[0], data[1]
     print X.shape
     print y.shape
+    save_f1_obj(source,target,X,'new_train')
+    save_f1_obj(source,target,y,'new_test')
     pass
 
 if __name__ == '__main__':
