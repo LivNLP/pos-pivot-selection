@@ -163,8 +163,8 @@ def load(source,target):
     X, y = data[0], data[1]
     print X.shape
     print y.shape
-    save_f1_obj(source,target,X,'new_train')
-    save_f1_obj(source,target,y,'new_test')
+    # save_f1_obj(source,target,X,'new_train')
+    # save_f1_obj(source,target,y,'new_test')
     pass
 
 if __name__ == '__main__':
