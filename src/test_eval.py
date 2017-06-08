@@ -300,9 +300,8 @@ def clas_rpt():
     source = "wsj"
     target = "answers"
     pv_method = "mi"
-    gamma = 1
-    model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
-    test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
+    model_file = '../work/%s-%s/model.NA' % (source, target)
+    test_file = '../work/%s-%s/testVects.NA' % (source, target)
     testLBFGS(test_file,model_file)
     output = '../work/output_eval'
     predict_labels = read_labels(output)
