@@ -5,6 +5,7 @@ import re
 import sys, math, subprocess, time
 from tabulate import tabulate
 import roc_curve
+from sklearn.metrics import classification_report
 # from decimal import *
 
 # return a list of all the labels from a output file or test file
@@ -241,7 +242,6 @@ def batch_f1_results(source,target,pv_method):
 def bathc_f1_pv_methods():
     pass
 
-
 # gamma results for unbalanced function
 def batch_gamma_results(source,target,pv_method):
     f = open('../work/a_sim/%s-%sgamma_F1.%s.csv'%(source,target,pv_method), 'w')
@@ -295,11 +295,25 @@ def batch_dist_gamma_results(source,target,pv_method):
     f.close()
     pass
 
+
+def clas_rpt():
+    source = "wsj"
+    target = "answers"
+    pv_method = "mi"
+    model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
+    test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
+    testLBFGS(test_file,model_file)
+    output = '../work/output_eval'
+    predict_labels = read_labels(output)
+    target_labels = read_labels(test_file)
+    print(classification_report(target_labels, predict_labels))
+    pass
+
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    # pv_method = "mi"
-    pv_method = "dist/mi"
+    pv_method = "mi"
+    # pv_method = "dist/mi"
     # pv_method = "un_mi"
     if "dist" in pv_method:
         batch_dist_gamma_results(source,target,pv_method)
@@ -309,5 +323,6 @@ def print_gamma_results():
 
 if __name__ == '__main__':
     # print_results()
-    print_gamma_results()
+    # print_gamma_results()
     # test_sort()
+    clas_rpt()

@@ -168,8 +168,8 @@ def load(source,target):
     print y.shape
     clf = LogisticRegressionCV(solver='liblinear').fit(X,y)
     scores = cross_val_score(clf, X, y, cv=5, scoring='f1_macro')
-    predicted = cross_val_predict(clf, X, y, cv=5)
     print scores
+    predicted = cross_val_predict(clf, X, y, cv=5)
     print predicted.shape
     f1s = f1_score(y,predicted,average=None)
     print f1s
