@@ -13,7 +13,8 @@ import numpy
 
 from sklearn.externals.joblib import Memory
 from sklearn.datasets import load_svmlight_file
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score,cross_val_predict
+from sklearn.metrics import f1_score
 
 # add f1 when sum up the scores, using test data and results obtained from model
 def sum_up_f1_labeled_scores_test(source,target,opt):
@@ -165,7 +166,11 @@ def load(source,target):
     print X.shape
     print y.shape
     scores = cross_val_score(clf, X, y, cv=5, scoring='f1_macro')
+    predicted = cross_val_predict(clf, X, y, cv=5)
     print scores
+    print predicted.shape
+    f1s = f1_score(y,predicted,average=None)
+    print f1s
     # save_f1_obj(source,target,X,'new_train')
     # save_f1_obj(source,target,y,'new_test')
     return scores
