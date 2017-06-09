@@ -228,5 +228,5 @@ if __name__ == '__main__':
     target = 'answers'
     res_list = compute_res(source,target)
     sum_up_f1_labeled_scores(source,target,'r',res_list)
-    # sum_up_f1_labeled_scores(source,target,'w',res_list)
+    sum_up_f1_labeled_scores(source,target,'w',res_list)
     # load(source,target)
