@@ -81,7 +81,7 @@ def multiply_f1(L,f1):
     # print L
     return dict([(x,f1*v) for (x,v) in L.iteritems()])
 
-def sum_up_f1_labeled_scores(source,target,opt):
+def sum_up_f1_labeled_scores(source,target,opt,res_list):
 
     # n_splits = 5
     # original_data = read_file(original_train)
@@ -92,7 +92,12 @@ def sum_up_f1_labeled_scores(source,target,opt):
     # new_train = random_data[det_idx:]
     # new_test = random_data[:det_idx]
     
-    tags,f1s = compute_f1(source,target,opt)
+    
+    tags = [x[0] for x in res_list]
+    print tags==tag_list
+    f1s = [x[4] for x in res_list] if opt=='r' else [x[6] for x in res_list]
+    print f1s
+
     methods = ['freq','mi','pmi','ppmi']
     for method in methods:
         for idx,pos_tag in enumerate(tags):
@@ -137,24 +142,20 @@ def sum_up_f1_labeled_scores(source,target,opt):
 
     pass
 
-def compute_f1(source,target,opt):
+def compute_res(source,target,opt):
     train_file = '../work/%s-%s/trainVects.NA' % (source,target)
     model_file = '../work/%s-%s/model.NA' % (source, target)
     test_file = '../work/%s-%s/self_testVects.NA' % (source,target)
     generate_test_file(train_file,test_file)
     testLBFGS(test_file,model_file)
-    output = "../work/%s-%s/f1/output"
+    output = "../work/output_f1"
     predict_labels = test_eval.read_labels(output)
     target_labels = test_eval.read_labels(test_file)
     tag_list = test_eval.generate_tag_list(source,target)
     tag_dist = pos_data.compute_dist(source)
     res_list = test_eval.compare_labels(predict_labels,target_labels,tag_list,tag_dist)
     # order might be different, so generate a tag_list
-    tags = [x[0] for x in res_list]
-    print tags==tag_list
-    f1s = [x[4] for x in res_list] if opt=='r' else [x[6] for x in res_list]
-    print f1s
-    return tags,f1s
+    return res_list
 
 def generate_test_file(input_fname, output_fname):
     input_file = open(input_fname,'r')
@@ -225,6 +226,7 @@ def load(source,target):
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
-    sum_up_f1_labeled_scores(source,target,'r')
-    # sum_up_f1_labeled_scores(source,target,'w')
+    res_list = compute_res(source,target,opt)
+    sum_up_f1_labeled_scores(source,target,'r',res_list)
+    # sum_up_f1_labeled_scores(source,target,'w',res_list)
     # load(source,target)
