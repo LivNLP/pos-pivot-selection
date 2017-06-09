@@ -179,7 +179,7 @@ def load(source,target):
     print f1s
     # save_f1_obj(source,target,X,'new_train')
     # save_f1_obj(source,target,y,'new_test')
-    return scores
+    return f1s
 
 if __name__ == '__main__':
     source = 'wsj'
