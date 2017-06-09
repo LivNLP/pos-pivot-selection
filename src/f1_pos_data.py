@@ -91,7 +91,10 @@ def sum_up_f1_labeled_scores(source,target,opt,res_list):
     # random_data = numpy.random.shuffle(original_data)
     # new_train = random_data[det_idx:]
     # new_test = random_data[:det_idx]
-    
+    freq_dict={}
+    mi_dict={}
+    pmi_dict={}
+    ppmi_dict={}
     
     tags = [x[0] for x in res_list]
     print tags
