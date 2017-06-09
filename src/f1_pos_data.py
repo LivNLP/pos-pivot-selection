@@ -142,7 +142,7 @@ def sum_up_f1_labeled_scores(source,target,opt,res_list):
 
     pass
 
-def compute_res(source,target,opt):
+def compute_res(source,target):
     train_file = '../work/%s-%s/trainVects.NA' % (source,target)
     model_file = '../work/%s-%s/model.NA' % (source, target)
     test_file = '../work/%s-%s/self_testVects.NA' % (source,target)
@@ -226,7 +226,7 @@ def load(source,target):
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
-    res_list = compute_res(source,target,opt)
+    res_list = compute_res(source,target)
     sum_up_f1_labeled_scores(source,target,'r',res_list)
     # sum_up_f1_labeled_scores(source,target,'w',res_list)
     # load(source,target)
