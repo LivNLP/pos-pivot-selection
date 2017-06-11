@@ -1014,7 +1014,7 @@ def f1_evaluate_one_domain_pair(source,target,method,gamma,n,opt):
     # create dir to store scores for different settings
     f1_method = ("f1/%s/"%opt)+method
     # others remain the same
-    resFile = open('../work/f1_sim/SCLf1%s-%s.%s.csv'% (source,target,method), 'w')
+    resFile = open('../work/f1_sim/%s/SCLf1%s-%s.%s.csv'% (opt,source,target,method), 'w')
     resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots\n')
     learnProjection(source, target, f1_method, n)
     # explicit: SCL pivot predictors 
@@ -1034,7 +1034,7 @@ def f1_evaluate_one_domain_pair(source,target,method,gamma,n,opt):
 
 def f1_choose_gamma_one_domain_pair(source,target,method,gammas,n,opt):
     f1_method = ("f1/%s/"%opt)+method
-    resFile = open('../work/f1_sim/SCLf1gamma%s-%s.%s.csv'% (source, target, method), 'w')
+    resFile = open('../work/f1_sim/%s/SCLf1gamma%s-%s.%s.csv'% (opt, source, target, method), 'w')
     resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots, gamma\n')
     learnProjection(source, target, f1_method, n)
     for gamma in gammas:    
