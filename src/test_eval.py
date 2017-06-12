@@ -269,8 +269,8 @@ def batch_gamma_results(source,target,pv_method):
     pass
 
 # gamma results for dist (balanced) function
-def batch_dist_gamma_results(source,target,pv_method):
-    method = pv_method.replace("dist/","")
+def batch_dist_gamma_results(source,target,method):
+    pv_method = "dist/"+method
     f = open('../work/dist_sim/%s-%sdistgamma_F1.%s.csv'%(source,target,method), 'w')
     print "Generating results for different gamma values..."
     f.write("gamma,F1 score\n")
@@ -312,12 +312,11 @@ def clas_rpt():
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    pv_method = "mi"
+    methods = ['freq','mi','pmi','ppmi']
     # pv_method = "dist/mi"
     # pv_method = "un_mi"
-    if "dist" in pv_method:
+    for pv_method in methods:
         batch_dist_gamma_results(source,target,pv_method)
-    else:
         batch_gamma_results(source,target,pv_method)
     pass
 
