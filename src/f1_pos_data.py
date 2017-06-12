@@ -161,7 +161,7 @@ def compute_res(source,target):
         tags = [x[0] for x in res_list]
         tmp_res = [[x[4],x[6]] for x in res_list]
         print tmp_res
-        sum_res = [x+y for x,y in zip(tmp_res, sum_res)]
+        sum_res = [[x[0]+y[0],x[1]+y[1]] for x,y in zip(tmp_res, sum_res)]
         print sum_res
     print "final: ", sum_res
     res_list=[[x,y[0]/5.0,y[1]/5.0] for x,y in zip(tags,sum_res)]
