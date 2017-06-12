@@ -56,7 +56,7 @@ def batch_dist_results_from_methods(source,target,methods,n):
     for method in methods:
         print "method = ", method
         nouns = runner(source,target,pv_method,n)
-        f.write("%s, %S, %s, %f, %f\n"%(source,target,method,nouns,n))
+        f.write("%s, %s, %s, %f, %f\n"%(source,target,method,nouns,n))
         f.flush()
     f.close()
     pass
@@ -70,7 +70,7 @@ def batch_reuslts_from_numbers(source,target,method,nums):
     for n in nums:
         print "#pivots = ", n
         nouns = runner(source,target,method,n) 
-        f.write("%s, %S, %s, %f, %f\n"%(source,target,method,nouns,n))
+        f.write("%s, %s, %s, %f, %f\n"%(source,target,method,nouns,n))
         f.flush()
     f.close()
     pass
