@@ -50,10 +50,10 @@ def batch_results_from_methods(source,target,methods,n):
 def batch_dist_results_from_methods(source,target,methods,n):
     f = open('../work/dist_sim/%s-%sdist_nouns.csv'%(source,target), 'w')
     print "source = ", source
-    print "target = ", target
-    pv_method = "dist/"+method
+    print "target = ", target  
     f.write("Source, Target, Method, Nouns, #pivots\n")
     for method in methods:
+        pv_method = "dist/"+method
         print "method = ", method
         nouns = runner(source,target,pv_method,n)
         f.write("%s, %s, %s, %f, %f\n"%(source,target,method,nouns,n))
