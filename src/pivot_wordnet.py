@@ -41,7 +41,7 @@ def batch_results_from_methods(source,target,methods,n):
     for method in methods:
         print "method = ", method
         nouns = runner(source,target,method,n)
-        f.write("%s, %S, %s, %f, %f\n"%(source,target,method,nouns,n))
+        f.write("%s, %s, %s, %f, %f\n"%(source,target,method,nouns,n))
         f.flush()
     f.close()
     pass
