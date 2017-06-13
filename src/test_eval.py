@@ -340,7 +340,9 @@ def print_results():
 def print_f1_results():
     methods = ['freq','mi','pmi','ppmi']
     methods += ['un_freq','un_mi','un_pmi','un_ppmi']
+    # pos_tag = 'NN'
     for pv_method in methods:
+        # pv_method = '%s.%s'%(pv_method,pos_tag)
         batch_f1_results(source,target,pv_method)
     pass
 
