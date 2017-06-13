@@ -325,8 +325,8 @@ def clas_rpt():
 def print_results():
     source = 'wsj'
     target = 'answers'
-    # pv_method = 'freq'
-    pv_method = 'mi'
+    pv_method = 'freq.NN'
+    # pv_method = 'mi'
     # train_model = 'implicit'
     train_models = ['explicit','implicit','combined']
     # train_model = 'explicit'
@@ -361,8 +361,8 @@ def print_gamma_results():
     pass
 
 if __name__ == '__main__':
-    # print_results()
-    print_f1_results()
+    print_results()
+    # print_f1_results()
     # print_gamma_results()
     # test_sort()
     # clas_rpt()

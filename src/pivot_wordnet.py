@@ -82,7 +82,7 @@ if __name__ == '__main__':
     n = 500
     # runner(source,target,method,n)
     # random_runner(source,target,method,n)
-    methods = ['freq','mi','pmi','ppmi']
+    # methods = ['freq','mi','pmi','ppmi']
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
     # batch_results_from_methods(source,target,methods,n)
-    batch_dist_results_from_methods(source,target,methods,n)
+    # batch_dist_results_from_methods(source,target,methods,n)
