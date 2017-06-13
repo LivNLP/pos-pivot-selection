@@ -325,8 +325,9 @@ def clas_rpt():
 def print_results():
     source = 'wsj'
     target = 'answers'
-    pv_method = 'freq.NN'
+    # pv_method = 'freq.NN'
     # pv_method = 'mi'
+    pv_method = 'mi.NN'
     # train_model = 'implicit'
     train_models = ['explicit','implicit','combined']
     # train_model = 'explicit'
@@ -340,7 +341,7 @@ def print_results():
 def print_f1_results():
     source = 'wsj'
     target = 'answers'
-    methods = ['ppmi']
+    methods = ['freq','mi','pmi','ppmi']
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
     pos_tag = 'NN'
     for pv_method in methods:
