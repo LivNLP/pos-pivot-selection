@@ -223,8 +223,23 @@ def batch_f1_results(source,target,pv_method):
     f.close()
     pass
 
-#batch f1 score by pivot selection methods
-def bathc_f1_pv_methods():
+# distribution
+def batch_dist_f1_results(source,target,pv_method):
+    f = open('../work/dist_sim/%s-%sdist_F1.%s.csv'%(source,target,pv_method), 'w')
+    print "Sum up results..."
+    f.write("model, F1 score\n")
+    train_models = ['explicit','implicit','combined']
+    index = 1
+    gamma = 1
+    pv_method = 'dist/'+pv_method
+    for train_model in train_models:
+        res_list = evaluate_table(source,target,pv_method,train_model,index,gamma)
+        tmp = [x[5] for x in res_list]
+        avg_f1 = numpy.mean(tmp)
+        print train_model,avg_f1
+        f.write("%s, %f\n"%(train_model,avg_f1))
+        f.flush()
+    f.close()
     pass
 
 # gamma results for unbalanced function
@@ -344,11 +359,12 @@ def print_f1_results():
     target = 'answers'
     methods = ['freq','mi','pmi','ppmi']
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
-    pos_tag = 'NN'
+    # pos_tag = 'NN'
     for pv_method in methods:
-        pv_method = '%s.%s'%(pv_method,pos_tag)
-        print "method = ", pv_method
-        batch_f1_results(source,target,pv_method)
+        # pv_method = '%s.%s'%(pv_method,pos_tag)
+        # print "method = ", pv_method
+        # batch_f1_results(source,target,pv_method)
+        batch_dist_gamma_results(source,target,pv_method)
     pass
 
 def print_gamma_results():
@@ -365,7 +381,7 @@ def print_gamma_results():
     pass
 
 if __name__ == '__main__':
-    print_results()
+    # print_results()
     # print_f1_results()
     # print_gamma_results()
     # test_sort()
