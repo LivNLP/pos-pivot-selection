@@ -48,12 +48,12 @@ def batch_results_from_methods(source,target,methods,n):
 
 # different methods focus on nouns
 def batch_results_from_NN_methods(source,target,methods,n):
-    method = "%s.NN"%method
     f = open('../work/a_sim/%s-%s_NN_nouns.csv'%(source,target), 'w')
     print "source = ", source
     print "target = ", target
     f.write("Source, Target, Method, Nouns, #pivots\n")
     for method in methods:
+        method = "%s.NN"%method
         print "method = ", method
         nouns = runner(source,target,method,n)
         f.write("%s, %s, %s, %f, %f\n"%(source,target,method,nouns,n))
