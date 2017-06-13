@@ -137,17 +137,17 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     # print tag_list
     tag_dist = pos_data.compute_dist(source)
     res_list = sort_results(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
-    # tab = create_table(res_list)
+    tab = create_table(res_list)
     # draw_roc(res_list)
     # draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
     # for i in range(2,7):
     #     draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model,gamma)
     # draw(res_list[:len(tag_list)],6,source,target,pv_method,train_model)
-    # f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
+    f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
     # pv_method = pv_method.replace("dist/","")
     # f = open("../work/dist_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
-    # f.write(tab)
-    # f.close()
+    f.write(tab)
+    f.close()
     return res_list
 
 def testLBFGS(test_file, model_file):
