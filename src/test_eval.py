@@ -340,7 +340,7 @@ def print_results():
 def print_f1_results():
     source = 'wsj'
     target = 'answers'
-    methods = ['freq','mi','pmi','ppmi']
+    methods = ['ppmi']
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
     pos_tag = 'NN'
     for pv_method in methods:
@@ -361,8 +361,8 @@ def print_gamma_results():
     pass
 
 if __name__ == '__main__':
-    print_results()
-    # print_f1_results()
+    # print_results()
+    print_f1_results()
     # print_gamma_results()
     # test_sort()
     # clas_rpt()
