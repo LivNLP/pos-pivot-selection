@@ -599,7 +599,7 @@ if __name__ == "__main__":
     # collect_unlabeled_wsj()
     source = 'wsj'
     pos_tag = 'NN'
-    method = 'pmi'
+    method = 'ppmi'
     # compute_dist(source)
     # for target in domains:
     #     presets_labeled(source,target)
