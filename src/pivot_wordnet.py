@@ -46,6 +46,21 @@ def batch_results_from_methods(source,target,methods,n):
     f.close()
     pass
 
+# different methods focus on nouns
+def batch_results_from_NN_methods(source,target,methods,n):
+    method = "%s.NN"%method
+    f = open('../work/a_sim/%s-%s_NN_nouns.csv'%(source,target), 'w')
+    print "source = ", source
+    print "target = ", target
+    f.write("Source, Target, Method, Nouns, #pivots\n")
+    for method in methods:
+        print "method = ", method
+        nouns = runner(source,target,method,n)
+        f.write("%s, %s, %s, %f, %f\n"%(source,target,method,nouns,n))
+        f.flush()
+    f.close()
+    pass
+
 # different dist methods
 def batch_dist_results_from_methods(source,target,methods,n):
     f = open('../work/dist_sim/%s-%sdist_nouns.csv'%(source,target), 'w')
@@ -82,7 +97,8 @@ if __name__ == '__main__':
     n = 500
     # runner(source,target,method,n)
     # random_runner(source,target,method,n)
-    # methods = ['freq','mi','pmi','ppmi']
+    methods = ['freq','mi','pmi','ppmi']
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
     # batch_results_from_methods(source,target,methods,n)
     # batch_dist_results_from_methods(source,target,methods,n)
+    batch_results_from_NN_methods(source,target,methods,n)
