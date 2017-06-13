@@ -295,6 +295,33 @@ def batch_dist_gamma_results(source,target,method):
     f.close()
     pass
 
+def batch_f1_gamma_results(source,target,method,opt):
+    pv_method = ("f1/%s/"%opt)+method
+    f = open('../work/f1_sim/%s/%s-%sf1gamma_F1.%s.csv'%(opt,source,target,method), 'w')
+    print "Generating results for different gamma values..."
+    f.write("gamma,F1 score\n")
+    gammas = [0.01,0.1,1,10,100]
+    for gamma in gammas:
+        model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
+        test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
+        testLBFGS(test_file,model_file)
+        output = '../work/output_eval'
+        predict_labels = read_labels(output)
+        target_labels = read_labels(test_file)
+        tag_list = generate_tag_list(source,target)
+        # print tag_list
+        tag_dist = pos_data.compute_dist(source)
+        # default sort by distribution
+        res_list = sort_results(1,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
+        tmp = [x[5] for x in res_list]
+        avg_f1 = numpy.mean(tmp)
+        print gamma,avg_f1
+        f.write("%f, %f\n"%(gamma,avg_f1))
+        f.flush()
+    f.close()
+    pass
+
+
 
 def clas_rpt():
     source = "wsj"

@@ -143,13 +143,14 @@ def sum_up_f1_labeled_scores(source,target,opt,res_list):
     save_f1_obj(source,target,ppmi_list,"%s/ppmi"%opt)
     pass
 
+# random select test data 5 times to take an average of the the scores
 def compute_res(source,target):
     sum_res = []
     tags = []
+    train_file = '../work/%s-%s/trainVects.NA' % (source,target)
+    model_file = '../work/%s-%s/model.NA' % (source, target)
+    test_file = '../work/%s-%s/self_testVects.NA' % (source,target)
     for i in range(5):
-        train_file = '../work/%s-%s/trainVects.NA' % (source,target)
-        model_file = '../work/%s-%s/model.NA' % (source, target)
-        test_file = '../work/%s-%s/self_testVects.NA' % (source,target)
         generate_test_file(train_file,test_file)
         testLBFGS(test_file,model_file)
         output = "../work/output_f1"
@@ -160,12 +161,12 @@ def compute_res(source,target):
         res_list = test_eval.compare_labels(predict_labels,target_labels,tag_list,tag_dist)
         tags = [x[0] for x in res_list]
         tmp_res = [[x[4],x[6]] for x in res_list]
-        print tmp_res
+        # print tmp_res
         sum_res = [[x[0]+y[0],x[1]+y[1]] for x,y in zip(tmp_res, sum_res)] if sum_res!=[] else tmp_res+sum_res
-        print sum_res
-    print "final: ", sum_res
+        # print sum_res
+    # print "final: ", sum_res
     res_list=[[x,y[0]/5.0,y[1]/5.0] for x,y in zip(tags,sum_res)]
-    print res_list
+    # print res_list
     return res_list
 
 def generate_test_file(input_fname, output_fname):
@@ -237,7 +238,7 @@ def load(source,target):
 if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
-    res_list = compute_res(source,target)
+    # res_list = compute_res(source,target)
     # sum_up_f1_labeled_scores(source,target,'r',res_list)
     # sum_up_f1_labeled_scores(source,target,'w',res_list)
     # load(source,target)
