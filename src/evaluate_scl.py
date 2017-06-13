@@ -1080,7 +1080,7 @@ if __name__ == '__main__':
     pos_tag = 'NN'
     methods = ['%s.%s'%(method,pos_tag)]
 
-    # methods = ['un_mi']
+    # methods = ['mi']
     # methods = ['freq','mi','pmi','ppmi']
     # opt = 'r'
     # opt = 'w'
@@ -1107,3 +1107,4 @@ if __name__ == '__main__':
     # params = [0,1,50,100,1000,10000]
     # for method in methods:
     #     choose_param(method,params,1,n)
+
