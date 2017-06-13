@@ -139,7 +139,7 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     res_list = sort_results(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
     tab = create_table(res_list)
     # draw_roc(res_list)
-    draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
+    # draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
     # for i in range(2,7):
     #     draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model,gamma)
     # draw(res_list[:len(tag_list)],6,source,target,pv_method,train_model)
@@ -370,8 +370,8 @@ def print_f1_results():
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    # methods = ['freq','mi','pmi','ppmi']
-    methods = ["freq"]
+    methods = ['freq','mi','pmi','ppmi']
+    # methods = ["freq"]
     # pv_method = "dist/mi"
     # pv_method = "un_mi"
     # pos_tag = 'NN'
