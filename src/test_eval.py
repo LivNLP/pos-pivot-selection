@@ -205,21 +205,6 @@ def test_sort():
     print sort_results(1,result_list)
     pass
 
-def print_results():
-    source = 'wsj'
-    target = 'answers'
-    # pv_method = 'freq'
-    pv_method = 'mi'
-    # train_model = 'implicit'
-    train_models = ['implicit','explicit','combined']
-    # train_model = 'explicit'
-    # train_model = 'combined'
-    index = 1
-    gamma = 1
-    for train_model in train_models:
-        evaluate_table(source,target,pv_method,train_model,index,gamma)
-    pass
-
 # batch f1 score for method implict,explicit and combined
 def batch_f1_results(source,target,pv_method):
     f = open('../work/a_sim/%s-%s_F1.%s.csv'%(source,target,pv_method), 'w')
@@ -334,6 +319,29 @@ def clas_rpt():
     predict_labels = read_labels(output)
     target_labels = read_labels(test_file)
     print(classification_report(target_labels, predict_labels))
+    pass
+
+
+def print_results():
+    source = 'wsj'
+    target = 'answers'
+    # pv_method = 'freq'
+    pv_method = 'mi'
+    # train_model = 'implicit'
+    train_models = ['implicit','explicit','combined']
+    # train_model = 'explicit'
+    # train_model = 'combined'
+    index = 1
+    gamma = 1
+    for train_model in train_models:
+        evaluate_table(source,target,pv_method,train_model,index,gamma)
+    pass
+
+def print_f1_results():
+    methods = ['freq','mi','pmi','ppmi']
+    methods += ['un_freq','un_mi','un_pmi','un_ppmi']
+    for pv_method in methods:
+        batch_f1_results(source,target,pv_method)
     pass
 
 def print_gamma_results():
