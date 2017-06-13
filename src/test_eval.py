@@ -210,7 +210,7 @@ def batch_f1_results(source,target,pv_method):
     f = open('../work/a_sim/%s-%s_F1.%s.csv'%(source,target,pv_method), 'w')
     print "Sum up results..."
     f.write("model, F1 score\n")
-    train_models = ['implicit','explicit','combined']
+    train_models = ['explicit','implicit','combined']
     index = 1
     gamma = 1
     for train_model in train_models:
