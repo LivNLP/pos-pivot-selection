@@ -326,7 +326,8 @@ def print_results():
     source = 'wsj'
     target = 'answers'
     # pv_method = 'freq.NN'
-    pv_method = 'mi'
+    pv_method = 'un_mi'
+    # pv_method = 'mi'
     # pv_method = 'mi.NN'
     # train_model = 'implicit'
     train_models = ['explicit','implicit','combined']
@@ -353,7 +354,7 @@ def print_f1_results():
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    methods = ['freq','mi','pmi']
+    methods = ['freq','mi','pmi','ppmi']
     # pv_method = "dist/mi"
     # pv_method = "un_mi"
     pos_tag = 'NN'
@@ -364,8 +365,8 @@ def print_gamma_results():
     pass
 
 if __name__ == '__main__':
-    # print_results()
+    print_results()
     # print_f1_results()
-    print_gamma_results()
+    # print_gamma_results()
     # test_sort()
     # clas_rpt()
