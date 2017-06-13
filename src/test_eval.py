@@ -384,7 +384,7 @@ def print_gamma_results():
 
 if __name__ == '__main__':
     # print_results()
-    print_f1_results()
+    # print_f1_results()
     print_gamma_results()
     # test_sort()
     # clas_rpt()
