@@ -338,6 +338,8 @@ def print_results():
     pass
 
 def print_f1_results():
+    source = 'wsj'
+    target = 'answers'
     methods = ['freq','mi','pmi','ppmi']
     methods += ['un_freq','un_mi','un_pmi','un_ppmi']
     # pos_tag = 'NN'
