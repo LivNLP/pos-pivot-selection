@@ -328,7 +328,7 @@ def print_results():
     # pv_method = 'freq'
     pv_method = 'mi'
     # train_model = 'implicit'
-    train_models = ['implicit','explicit','combined']
+    train_models = ['explicit','implicit','combined']
     # train_model = 'explicit'
     # train_model = 'combined'
     index = 1
