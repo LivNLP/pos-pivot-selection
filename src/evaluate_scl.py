@@ -1055,7 +1055,7 @@ if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # target = 'reviews'
-    # method = 'pmi'
+    method = 'ppmi'
     # method = 'un_mi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
@@ -1077,12 +1077,12 @@ if __name__ == '__main__':
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
     # methods = ['un_mi','pmi']
-    # pos_tag = 'NN'
-    # methods = ['%s.%s'%(method,pos_tag)]
+    pos_tag = 'NN'
+    methods = ['%s.%s'%(method,pos_tag)]
 
     # methods = ['un_mi']
-    methods = ['freq','mi','pmi','ppmi']
-    opt = 'r'
+    # methods = ['freq','mi','pmi','ppmi']
+    # opt = 'r'
     # opt = 'w'
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']

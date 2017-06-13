@@ -370,8 +370,8 @@ def print_f1_results():
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    # methods = ['freq','mi','pmi','ppmi']
-    methods = ["freq"]
+    methods = ['freq','mi','pmi','ppmi']
+    # methods = ["freq"]
     # pv_method = "dist/mi"
     # pv_method = "un_mi"
     # pos_tag = 'NN'
