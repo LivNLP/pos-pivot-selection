@@ -342,7 +342,7 @@ def print_f1_results():
     target = 'answers'
     methods = ['freq','mi','pmi','ppmi']
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
-    # pos_tag = 'NN'
+    pos_tag = 'NN'
     for pv_method in methods:
         pv_method = '%s.%s'%(pv_method,pos_tag)
         print "method = ", pv_method
