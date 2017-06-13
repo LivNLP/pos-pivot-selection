@@ -341,8 +341,7 @@ def print_results():
 def print_f1_results():
     source = 'wsj'
     target = 'answers'
-    # methods = ['freq','mi','pmi','ppmi']
-    methods = ['mi']
+    methods = ['freq','mi','pmi','ppmi']
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
     pos_tag = 'NN'
     for pv_method in methods:
@@ -354,17 +353,19 @@ def print_f1_results():
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    methods = ['freq','mi','pmi','ppmi']
+    methods = ['freq','mi','pmi']
     # pv_method = "dist/mi"
     # pv_method = "un_mi"
+    pos_tag = 'NN'
     for pv_method in methods:
         batch_dist_gamma_results(source,target,pv_method)
+        pv_method = '%s.%s'%(pv_method,pos_tag)
         batch_gamma_results(source,target,pv_method)
     pass
 
 if __name__ == '__main__':
-    print_results()
-    print_f1_results()
-    # print_gamma_results()
+    # print_results()
+    # print_f1_results()
+    print_gamma_results()
     # test_sort()
     # clas_rpt()
