@@ -250,6 +250,7 @@ def batch_f1_results_with_opt(source,target,pv_method,opt):
     train_models = ['explicit','implicit','combined']
     index = 1
     gamma = 1
+    pv_method = ("f1/%s/"%opt)+pv_method
     for train_model in train_models:
         res_list = evaluate_table(source,target,pv_method,train_model,index,gamma)
         tmp = [x[5] for x in res_list]
@@ -408,6 +409,6 @@ def print_gamma_results():
 if __name__ == '__main__':
     # print_results()
     print_f1_results()
-    print_gamma_results()
+    # print_gamma_results()
     # test_sort()
     # clas_rpt()
