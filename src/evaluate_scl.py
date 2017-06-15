@@ -1090,15 +1090,15 @@ if __name__ == '__main__':
     # methods = ['pmi','un_pmi','ppmi','un_ppmi']
     for method in methods:
     #     batchEval(method, 1, n)
-        # batchEval_one_domain_pair(source,target,method,1,n)
+        batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
-        f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
+        # f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
     gammas = [0.01,0.1,1,10,100]
     for method in methods:
         # dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
-        # choose_gamma_one_domain_pair(source, target, method,gammas,n)
-        f1_choose_gamma_one_domain_pair(source, target, method,gammas,n,opt)
+        choose_gamma_one_domain_pair(source, target, method,gammas,n)
+        # f1_choose_gamma_one_domain_pair(source, target, method,gammas,n,opt)
     # params = [1]
     # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
     # params += [10e-3,10e-4,10e-5,10e-6]
