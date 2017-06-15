@@ -1055,7 +1055,7 @@ if __name__ == '__main__':
     source = 'wsj'
     target = 'answers'
     # target = 'reviews'
-    method = 'ppmi'
+    # method = 'ppmi'
     # method = 'un_mi'
     # method = "un_mi"
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
@@ -1077,28 +1077,28 @@ if __name__ == '__main__':
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
     # methods = ['un_mi','pmi']
-    pos_tag = 'NN'
-    methods = ['%s.%s'%(method,pos_tag)]
+    # pos_tag = 'NN'
+    # methods = ['%s.%s'%(method,pos_tag)]
 
     # methods = ['mi']
-    # methods = ['freq','mi','pmi','ppmi']
+    methods = ['freq','mi','pmi','ppmi']
     # opt = 'r'
-    # opt = 'w'
+    opt = 'w'
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
     # methods = ['pmi','un_pmi','ppmi','un_ppmi']
     for method in methods:
     #     batchEval(method, 1, n)
-        batchEval_one_domain_pair(source,target,method,1,n)
+        # batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
-        # f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
+        f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
     gammas = [0.01,0.1,1,10,100]
     for method in methods:
         # dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
-        choose_gamma_one_domain_pair(source, target, method,gammas,n)
-        # f1_choose_gamma_one_domain_pair(source, target, method,gammas,n,opt)
+        # choose_gamma_one_domain_pair(source, target, method,gammas,n)
+        f1_choose_gamma_one_domain_pair(source, target, method,gammas,n,opt)
     # params = [1]
     # params = [0,0.1,0.2,0.4,0.6,0.8,1,1.2,1.4,1.6,1.8,2]
     # params += [10e-3,10e-4,10e-5,10e-6]
