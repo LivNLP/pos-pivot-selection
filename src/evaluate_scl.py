@@ -1080,10 +1080,10 @@ if __name__ == '__main__':
     # pos_tag = 'NN'
     # methods = ['%s.%s'%(method,pos_tag)]
 
-    # methods = ['mi']
-    methods = ['freq','mi','pmi','ppmi']
-    # opt = 'r'
-    opt = 'w'
+    methods = ['mi']
+    # methods = ['freq','mi','pmi','ppmi']
+    opt = 'r'
+    # opt = 'w'
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
@@ -1093,7 +1093,7 @@ if __name__ == '__main__':
         # batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
-        f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
+        # f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
     gammas = [0.01,0.1,1,10,100]
     for method in methods:
         # dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
