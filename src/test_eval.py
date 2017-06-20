@@ -376,9 +376,9 @@ def print_results():
 def print_f1_results():
     source = 'wsj'
     target = 'answers'
-    # methods = ['freq','mi','pmi','ppmi']
-    methods = ["freq"]
-    opt = 'r'
+    methods = ['freq','mi','pmi','ppmi']
+    # methods = ["freq"]
+    opt = 'w'
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
     # pos_tag = 'NN'
     for pv_method in methods:
@@ -392,10 +392,10 @@ def print_f1_results():
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    # methods = ['freq','mi','pmi','ppmi']
-    opt = 'r'
+    methods = ['freq','mi','pmi','ppmi']
+    opt = 'w'
     # methods = ['un_freq','un_mi','un_pmi','un_ppmi']
-    methods = ["freq"]
+    # methods = ["freq"]
     # pv_method = "dist/mi"
     # pv_method = "un_mi"
     # pos_tag = 'NN'
@@ -409,6 +409,6 @@ def print_gamma_results():
 if __name__ == '__main__':
     # print_results()
     print_f1_results()
-    # print_gamma_results()
+    print_gamma_results()
     # test_sort()
     # clas_rpt()
