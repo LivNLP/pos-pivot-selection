@@ -376,34 +376,34 @@ def print_results():
 def print_f1_results():
     source = 'wsj'
     target = 'answers'
-    # methods = ['freq','mi','pmi','ppmi']
-    methods = ["ppmi"]
-    # opt = 'w'
+    methods = ['freq','mi','pmi','ppmi']
+    # methods = ["ppmi"]
+    opt = 'r'
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
-    pos_tag = 'NN'
+    # pos_tag = 'NN'
     for pv_method in methods:
-        pv_method = '%s.%s'%(pv_method,pos_tag)
-        print "method = ", pv_method
-        batch_f1_results(source,target,pv_method)
+        # pv_method = '%s.%s'%(pv_method,pos_tag)
+        # print "method = ", pv_method
+        # batch_f1_results(source,target,pv_method)
         # batch_dist_f1_results(source,target,pv_method)
-        # batch_f1_results_with_opt(source,target,pv_method,opt)
+        batch_f1_results_with_opt(source,target,pv_method,opt)
     pass
 
 def print_gamma_results():
     source = "wsj"
     target = "answers"
-    # methods = ['freq','mi','pmi','ppmi']
-    # opt = 'w'
+    methods = ['freq','mi','pmi','ppmi']
+    opt = 'r'
     # methods = ['un_freq','un_mi','un_pmi','un_ppmi']
-    methods = ["ppmi"]
+    # methods = ["ppmi"]
     # pv_method = "dist/mi"
     # pv_method = "un_mi"
-    pos_tag = 'NN'
+    # pos_tag = 'NN'
     for pv_method in methods:
         # batch_dist_gamma_results(source,target,pv_method)
-        pv_method = '%s.%s'%(pv_method,pos_tag)
-        batch_gamma_results(source,target,pv_method)
-        # batch_f1_gamma_results(source,target,pv_method,opt)
+        # pv_method = '%s.%s'%(pv_method,pos_tag)
+        # batch_gamma_results(source,target,pv_method)
+        batch_f1_gamma_results(source,target,pv_method,opt)
     pass
 
 if __name__ == '__main__':
