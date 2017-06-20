@@ -110,7 +110,7 @@ if __name__ == '__main__':
     target = "answers"
     # method = "freq.NN"
     n = 500
-    opt = 'r'
+    opt = 'w'
     # runner(source,target,method,n)
     # random_runner(source,target,method,n)
     methods = ['freq','mi','pmi','ppmi']
