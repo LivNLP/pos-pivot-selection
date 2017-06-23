@@ -205,6 +205,13 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
     new_methods = pv_methods
     if 'x' in pv_methods:
         new_methods = [method,'dist/'+method,"f1/r/"+method,"f1/w/"+method,method+".NN"]
+    else:
+        if method == 'q(x)':
+            new_methods = ['dist/'+pv for pv in pv_methods]
+        elif method == 'r(x)':
+            new_methods = ['f1/r/'+pv for pv in pv_methods]
+        elif method = 'w(x)':
+            new_methods = ['f1/w/'+pv for pv in pv_methods]
     for pv_method in new_methods:
         res_list = evaluate_table(source,target,pv_method,train_model,1,gamma)
         f1 = [x[5] for x in res_list]
@@ -234,6 +241,7 @@ def print_graphs_single_method():
     gamma = 1
     method = 'x'
     pv_methods=['freq','mi','pmi','ppmi']
+    draw_f1_for_methods(ource,target,pv_methods,method,train_model,gamma)
     pass
 
 # test methods
@@ -446,4 +454,5 @@ if __name__ == '__main__':
     # print_gamma_results()
     # test_sort()
     # clas_rpt()
-    print_graphs_single_pv()
+    # print_graphs_single_pv()
+    print_graphs_single_method()
