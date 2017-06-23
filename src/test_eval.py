@@ -248,6 +248,17 @@ def print_graphs_single_method():
         draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
     pass
 
+#unlabelled
+def print_graph_unlabelled():
+    ource = 'wsj'
+    target = 'answers'
+    train_model = 'combined'
+    gamma = 1
+    method = 'un_x'
+    pv_methods=['un_freq','un_mi','un_pmi','un_ppmi']
+    draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
+    pass
+
 # test methods
 def test_sort():
     result_list = [['a',3,2,1],['b',1,2,2],['c',2,3,1]]
@@ -458,5 +469,6 @@ if __name__ == '__main__':
     # print_gamma_results()
     # test_sort()
     # clas_rpt()
-    print_graphs_single_pv()
-    print_graphs_single_method()
+    # print_graphs_single_pv()
+    # print_graphs_single_method()
+    print_graph_unlabelled()
