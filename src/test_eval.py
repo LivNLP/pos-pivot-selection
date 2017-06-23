@@ -222,13 +222,18 @@ def print_graphs_single_pv():
     train_model = 'combined'
     gamma = 1
     methods = ['x','q(x)','r(x)','w(x)','x.NN']
-    pv_method = 'freq'
+    pv_method = 'mi'
     draw_f1_for_methods(source,target,methods,pv_method,train_model,gamma)
     pass
 
 # e.g. x: FREQ-L, MI-L, PMI-L. PPMI-L
 def print_graphs_single_method():
     source = 'wsj'
+    target = 'answers'
+    train_model = 'combined'
+    gamma = 1
+    method = 'x'
+    pv_methods=['freq','mi','pmi','ppmi']
     pass
 
 # test methods
