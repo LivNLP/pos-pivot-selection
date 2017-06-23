@@ -241,7 +241,7 @@ def print_graphs_single_method():
     gamma = 1
     method = 'x'
     pv_methods=['freq','mi','pmi','ppmi']
-    draw_f1_for_methods(ource,target,pv_methods,method,train_model,gamma)
+    draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
     pass
 
 # test methods
