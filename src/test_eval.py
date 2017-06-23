@@ -199,6 +199,38 @@ def draw_prf(result_list,source,target,pv_method,train_model,gamma):
     roc_curve.draw_prf(tags,ys,y_labels,source,target,pv_method,train_model,gamma)
     pass
 
+def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
+    ys = []
+    tags = []
+    new_methods = pv_methods
+    if 'x' in pv_methods:
+        new_methods = [method,'dist/'+method,"f1/r/"+method,"f1/w/"+method,method+".NN"]
+    for pv_method in new_methods:
+        res_list = evaluate_table(source,target,pv_method,train_model,1,gamma)
+        f1 = [x[5] for x in res_list]
+        tags = [x[0] for x in res_list]
+        ys.append(f1)
+    y_labels = pv_methods
+    roc_curve.draw_methods(tags,ys,y_labels,source,target, method, train_model,gamma)
+    pass
+
+# print graphs
+# e.g. FREQ-L: x, q(x), r(x), w(x), x.NN
+def print_graphs_single_pv():
+    source = 'wsj'
+    target = 'answers'
+    train_model = 'combined'
+    gamma = 1
+    methods = ['x','q(x)','r(x)','w(x)','x.NN']
+    pv_method = 'freq'
+    draw_f1_for_methods(source,target,methods,pv_method,train_model,gamma)
+    pass
+
+# e.g. x: FREQ-L, MI-L, PMI-L. PPMI-L
+def print_graphs_single_method():
+    source = 'wsj'
+    pass
+
 # test methods
 def test_sort():
     result_list = [['a',3,2,1],['b',1,2,2],['c',2,3,1]]
@@ -340,8 +372,6 @@ def batch_f1_gamma_results(source,target,method,opt):
     f.close()
     pass
 
-
-
 def clas_rpt():
     source = "wsj"
     target = "answers"
@@ -354,7 +384,6 @@ def clas_rpt():
     target_labels = read_labels(test_file)
     print(classification_report(target_labels, predict_labels))
     pass
-
 
 def print_results():
     source = 'wsj'
@@ -408,7 +437,8 @@ def print_gamma_results():
 
 if __name__ == '__main__':
     # print_results()
-    print_f1_results()
-    print_gamma_results()
+    # print_f1_results()
+    # print_gamma_results()
     # test_sort()
     # clas_rpt()
+    print_graphs_single_pv()

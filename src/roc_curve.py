@@ -65,6 +65,38 @@ def draw_prf(x,ys,y_labels,source,target,pv_method,train_model,gamma):
     plt.savefig('../work/a_sim/pic/prf/%s-%s_%s_%s.png'%(source,target,pv_method,train_model))
     pass
 
+# draw f1 for pv_methods
+def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
+    plt.figure(figsize=(12,5.5))
+    index = np.arange(len(x))
+    if 'x' in y_labels:
+        if train_model == 'combined':
+            plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,convert(method),train_model,gamma))
+        else:
+            plt.title('%s-%s:%s,%s'%(source,target,convert(method),train_model))
+        i = 0
+        for y in ys:
+            plt.plot(index,y,label = y_labels[i])
+            i+=1
+        plt.legend(loc = 'lower right')
+        pylab.xticks(index,x,rotation='vertical')
+        plt.xlabel('POS_tags')
+        plt.savefig('../work/a_sim/pic/f1/%s-%s_%s_%s.png'%(source,target,method,train_model))
+    else:
+        if train_model == 'combined':
+            plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,method,train_model,gamma))
+        else:
+            plt.title('%s-%s:%s,%s'%(source,target,method,train_model))
+        i = 0
+        for y in ys:
+            plt.plot(index,y,label = covert(y_labels[i]))
+            i+=1
+        plt.legend(loc = 'lower right')
+        pylab.xticks(index,x,rotation='vertical')
+        plt.xlabel('POS_tags')
+        plt.savefig('../work/a_sim/pic/f1/%s-%s_%s_%s.png'%(source,target,method,train_model))
+    pass
+
 # convert names
 def convert(method):
     if "landmark_" in method: 
