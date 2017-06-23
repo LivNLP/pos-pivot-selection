@@ -458,5 +458,5 @@ if __name__ == '__main__':
     # print_gamma_results()
     # test_sort()
     # clas_rpt()
-    # print_graphs_single_pv()
+    print_graphs_single_pv()
     print_graphs_single_method()
