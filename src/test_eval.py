@@ -242,9 +242,10 @@ def print_graphs_single_method():
     target = 'answers'
     train_model = 'combined'
     gamma = 1
-    method = 'q(x)'
+    methods = ['x','q(x)','r(x)','w(x)','x.NN']
     pv_methods=['freq','mi','pmi','ppmi']
-    draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
+    for method in methods:
+        draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
     pass
 
 # test methods
