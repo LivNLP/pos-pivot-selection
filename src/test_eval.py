@@ -250,7 +250,7 @@ def print_graphs_single_method():
 
 #unlabelled
 def print_graph_unlabelled():
-    ource = 'wsj'
+    source = 'wsj'
     target = 'answers'
     train_model = 'combined'
     gamma = 1
