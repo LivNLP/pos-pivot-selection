@@ -212,6 +212,8 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
             new_methods = ['f1/r/'+pv for pv in pv_methods]
         elif method == 'w(x)':
             new_methods = ['f1/w/'+pv for pv in pv_methods]
+        elif method == 'x.NN':
+            new_methods = [pv+'.NN' for pv in pv_methods]
     for pv_method in new_methods:
         res_list = evaluate_table(source,target,pv_method,train_model,1,gamma)
         f1 = [x[5] for x in res_list]
@@ -229,8 +231,9 @@ def print_graphs_single_pv():
     train_model = 'combined'
     gamma = 1
     methods = ['x','q(x)','r(x)','w(x)','x.NN']
-    pv_method = 'mi'
-    draw_f1_for_methods(source,target,methods,pv_method,train_model,gamma)
+    pv_methods=['freq','mi','pmi','ppmi']
+    for pv_method in pv_methods:
+        draw_f1_for_methods(source,target,methods,pv_method,train_model,gamma)
     pass
 
 # e.g. x: FREQ-L, MI-L, PMI-L. PPMI-L
@@ -239,7 +242,7 @@ def print_graphs_single_method():
     target = 'answers'
     train_model = 'combined'
     gamma = 1
-    method = 'x'
+    method = 'q(x)'
     pv_methods=['freq','mi','pmi','ppmi']
     draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
     pass
