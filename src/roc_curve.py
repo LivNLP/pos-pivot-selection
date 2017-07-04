@@ -39,7 +39,7 @@ def draw(x,y,y_label,source,target,pv_method,train_model,gamma):
     plt.figure(figsize=(12,5.5))
     index = np.arange(len(x))
     if train_model == 'combined':
-        plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,convert(pv_method),train_model,digit_limit(gamma)))
+        plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,convert(pv_method),train_model,digit_limit(gamma)))
     else:
         plt.title('%s-%s:%s,%s'%(source,target,convert(pv_method),train_model))
     plt.plot(index,y)
@@ -53,7 +53,7 @@ def draw_prf(x,ys,y_labels,source,target,pv_method,train_model,gamma):
     plt.figure(figsize=(12,5.5))
     index = np.arange(len(x))
     if train_model == 'combined':
-        plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,convert(pv_method),train_model,digit_limit(gamma)))
+        plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,convert(pv_method),train_model,digit_limit(gamma)))
     else:
         plt.title('%s-%s:%s,%s'%(source,target,convert(pv_method),train_model))
     i = 0
@@ -72,7 +72,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
     index = np.arange(len(x))
     if 'x' in y_labels:
         if train_model == 'combined':
-            plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,convert(method),train_model,digit_limit(gamma)))
+            plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,convert(method),train_model,digit_limit(gamma)))
         else:
             plt.title('%s-%s:%s,%s'%(source,target,convert(method),train_model))
         i = 0
@@ -85,7 +85,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
         plt.savefig('../work/a_sim/pic/f1/%s-%s_%s_%s.png'%(source,target,method,train_model))
     else:
         if train_model == 'combined':
-            plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,method,train_model,digit_limit(gamma)))
+            plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,method,train_model,digit_limit(gamma)))
         else:
             plt.title('%s-%s:%s,%s'%(source,target,method,train_model))
         i = 0
