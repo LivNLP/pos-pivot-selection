@@ -39,7 +39,7 @@ def draw(x,y,y_label,source,target,pv_method,train_model,gamma):
     plt.figure(figsize=(12,5.5))
     index = np.arange(len(x))
     if train_model == 'combined':
-        plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,convert(pv_method),train_model,gamma))
+        plt.title('%s-%s:%s,%s,$\gamma$=%f'%(source,target,convert(pv_method),train_model,digit_limit(gamma)))
     else:
         plt.title('%s-%s:%s,%s'%(source,target,convert(pv_method),train_model))
     plt.plot(index,y)
