@@ -46,6 +46,7 @@ def draw(x,y,y_label,source,target,pv_method,train_model,gamma):
     pylab.xticks(index,x,rotation='vertical')
     plt.ylabel(y_label)
     plt.xlabel('POS_tags')
+    plt.autoscale()
     plt.savefig('../work/a_sim/pic/%s-%s_%s_%s_%s.png'%(source,target,pv_method,train_model,y_label))
     pass
 
@@ -94,6 +95,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
             i+=1
         plt.legend(loc = 'upper right')
         pylab.xticks(index,x,rotation='vertical')
+        plt.autoscale()
         plt.xlabel('POS_tags')
         plt.savefig('../work/a_sim/pic/f1/%s-%s_%s_%s.png'%(source,target,method,train_model))
     pass
