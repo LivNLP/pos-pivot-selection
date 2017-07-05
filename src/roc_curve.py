@@ -73,9 +73,9 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
     index = np.arange(len(x))
     if 'x' in y_labels:
         if train_model == 'combined':
-            plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,convert(method),train_model,digit_limit(gamma)))
+            plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,convert(method),train_model,digit_limit(gamma)),size=22)
         else:
-            plt.title('%s-%s:%s,%s'%(source,target,convert(method),train_model))
+            plt.title('%s-%s:%s,%s'%(source,target,convert(method),train_model),size=22)
         i = 0
         for y in ys:
             plt.plot(index,y,label = y_labels[i],linewidth=3.0)
@@ -89,9 +89,9 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
         plt.savefig('../work/a_sim/pic/f1/%s-%s_%s_%s.png'%(source,target,method,train_model))
     else:
         if train_model == 'combined':
-            plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,method,train_model,digit_limit(gamma)))
+            plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,method,train_model,digit_limit(gamma)),size=22)
         else:
-            plt.title('%s-%s:%s,%s'%(source,target,method,train_model))
+            plt.title('%s-%s:%s,%s'%(source,target,method,train_model),size=22)
         i = 0
         for y in ys:
             plt.plot(index,y,label = convert(y_labels[i]),linewidth=3.0)
