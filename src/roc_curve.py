@@ -36,7 +36,7 @@ def draw_roc(tpr,fpr,auc):
 
 # draw others vs distribution
 def draw(x,y,y_label,source,target,pv_method,train_model,gamma):
-    plt.figure(figsize=(12,5.5))
+    plt.figure(figsize=(11,5.5))
     index = np.arange(len(x))
     if train_model == 'combined':
         plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,convert(pv_method),train_model,digit_limit(gamma)))
@@ -51,7 +51,7 @@ def draw(x,y,y_label,source,target,pv_method,train_model,gamma):
     pass
 
 def draw_prf(x,ys,y_labels,source,target,pv_method,train_model,gamma):
-    plt.figure(figsize=(12,5.5))
+    plt.figure(figsize=(11,5.5))
     index = np.arange(len(x))
     if train_model == 'combined':
         plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,convert(pv_method),train_model,digit_limit(gamma)))
@@ -69,7 +69,7 @@ def draw_prf(x,ys,y_labels,source,target,pv_method,train_model,gamma):
 
 # draw f1 for pv_methods
 def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
-    plt.figure(figsize=(12,5.5))
+    plt.figure(figsize=(11,5.5))
     index = np.arange(len(x))
     if 'x' in y_labels:
         if train_model == 'combined':
