@@ -97,7 +97,7 @@ def create_table(table):
         tmp = [x[i] for x in table]
         # print numpy.mean(tmp)
         avg_list.append(numpy.mean(tmp))
-    table.append(['\\underline\{AVG\}']+avg_list)
+    table.append(['[AVG]']+avg_list)
     
     tab = tabulate(table,headers,floatfmt=".4f")
     print tab
