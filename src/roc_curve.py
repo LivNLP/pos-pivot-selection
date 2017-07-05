@@ -78,7 +78,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
             plt.title('%s-%s:%s,%s'%(source,target,convert(method),train_model))
         i = 0
         for y in ys:
-            plt.plot(index,y,label = y_labels[i])
+            plt.plot(index,y,label = y_labels[i],linewidth=3.0)
             i+=1
         plt.legend(loc = 'upper right')
         pylab.xticks(index,x,rotation='vertical')
@@ -93,7 +93,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
             plt.title('%s-%s:%s,%s'%(source,target,method,train_model))
         i = 0
         for y in ys:
-            plt.plot(index,y,label = convert(y_labels[i]))
+            plt.plot(index,y,label = convert(y_labels[i]),linewidth=3.0)
             i+=1
         plt.legend(loc = 'upper right')
         pylab.xticks(index,x,rotation='vertical')
