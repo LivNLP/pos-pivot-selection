@@ -83,8 +83,8 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
         plt.legend(loc = 'upper right')
         pylab.xticks(index,x,rotation='vertical')
         plt.xlabel('POS_tags')
-        plt.ylim([0,1.0])
         plt.autoscale()
+        plt.ylim([0,1.0])
         plt.savefig('../work/a_sim/pic/f1/%s-%s_%s_%s.png'%(source,target,method,train_model))
     else:
         if train_model == 'combined':
