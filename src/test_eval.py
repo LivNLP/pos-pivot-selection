@@ -221,7 +221,7 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
         f1 = [x[5] for x in res_list]
         tags = [x[0] for x in res_list]
         ys.append(f1)
-    y_labels = ['$x$','$q(x)$','$r(x)$','$x_NN$'] if 'x' in pv_methods else pv_methods
+    y_labels = ['$x$','$q(x)$','$r(x)$','$x_NN$'] if 'x' not in pv_methods else pv_methods
     roc_curve.draw_methods(tags,ys,y_labels,source,target, method, train_model,gamma)
     pass
 
@@ -231,7 +231,7 @@ def print_graphs_single_pv():
     source = 'wsj'
     target = 'answers'
     train_model = 'combined'
-    gamma = 1
+    gamma = 0.01
     # drop w(x) method on the graph,'w(x)'
     methods = ['x','q(x)','r(x)','x.NN']
     # methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
@@ -245,7 +245,7 @@ def print_graphs_single_method():
     source = 'wsj'
     target = 'answers'
     train_model = 'combined'
-    gamma = 1
+    gamma = 0.01
     # drop w(x) method on the graph,'w(x)'
     methods = ['x','q(x)','r(x)','x.NN']
     # methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
@@ -259,7 +259,7 @@ def print_graph_unlabelled():
     source = 'wsj'
     target = 'answers'
     train_model = 'combined'
-    gamma = 1
+    gamma = 0.01
     method = '$x_U$'
     pv_methods=['un_freq','un_mi','un_pmi','un_ppmi']
     draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
