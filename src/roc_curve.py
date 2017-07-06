@@ -127,8 +127,10 @@ def digit_limit(tmp):
 def convert_method(method):
     if method=='x':
         method = '$x$'
+    elif method = 'q(x)':
+        method = '$q(x)$'
     elif method == 'r(x)':
         method = '$r(x)$'
     elif method == 'x.NN':
-        method = '$x_NN$'
+        method = '$x_{NN}$'
     return method

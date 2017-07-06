@@ -224,10 +224,12 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
     if 'x' in method:
         if method=='x':
             method = '$x$'
+        elif method = 'q(x)':
+            method = '$q(x)$'
         elif method == 'r(x)':
             method = '$r(x)$'
         elif method == 'x.NN':
-            method = '$x_NN$'
+            method = '$x_{NN}$'
     y_labels = pv_methods
     roc_curve.draw_methods(tags,ys,y_labels,source,target, method, train_model,gamma)
     pass
