@@ -221,6 +221,13 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
         f1 = [x[5] for x in res_list]
         tags = [x[0] for x in res_list]
         ys.append(f1)
+    if 'x' in method:
+        if method=='x':
+            method = '$x$'
+        elif method == 'r(x)':
+            method = '$r(x)$'
+        elif method == 'x.NN':
+            method = '$x_NN$'
     y_labels = ['$x$','$q(x)$','$r(x)$','$x_NN$'] if 'x' not in pv_methods else pv_methods
     roc_curve.draw_methods(tags,ys,y_labels,source,target, method, train_model,gamma)
     pass
@@ -231,7 +238,7 @@ def print_graphs_single_pv():
     source = 'wsj'
     target = 'answers'
     train_model = 'combined'
-    gamma = 0.01
+    gamma = 1
     # drop w(x) method on the graph,'w(x)'
     methods = ['x','q(x)','r(x)','x.NN']
     # methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
@@ -245,7 +252,7 @@ def print_graphs_single_method():
     source = 'wsj'
     target = 'answers'
     train_model = 'combined'
-    gamma = 0.01
+    gamma = 1
     # drop w(x) method on the graph,'w(x)'
     methods = ['x','q(x)','r(x)','x.NN']
     # methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
@@ -259,7 +266,7 @@ def print_graph_unlabelled():
     source = 'wsj'
     target = 'answers'
     train_model = 'combined'
-    gamma = 0.01
+    gamma = 1
     method = '$x_U$'
     pv_methods=['un_freq','un_mi','un_pmi','un_ppmi']
     draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
@@ -271,7 +278,7 @@ def test_sort():
     print sort_results(1,result_list)
     pass
 
-# batch f1 score for method implict,explicit and combined
+# batch f1 score for method implicit,explicit and combined
 def batch_f1_results(source,target,pv_method):
     f = open('../work/a_sim/%s-%s_F1.%s.csv'%(source,target,pv_method), 'w')
     print "Sum up results..."
