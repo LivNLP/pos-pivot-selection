@@ -206,6 +206,7 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
     if 'x' in pv_methods:
         # "f1/w/"+method, drop w(x)
         new_methods = [method,'dist/'+method,"f1/r/"+method, method+".NN"]
+
     else:
         if method == '$q(x)$':
             new_methods = ['dist/'+pv for pv in pv_methods]
@@ -220,7 +221,7 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
         f1 = [x[5] for x in res_list]
         tags = [x[0] for x in res_list]
         ys.append(f1)
-    y_labels = pv_methods
+    y_labels = ['$x$','$q(x)$','$r(x)$','$x_NN$'] if x in pv_methods else pv_methods
     roc_curve.draw_methods(tags,ys,y_labels,source,target, method, train_model,gamma)
     pass
 
@@ -232,7 +233,8 @@ def print_graphs_single_pv():
     train_model = 'combined'
     gamma = 1
     # drop w(x) method on the graph,'w(x)'
-    methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
+    methods = ['x','q(x)','r(x)','x.NN']
+    # methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
     pv_methods=['freq','mi','pmi','ppmi']
     for pv_method in pv_methods:
         draw_f1_for_methods(source,target,methods,pv_method,train_model,gamma)
@@ -245,7 +247,8 @@ def print_graphs_single_method():
     train_model = 'combined'
     gamma = 1
     # drop w(x) method on the graph,'w(x)'
-    methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
+    methods = ['x','q(x)','r(x)','x.NN']
+    # methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
     pv_methods=['freq','mi','pmi','ppmi']
     for method in methods:
         draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
