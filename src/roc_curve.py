@@ -125,9 +125,9 @@ def digit_limit(tmp):
     # if (tmp>0.1 or tmp==0) else '$10^{%d}$'%(math.log10(tmp)-1)
 
 def convert_method(method):
-    if method=='x':
+    if method == 'x':
         method = '$x$'
-    elif method = 'q(x)':
+    elif method == 'q(x)':
         method = '$q(x)$'
     elif method == 'r(x)':
         method = '$r(x)$'
