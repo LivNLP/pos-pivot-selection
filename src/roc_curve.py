@@ -121,7 +121,7 @@ def convert(method):
             return "%s$_L$" % method.upper()
 
 def digit_limit(tmp):
-    return '%.2f'%tmp 
+    return '%.1f'%tmp 
     # if (tmp>0.1 or tmp==0) else '$10^{%d}$'%(math.log10(tmp)-1)
 
 def convert_method(method):
