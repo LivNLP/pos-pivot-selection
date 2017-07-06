@@ -81,7 +81,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
             plt.plot(index,y,label = y_labels[i],linewidth=3.0)
             i+=1
         plt.legend(loc = 'upper right')
-        pylab.xticks(index,x,rotation='vertical')
+        pylab.xticks(index,x,rotation=45)
         plt.xlabel('POS_tags')
         plt.ylabel('F-score',size=22)
         plt.autoscale()
@@ -97,7 +97,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
             plt.plot(index,y,label = convert(y_labels[i]),linewidth=3.0)
             i+=1
         plt.legend(loc = 'upper right')
-        pylab.xticks(index,x,rotation='vertical')
+        pylab.xticks(index,x,rotation=45)
         plt.autoscale()
         plt.ylim([0,1.0])
         plt.xlabel('POS_tags')
