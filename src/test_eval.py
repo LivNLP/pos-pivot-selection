@@ -222,9 +222,9 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
         tags = [x[0] for x in res_list]
         ys.append(f1)
     if 'x' in method:
-        if method=='x':
+        if method == 'x':
             method = '$x$'
-        elif method = 'q(x)':
+        elif method == 'q(x)':
             method = '$q(x)$'
         elif method == 'r(x)':
             method = '$r(x)$'
