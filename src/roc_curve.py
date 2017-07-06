@@ -123,4 +123,3 @@ def convert(method):
 def digit_limit(tmp):
     return '%.1f'%tmp if (tmp>0.1 or tmp==0) else '$10^{%d}$'%(math.log10(tmp)-1)
 
-def convert
