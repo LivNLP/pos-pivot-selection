@@ -69,7 +69,7 @@ def draw_prf(x,ys,y_labels,source,target,pv_method,train_model,gamma):
 
 # draw f1 for pv_methods
 def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
-    plt.figure(figsize=(9,5.5))
+    plt.figure(figsize=(8,5.5))
     index = np.arange(len(x))
     if 'x' in y_labels:
         if train_model == 'combined':
@@ -81,7 +81,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
             plt.plot(index,y,label = y_labels[i],linewidth=3.0)
             i+=1
         plt.legend(loc = 'upper right')
-        pylab.xticks(index,x,rotation=45)
+        pylab.xticks(index,x,rotation='vertical')
         plt.xlabel('POS_tags')
         plt.ylabel('F-score',size=22)
         plt.autoscale()
@@ -97,7 +97,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
             plt.plot(index,y,label = convert(y_labels[i]),linewidth=3.0)
             i+=1
         plt.legend(loc = 'upper right')
-        pylab.xticks(index,x,rotation=45)
+        pylab.xticks(index,x,rotation='vertical')
         plt.autoscale()
         plt.ylim([0,1.0])
         plt.xlabel('POS_tags')
