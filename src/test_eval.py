@@ -228,7 +228,7 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
             method = '$r(x)$'
         elif method == 'x.NN':
             method = '$x_NN$'
-    y_labels = ['$x$','$q(x)$','$r(x)$','$x_NN$'] if 'x' not in pv_methods else pv_methods
+    y_labels = pv_methods
     roc_curve.draw_methods(tags,ys,y_labels,source,target, method, train_model,gamma)
     pass
 

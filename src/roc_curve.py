@@ -78,7 +78,7 @@ def draw_methods(x,ys,y_labels,source,target,method,train_model,gamma):
             plt.title('%s-%s:%s,%s'%(source,target,convert(method),train_model),size=22)
         i = 0
         for y in ys:
-            plt.plot(index,y,label = y_labels[i],linewidth=3.0)
+            plt.plot(index,y,label = convert_method(y_labels[i]),linewidth=3.0)
             i+=1
         plt.legend(loc = 'upper right')
         pylab.xticks(index,x,rotation='vertical')
@@ -124,3 +124,11 @@ def digit_limit(tmp):
     return '%.2f'%tmp 
     # if (tmp>0.1 or tmp==0) else '$10^{%d}$'%(math.log10(tmp)-1)
 
+def convert_method(method):
+    if method=='x':
+        method = '$x$'
+    elif method == 'r(x)':
+        method = '$r(x)$'
+    elif method == 'x.NN':
+        method = '$x_NN$'
+    return method
