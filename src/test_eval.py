@@ -257,7 +257,7 @@ def print_graph_unlabelled():
     target = 'answers'
     train_model = 'combined'
     gamma = 1
-    method = 'un_x'
+    method = '$x_U$'
     pv_methods=['un_freq','un_mi','un_pmi','un_ppmi']
     draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
     pass
