@@ -214,14 +214,14 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
             new_methods = ['f1/r/'+pv for pv in pv_methods]
         elif method == 'w(x)':
             new_methods = ['f1/w/'+pv for pv in pv_methods]
-        elif method == 'x_NN':
+        elif method == 'x.NN':
             new_methods = [pv+'.NN' for pv in pv_methods]
     for pv_method in new_methods:
         res_list = evaluate_table(source,target,pv_method,train_model,1,gamma)
         f1 = [x[5] for x in res_list]
         tags = [x[0] for x in res_list]
         ys.append(f1)
-    y_labels = ['$x$','$q(x)$','$r(x)$','$x_NN$'] if 'x' not in pv_methods else pv_methods
+    y_labels = ['$x$','$q(x)$','$r(x)$','$x_NN$'] if 'x' in pv_methods else pv_methods
     roc_curve.draw_methods(tags,ys,y_labels,source,target, method, train_model,gamma)
     pass
 
