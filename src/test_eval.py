@@ -221,7 +221,7 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
         f1 = [x[5] for x in res_list]
         tags = [x[0] for x in res_list]
         ys.append(f1)
-    y_labels = ['$x$','$q(x)$','$r(x)$','$x_NN$'] if x in pv_methods else pv_methods
+    y_labels = ['$x$','$q(x)$','$r(x)$','$x_NN$'] if 'x' in pv_methods else pv_methods
     roc_curve.draw_methods(tags,ys,y_labels,source,target, method, train_model,gamma)
     pass
 
