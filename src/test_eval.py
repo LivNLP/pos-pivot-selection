@@ -207,13 +207,13 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
         # "f1/w/"+method, drop w(x)
         new_methods = [method,'dist/'+method,"f1/r/"+method, method+".NN"]
     else:
-        if method == 'q(x)':
+        if method == '$q(x)$':
             new_methods = ['dist/'+pv for pv in pv_methods]
-        elif method == 'r(x)':
+        elif method == '$r(x)$':
             new_methods = ['f1/r/'+pv for pv in pv_methods]
-        elif method == 'w(x)':
+        elif method == '$w(x)$':
             new_methods = ['f1/w/'+pv for pv in pv_methods]
-        elif method == 'x.NN':
+        elif method == '$x_NN$':
             new_methods = [pv+'.NN' for pv in pv_methods]
     for pv_method in new_methods:
         res_list = evaluate_table(source,target,pv_method,train_model,1,gamma)
@@ -232,7 +232,7 @@ def print_graphs_single_pv():
     train_model = 'combined'
     gamma = 1
     # drop w(x) method on the graph,'w(x)'
-    methods = ['x','q(x)','r(x)','x.NN']
+    methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
     pv_methods=['freq','mi','pmi','ppmi']
     for pv_method in pv_methods:
         draw_f1_for_methods(source,target,methods,pv_method,train_model,gamma)
@@ -245,7 +245,7 @@ def print_graphs_single_method():
     train_model = 'combined'
     gamma = 1
     # drop w(x) method on the graph,'w(x)'
-    methods = ['x','q(x)','r(x)','x.NN']
+    methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
     pv_methods=['freq','mi','pmi','ppmi']
     for method in methods:
         draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma)
