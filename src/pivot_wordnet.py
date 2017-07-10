@@ -96,7 +96,7 @@ def batch_dist_results_from_methods(source,target,methods,n):
     f.write("Source, Target, Method, Nouns, #pivots\n")
     for method in methods:
         pv_method = "dist/"+method
-        print "method = ", method
+        print "method = ", pv_method
         nouns = runner(source,target,pv_method,n)
         f.write("%s, %s, %s, %f, %f\n"%(source,target,method,nouns,n))
         f.flush()
@@ -122,12 +122,12 @@ if __name__ == '__main__':
     target = "answers"
     # method = "freq.NN"
     n = 500
-    opt = 'r'
+    # opt = 'r'
     # runner(source,target,method,n)
     # random_runner(source,target,method,n)
     methods = ['freq','mi','pmi','ppmi']
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
     batch_results_from_methods(source,target,methods,n)
-    batch_dist_results_from_methods(source,target,methods,n)
+    # batch_dist_results_from_methods(source,target,methods,n)
     batch_results_from_NN_methods(source,target,methods,n)
-    batch_results_from_f1_methods(source,target,methods,n,opt)
+    # batch_results_from_f1_methods(source,target,methods,n,opt)
