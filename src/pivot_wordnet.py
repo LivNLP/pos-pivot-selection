@@ -28,6 +28,7 @@ def runner(source,target,method,n):
     # print len(pos_list)
     # pos_data.save_preprocess_obj(pos_list,'NN_list')
     pos_list = pos_data.load_preprocess_obj('NN_list')
+    print pos_list
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
     pivots = dict(features[:n]).keys() if n >0 else dict(features[n:]).keys()
     print count_nouns(pivots,pos_list),n
