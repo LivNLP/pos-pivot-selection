@@ -229,13 +229,16 @@ def sentence_list_contain_tag(pos_tag,sentences):
 # features contain pos_tag without position info
 def feature_list_contain_tag(pos_tag,sentences):
     features = feature_list(sentences)
-    features_bag = np.zeros(len(features),dtype=float)
+    # features_bag = np.zeros(len(features),dtype=float)
+    feature_bag = []
     for sent in sentences:
         for word in sent:
             if word[1]==pos_tag:
-                i = features.index(word[0])
-                features_bag[i]+=1
-    return [word[0] for sent in sentences for word in sent if features_bag[features.index(word[0])]>0]
+                # i = features.index(word[0])
+                # features_bag[i]+=1
+                features_bag.append(word[0])
+    return features_bag
+    # return [word[0] for sent in sentences for word in sent if features_bag[features.index(word[0])]>0]
 
 # format sentences, remove other info just leave the word itself for computation
 def format_sentences(sentences):
