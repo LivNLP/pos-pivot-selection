@@ -233,7 +233,7 @@ def feature_list_contain_tag(pos_tag,sentences):
     for sent in sentences:
         for word in sent:
             if word[1]==pos_tag:
-                i = features.index(word)
+                i = features.index(word[0])
                 features_bag[i]+=1
     return [word[0] for sent in sentences for word in sent if features_bag[features.index(word)]>0]
 
