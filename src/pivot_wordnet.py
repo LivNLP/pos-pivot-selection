@@ -13,8 +13,10 @@ import random
 
 
 # we give up to do this by wordnet, but use the annonations in the datasets
-def is_noun(source,target,word):
+def is_noun(word):
     tag = "NN"
+    source = 'wsj'
+    target = 'answers'
     pos_list = pos_data.feature_list(pos_data.load_tag_obj(source,target,tag,'pos_src_data'))
     return 1 if word in pos_list else 0
 
