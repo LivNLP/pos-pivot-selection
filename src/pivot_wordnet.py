@@ -23,8 +23,9 @@ def count_nouns(selected_pivots,pos_list):
     return float(sum(1 for word in selected_pivots if is_noun(word,pos_list)==1))/float(len(selected_pivots))
 
 def runner(source,target,method,n):
+    src_labeled = load_preprocess_obj('%s-labeled'%source)
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
-    pos_list = pos_data.feature_list(pos_data.load_tag_obj(source,target,'NN','pos_src_data'))
+    pos_list = pos_data.feature_list_contain_tag('NN',src_labeled)
     pivots = dict(features[:n]).keys() if n >0 else dict(features[n:]).keys()
     print count_nouns(pivots,pos_list),n
     return count_nouns(pivots,pos_list)
