@@ -13,24 +13,21 @@ import random
 
 
 # we give up to do this by wordnet, but use the annonations in the datasets
-def is_noun(word):
-    tag = "NN"
-    source = 'wsj'
-    target = 'answers'
-    pos_list = pos_data.feature_list(pos_data.load_tag_obj(source,target,tag,'pos_src_data'))
+def is_noun(word,pos_list):
     return 1 if word in pos_list else 0
 
 
 # read a list of words 
 # to decide how many nouns (distribution) in the selected pivots 
-def count_nouns(selected_pivots):
-    return float(sum(1 for word in selected_pivots if is_noun(word)==1))/float(len(selected_pivots))
+def count_nouns(selected_pivots,pos_list):
+    return float(sum(1 for word in selected_pivots if is_noun(word,pos_list)==1))/float(len(selected_pivots))
 
 def runner(source,target,method,n):
     features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
+    pos_list = pos_data.feature_list(pos_data.load_tag_obj(source,target,tag,'pos_src_data'))
     pivots = dict(features[:n]).keys() if n >0 else dict(features[n:]).keys()
-    print count_nouns(pivots),n
-    return count_nouns(pivots)
+    print count_nouns(pivots,pos_list),n
+    return count_nouns(pivots,pos_list)
 
 def random_runner(source,target,method,n):
     sum_nouns=0
