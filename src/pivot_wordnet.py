@@ -3,13 +3,21 @@ import pos_data
 import random
 
 # determine whether given word is noun (1) or not (0)
-def is_noun(word):
-    syns=wordnet.synsets(word)
-    # if the word is in the datasets
-    if syns:
-        return 1 if str(syns[0].name()).split('.')[1]=='n' else 0
-    else:
-        return 0
+# def is_noun(word):
+#     syns=wordnet.synsets(word)
+#     # if the word is in the datasets
+#     if syns:
+#         return 1 if str(syns[0].name()).split('.')[1]=='n' else 0
+#     else:
+#         return 0
+
+
+# we give up to do this by wordnet, but use the annonations in the datasets
+def is_noun(source,target,word):
+    tag = "NN"
+    pos_list = pos_data.feature_list(pos_data.load_tag_obj(source,target,tag,'pos_src_data'))
+    return 1 if word in pos_list else 0
+
 
 # read a list of words 
 # to decide how many nouns (distribution) in the selected pivots 
@@ -110,12 +118,12 @@ if __name__ == '__main__':
     target = "answers"
     # method = "freq.NN"
     n = 500
-    opt = 'w'
+    # opt = 'r'
     # runner(source,target,method,n)
     # random_runner(source,target,method,n)
     methods = ['freq','mi','pmi','ppmi']
     # methods += ['un_freq','un_mi','un_pmi','un_ppmi']
-    # batch_results_from_methods(source,target,methods,n)
+    batch_results_from_methods(source,target,methods,n)
     # batch_dist_results_from_methods(source,target,methods,n)
     # batch_results_from_NN_methods(source,target,methods,n)
-    batch_results_from_f1_methods(source,target,methods,n,opt)
+    # batch_results_from_f1_methods(source,target,methods,n,opt)
