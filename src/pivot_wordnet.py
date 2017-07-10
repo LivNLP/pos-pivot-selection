@@ -24,8 +24,11 @@ def count_nouns(selected_pivots,pos_list):
 
 def runner(source,target,method,n):
     src_labeled = pos_data.load_preprocess_obj('%s-labeled'%source)
-    features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
     pos_list = pos_data.feature_list_contain_tag('NN',src_labeled)
+    print len(pos_list)
+    pos_data.save_preprocess_obj(pos_list,'NN_list')
+    # pos_list = pos_data.load_preprocess_obj('NN_list')
+    features = pos_data.load_obj(source,target,method) if 'landmark' not in method else pos_data.load_obj(source,target,'/test/'+method)
     pivots = dict(features[:n]).keys() if n >0 else dict(features[n:]).keys()
     print count_nouns(pivots,pos_list),n
     return count_nouns(pivots,pos_list)
