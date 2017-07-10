@@ -230,7 +230,7 @@ def sentence_list_contain_tag(pos_tag,sentences):
 def feature_list_contain_tag(pos_tag,sentences):
     features = feature_list(sentences)
     # features_bag = np.zeros(len(features),dtype=float)
-    feature_bag = []
+    features_bag = []
     for sent in sentences:
         for word in sent:
             if word[1]==pos_tag:
