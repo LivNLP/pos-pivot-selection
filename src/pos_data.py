@@ -594,7 +594,7 @@ if __name__ == "__main__":
     # for domain in domains:
     #     collect_labeled(domain)
     # target domain unlabeled datasets
-    domains = ["answers"]
+    domains = ["reviews"]
     # domains += ["reviews","newsgroups","weblogs","emails"]
     # domain = "answers"
     # for domain in domains:
@@ -611,9 +611,9 @@ if __name__ == "__main__":
     # source is just wsj enough, copy to all
     # presets_labeled(source,'answers')
     for target in domains:
-        score_labeled_single_tag(source,target,pos_tag,method)
-    #     select_pivots_freq_unlabeled(source,target)
-        # select_pivots_mi_unlabeled(source,target)
-    #     select_pivots_pmi_unlabeled(source,target)
-    #     select_pivots_ppmi_unlabeled(source,target)
-    #     sum_up_labeled_scores(source,target)
+        # score_labeled_single_tag(source,target,pos_tag,method)
+        select_pivots_freq_unlabeled(source,target)
+        select_pivots_mi_unlabeled(source,target)
+        select_pivots_pmi_unlabeled(source,target)
+        select_pivots_ppmi_unlabeled(source,target)
+        sum_up_labeled_scores(source,target)

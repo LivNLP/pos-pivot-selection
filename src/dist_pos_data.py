@@ -77,5 +77,6 @@ def load_dist_obj(source,target,name):
 
 if __name__ == '__main__':
     source = 'wsj'
-    target = 'answers'
+    # target = 'answers'
+    target = 'reviews'
     sum_up_dist_labeled_scores(source,target)

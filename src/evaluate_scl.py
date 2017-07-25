@@ -1053,8 +1053,8 @@ def evaluate_numbers_of_pivots(source,target,method,gamma,nums):
 
 if __name__ == '__main__':
     source = 'wsj'
-    target = 'answers'
-    # target = 'reviews'
+    # target = 'answers'
+    target = 'reviews'
     # method = 'ppmi'
     # method = 'un_mi'
     # method = "un_mi"
@@ -1080,7 +1080,7 @@ if __name__ == '__main__':
     # pos_tag = 'NN'
     # methods = ['%s.%s'%(method,pos_tag)]
 
-    methods = ['ppmi','un_freq','un_mi']
+    # methods = ['ppmi','un_freq','un_mi']
     # methods = ['freq','mi','pmi','ppmi']
     # opt = 'r'
     # opt = 'w'
