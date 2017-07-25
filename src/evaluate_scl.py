@@ -828,8 +828,8 @@ def batchEval_NA():
     resFile.write('Source, Target, Method, Acc, IntLow, IntHigh\n')
     source = 'wsj'
     # domains = ['answers','emails']
-    # domains += ['reviews','newsgroups']
-    domains = ['weblogs']
+    # domains += ['weblogs','newsgroups']
+    domains = ['reviews']
     for target in domains:
         evaluation = evaluate_POS_NA(source, target)
         resFile.write('%s, %s, %s, %f, %f, %f\n' % (source, target, 'NA', evaluation[0], evaluation[1][0],evaluation[1][1]))
@@ -1062,7 +1062,7 @@ if __name__ == '__main__':
     n = 500
     
     # batchEval(method, 1, n)
-    # batchEval_NA()
+    batchEval_NA()
     # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1, method, n)
     # evaluate_POS(source, target, True, 1 ,method, n)
@@ -1088,9 +1088,9 @@ if __name__ == '__main__':
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
     # methods = ['pmi','un_pmi','ppmi','un_ppmi']
-    for method in methods:
+    # for method in methods:
     #     batchEval(method, 1, n)
-        batchEval_one_domain_pair(source,target,method,1,n)
+        # batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
         # f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
