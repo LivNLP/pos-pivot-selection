@@ -1062,7 +1062,7 @@ if __name__ == '__main__':
     n = 500
     
     # batchEval(method, 1, n)
-    batchEval_NA()
+    # batchEval_NA()
     # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1, method, n)
     # evaluate_POS(source, target, True, 1 ,method, n)
@@ -1082,18 +1082,18 @@ if __name__ == '__main__':
 
     # methods = ['ppmi','un_freq','un_mi']
     # methods = ['freq','mi','pmi','ppmi']
-    # opt = 'r'
+    opt = 'r'
     # opt = 'w'
-    # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
+    methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
     # methods = ['pmi','un_pmi','ppmi','un_ppmi']
-    # for method in methods:
+    for method in methods:
     #     batchEval(method, 1, n)
-        # batchEval_one_domain_pair(source,target,method,1,n)
+        batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
-        # dist_evaluate_one_domain_pair(source,target,method,1,n)
-        # f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
+        dist_evaluate_one_domain_pair(source,target,method,1,n)
+        f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
     # gammas = [0.01,0.1,1,10,100]
     # for method in methods:
         # dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
