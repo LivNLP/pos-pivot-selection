@@ -1080,7 +1080,7 @@ if __name__ == '__main__':
     # pos_tag = 'NN'
     # methods = ['%s.%s'%(method,pos_tag)]
 
-    methods = ['un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
+    methods = ['freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods = ['freq','mi','pmi','ppmi']
     opt = 'r'
     # opt = 'w'
