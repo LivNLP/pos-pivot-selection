@@ -142,7 +142,7 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     # draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
     # for i in range(2,7):
     #     draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model,gamma)
-    # draw(res_list[:len(tag_list)],6,source,target,pv_method,train_model)
+    draw(res_list[:len(tag_list)],1,source,target,pv_method,train_model)
     # f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
     # pv_method = pv_method.replace("dist/","")
     # f = open("../work/dist_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
@@ -435,8 +435,8 @@ def print_results():
     pv_method = 'un_mi'
     # pv_method = 'mi'
     # pv_method = 'mi.NN'
-    # train_model = 'implicit'
-    train_models = ['explicit','implicit','combined']
+    train_model = 'implicit'
+    # train_models = ['explicit','implicit','combined']
     # train_model = 'explicit'
     # train_model = 'combined'
     index = 1
@@ -479,11 +479,11 @@ def print_gamma_results():
     pass
 
 if __name__ == '__main__':
-    # print_results()
+    print_results()
     # print_f1_results()
     # print_gamma_results()
     # test_sort()
     # clas_rpt()
-    print_graphs_single_pv()
-    print_graphs_single_method()
-    print_graph_unlabelled()
+    # print_graphs_single_pv()
+    # print_graphs_single_method()
+    # print_graph_unlabelled()
