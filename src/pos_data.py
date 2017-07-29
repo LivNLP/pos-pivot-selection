@@ -107,10 +107,6 @@ def compute_dist(source):
     #         # print x,v
     #     f.write('%s %f\n'%(x,v))
     # f.close()
-
-    return L
-
-def draw_dist(L,source):
     plt.figure(figsize=(12,5.5))
     x =[x for (x,v) in L.iteritems()]
     y =[v for (x,v) in L.iteritems()]
@@ -122,7 +118,21 @@ def draw_dist(L,source):
     plt.xlabel('POS_tags')
     plt.autoscale()
     plt.savefig('../work/distribution.png')
-    pass
+    return L
+
+# def draw_dist(L,source):
+#     plt.figure(figsize=(12,5.5))
+#     x =[x for (x,v) in L.iteritems()]
+#     y =[v for (x,v) in L.iteritems()]
+#     index = np.arange(len(x))
+#     plt.title('Distribution in %s'%source)
+#     plt.plot(index,y)
+#     pylab.xticks(index,x,rotation='vertical')
+#     plt.ylabel('Distribution')
+#     plt.xlabel('POS_tags')
+#     plt.autoscale()
+#     plt.savefig('../work/distribution.png')
+#     pass
 
 # different from SA, for each pos_tag, the source labeled data is divided into
 # sentences HAVE pos_tag and NOT pos_tag, so this is a single method for a single pos_tag
@@ -621,8 +631,8 @@ if __name__ == "__main__":
     source = 'wsj'
     # pos_tag = 'NN'
     # method = 'ppmi'
-    L = compute_dist(source)
-    draw_dist(source,L)
+    compute_dist(source)
+    # draw_dist(source,L)
     # for target in domains:
     #     presets_labeled(source,target)
         # presets_unlabeled(source,target)
