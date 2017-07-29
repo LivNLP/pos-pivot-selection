@@ -110,8 +110,8 @@ def compute_dist(source):
     # f.close()
     # print L
     plt.figure(figsize=(12,5.5))
-    x =dict(L).keys()
-    y =dict(L).values()
+    x =[h for (h,v) in L]
+    y =[v for (h,v) in L]
     print x
     print y
     index = np.arange(len(x))
