@@ -108,8 +108,8 @@ def compute_dist(source):
     #     f.write('%s %f\n'%(x,v))
     # f.close()
     plt.figure(figsize=(12,5.5))
-    x =[x for (x,v) in L.iteritems()]
-    y =[v for (x,v) in L.iteritems()]
+    x =[x for (x,v) in L]
+    y =[v for (x,v) in L]
     index = np.arange(len(x))
     plt.title('Distribution in %s'%source)
     plt.plot(index,y)
