@@ -142,7 +142,7 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     # draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
     # for i in range(2,7):
     #     draw(res_list[:len(tag_list)],i,source,target,pv_method,train_model,gamma)
-    draw(res_list[:len(tag_list)],1,source,target,pv_method,train_model)
+    # draw(res_list[:len(tag_list)],1,source,target,pv_method,train_model)
     # f = open("../work/a_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
     # pv_method = pv_method.replace("dist/","")
     # f = open("../work/dist_sim/%s-%s_%s_table_%s"%(source,target,pv_method,train_model),"w")
@@ -223,7 +223,7 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
         ys.append(f1)
     if 'x' in method:
         if method == 'x':
-            method = '$x$'
+            method = '$x_L$'
         elif method == 'q(x)':
             method = '$q(x)$'
         elif method == 'r(x)':
@@ -484,6 +484,6 @@ if __name__ == '__main__':
     # print_gamma_results()
     # test_sort()
     # clas_rpt()
-    # print_graphs_single_pv()
-    # print_graphs_single_method()
-    # print_graph_unlabelled()
+    print_graphs_single_pv()
+    print_graphs_single_method()
+    print_graph_unlabelled()
