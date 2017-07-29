@@ -116,7 +116,7 @@ def compute_dist(source):
     print y
     index = np.arange(len(x))
     plt.title('Distribution in %s'%source)
-    plt.plot(index,y)
+    plt.plot(index,y,marker='x')
     pylab.xticks(index,x,rotation='vertical')
     plt.ylabel('Distribution')
     plt.xlabel('POS_tags')
