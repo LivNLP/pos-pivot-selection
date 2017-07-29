@@ -505,14 +505,14 @@ def evaluate_POS_NA(source,target):
     # featFile = open(trainFileName, 'w')
     window_size = 5
 
-    # train_sentences = pos_data.load_preprocess_obj('%s-labeled'%source)
-    # train_vectors = classify_pos.load_classify_obj('%s-labeled-classify'%source)
-    # print 'training features = ', len([word for sent in train_sentences for word in sent])
-    # test_sentences = pos_data.load_preprocess_obj('%s-test'%target)
-    # test_vectors = classify_pos.load_classify_obj('%s-test-classify'%target)
-    # print 'test features =', len([word for sent in test_sentences for word in sent])
-    # tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
-    # print 'number of tags = ',len(tag_list)
+    train_sentences = pos_data.load_preprocess_obj('%s-labeled'%source)
+    train_vectors = classify_pos.load_classify_obj('%s-labeled-classify'%source)
+    print 'training features = ', len([word for sent in train_sentences for word in sent])
+    test_sentences = pos_data.load_preprocess_obj('%s-test'%target)
+    test_vectors = classify_pos.load_classify_obj('%s-test-classify'%target)
+    print 'test features =', len([word for sent in test_sentences for word in sent])
+    tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
+    print 'number of tags = ',len(tag_list)
     # for nSent,sent in enumerate(train_sentences):
     #     words = [word[0] for word in sent]
     #     for nWord,w in enumerate(words):
