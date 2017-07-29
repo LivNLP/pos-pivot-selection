@@ -7,6 +7,7 @@ import glob
 import pickle
 import os
 import math
+import matplotlib.pyplot as plt
 
 # collect words and pos tags from labeled dataset 
 def collect_labeled(domain):
