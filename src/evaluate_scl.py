@@ -355,7 +355,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
                 # for ft in lex:
                 #     featFile.write('%s:%f ' % (ft[0],ft[1])) 
                 # print 'word %d of %d, sentence %d of %d...'%(nWord,len(words),nSent,len(train_sentences))
-                featFile.write('\n')
+                # featFile.write('\n')
     featFile.close()
     featFile = open(testFileName, 'w')
     for nSent,sent in enumerate(test_sentences):
