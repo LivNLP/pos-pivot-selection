@@ -349,14 +349,14 @@ def evaluate_POS(source, target, project, gamma, method, n):
     #                 for i,num in enumerate(word_vec):
     #                     if num != 0:
     #                         featFile.write('%d:%f ' % (((word_index+1)*1000+i),num)) 
-                    # featFile.write('%s'%(' '.join(str('%d:%d'%(((word_index+1)*1000+i),num)) for i,num in enumerate(word_vec) if num != 0)))
+    #                 featFile.write('%s'%(' '.join(str('%d:%d'%(((word_index+1)*1000+i),num)) for i,num in enumerate(word_vec) if num != 0)))
                         
                 # lex = train_feats[nSent][nWord]
                 # for ft in lex:
                 #     featFile.write('%s:%f ' % (ft[0],ft[1])) 
                 # print 'word %d of %d, sentence %d of %d...'%(nWord,len(words),nSent,len(train_sentences))
-                # featFile.write('\n')
-    featFile.close()
+    #             featFile.write('\n')
+    # featFile.close()
     featFile = open(testFileName, 'w')
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
@@ -381,18 +381,18 @@ def evaluate_POS(source, target, project, gamma, method, n):
                             featFile.write('%d:%f ' % (((word_index+1)*1000+i),num)) 
                 featFile.write('\n')
     featFile.close()
-    # Train using classias.
-    print 'Training...'
-    modelFileName = '../work/%s/%s-%s/model.SCL.%f' % (method, source, target,gamma)
-    trainMultiLBFGS(trainFileName, modelFileName)
-    # Test using classias.
-    print 'Testing...'
-    [acc,correct,total] = testLBFGS(testFileName, modelFileName)
-    intervals = clopper_pearson(correct,total)
-    print 'Accuracy =', acc
-    print 'Intervals=', intervals
-    print '###########################################\n\n'
-    return acc,intervals
+    # # Train using classias.
+    # print 'Training...'
+    # modelFileName = '../work/%s/%s-%s/model.SCL.%f' % (method, source, target,gamma)
+    # trainMultiLBFGS(trainFileName, modelFileName)
+    # # Test using classias.
+    # print 'Testing...'
+    # [acc,correct,total] = testLBFGS(testFileName, modelFileName)
+    # intervals = clopper_pearson(correct,total)
+    # print 'Accuracy =', acc
+    # print 'Intervals=', intervals
+    # print '###########################################\n\n'
+    # return acc,intervals
 
 def evaluate_POS_lexical(source, target, project, gamma, method, n):
     '''
