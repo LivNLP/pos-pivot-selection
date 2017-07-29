@@ -118,7 +118,7 @@ def draw_dist(L,source):
     plt.ylabel('Distribution')
     plt.xlabel('POS_tags')
     plt.autoscale()
-    plt.savefig('../work/a_sim/pic/distribution.png')
+    plt.savefig('../work/distribution.png')
     pass
 
 # different from SA, for each pos_tag, the source labeled data is divided into
