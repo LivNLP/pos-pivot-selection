@@ -96,15 +96,30 @@ def compute_dist(source):
     L = s.items()
     # descending order
     L.sort(lambda x, y: -1 if x[1] > y[1] else 1)
-    f = open("tmp","w")
-    f.write('%f\n\n'% (np.percentile(dists, 50)))
+    # f = open("tmp","w")
+    # f.write('%f\n\n'% (np.percentile(dists, 50)))
 
-    for (x,v) in L:
-        # if v > np.percentile(dists, 50):
-            # print x,v
-        f.write('%s %f\n'%(x,v))
-    f.close()
+    # for (x,v) in L:
+    #     # if v > np.percentile(dists, 50):
+    #         # print x,v
+    #     f.write('%s %f\n'%(x,v))
+    # f.close()
+
     return L
+
+def draw_dist(L,source):
+    plt.figure(figsize=(12,5.5))
+    x =[x for (x,v) in L.iteritems()]
+    y =[v for (x,v) in L.iteritems()]
+    index = np.arange(len(x))
+    plt.title('Distribution in %s'%source)
+    plt.plot(index,y)
+    pylab.xticks(index,x,rotation='vertical')
+    plt.ylabel('Distribution')
+    plt.xlabel('POS_tags')
+    plt.autoscale()
+    plt.savefig('../work/a_sim/pic/distribution.png')
+    pass
 
 # different from SA, for each pos_tag, the source labeled data is divided into
 # sentences HAVE pos_tag and NOT pos_tag, so this is a single method for a single pos_tag
@@ -594,7 +609,7 @@ if __name__ == "__main__":
     # for domain in domains:
     #     collect_labeled(domain)
     # target domain unlabeled datasets
-    domains = ["reviews"]
+    # domains = ["reviews"]
     # domains += ["reviews","newsgroups","weblogs","emails"]
     # domain = "answers"
     # for domain in domains:
@@ -603,17 +618,18 @@ if __name__ == "__main__":
     source = 'wsj'
     # pos_tag = 'NN'
     # method = 'ppmi'
-    # compute_dist(source)
+    L = compute_dist(source)
+    draw_dist(source,L)
     # for target in domains:
     #     presets_labeled(source,target)
         # presets_unlabeled(source,target)
     # print_test()
     # source is just wsj enough, copy to all
     # presets_labeled(source,'answers')
-    for target in domains:
+    # for target in domains:
         # score_labeled_single_tag(source,target,pos_tag,method)
-        select_pivots_freq_unlabeled(source,target)
-        select_pivots_mi_unlabeled(source,target)
-        select_pivots_pmi_unlabeled(source,target)
-        select_pivots_ppmi_unlabeled(source,target)
-        sum_up_labeled_scores(source,target)
+        # select_pivots_freq_unlabeled(source,target)
+        # select_pivots_mi_unlabeled(source,target)
+        # select_pivots_pmi_unlabeled(source,target)
+        # select_pivots_ppmi_unlabeled(source,target)
+        # sum_up_labeled_scores(source,target)
