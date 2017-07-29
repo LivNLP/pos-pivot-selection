@@ -441,8 +441,8 @@ def print_results():
     # train_model = 'combined'
     index = 1
     gamma = 1
-    for train_model in train_models:
-        evaluate_table(source,target,pv_method,train_model,index,gamma)
+    # for train_model in train_models:
+    evaluate_table(source,target,pv_method,train_model,index,gamma)
     pass
 
 def print_f1_results():
