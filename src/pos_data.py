@@ -10,6 +10,7 @@ import math
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib import pylab 
 
 # collect words and pos tags from labeled dataset 
 def collect_labeled(domain):
