@@ -7,6 +7,8 @@ import glob
 import pickle
 import os
 import math
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 
 # collect words and pos tags from labeled dataset 
