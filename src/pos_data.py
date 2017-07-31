@@ -109,14 +109,14 @@ def compute_dist(source):
     #     f.write('%s %f\n'%(x,v))
     # f.close()
     # print L
-    plt.figure(figsize=(12,5.5))
+    plt.figure(figsize=(10,5.5))
     x =[h for (h,v) in L]
     y =[v for (h,v) in L]
     # print x
     # print y
     index = np.arange(len(x))
     plt.title('Distribution in %s'%source,size=22)
-    plt.plot(index,y,marker='X',linewidth=3.0,)
+    plt.plot(index,y,marker='x',linewidth=3.0)
     pylab.xticks(index,x,rotation='vertical')
     plt.ylabel('Distribution',size=22)
     plt.xlabel('POS_tags')
