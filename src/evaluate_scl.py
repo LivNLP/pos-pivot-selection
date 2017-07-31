@@ -315,7 +315,7 @@ def evaluate_POS(source, target, project, gamma, method, n):
     # write train feature vectors.
     trainFileName = '../work/%s/%s-%s/trainVects.SCL' % (method, source, target)
     testFileName = '../work/%s/%s-%s/testVects.SCL' % (method, source, target)
-    # featFile = open(trainFileName, 'w')
+    featFile = open(trainFileName, 'w')
     
     train_sentences = pos_data.load_preprocess_obj('%s-labeled'%source)
     train_vectors = classify_pos.load_classify_obj('%s-labeled-classify'%source)
@@ -328,35 +328,35 @@ def evaluate_POS(source, target, project, gamma, method, n):
     tag_list = list(set(pos_data.tag_list(train_sentences))&set(pos_data.tag_list(test_sentences)))
     print 'number of tags = ',len(tag_list)
 
-    # for nSent,sent in enumerate(train_sentences):
-    #     words = [word[0] for word in sent]
-    #     for nWord,w in enumerate(words):
-    #         pos_tag = sent[nWord][1]
-    #         if pos_tag in tag_list:
-    #             featFile.write('%d '%pos_data.tag_to_number(pos_tag,tag_list))
-    #             x = sp.lil_matrix((1, nDS), dtype=np.float64)
-    #             lex = train_feats[nSent][nWord]
-    #             for ft in lex:
-    #                 if ft[0]!=0 and ft[0] in feats:
-    #                     x[0,feats.index(ft[0])] =ft[1] 
-    #             if project:
-    #                 y = x.tocsr().dot(M)
-    #                 for i in range(0, h):
-    #                     featFile.write('%d:%f ' % (i+1, gamma * y[0,i])) 
-    #             z = train_vectors[nSent][nWord]
-    #             word_vectors=split_list(z,window_size)
-    #             for word_index,word_vec in enumerate(word_vectors):
-    #                 for i,num in enumerate(word_vec):
-    #                     if num != 0:
-    #                         featFile.write('%d:%f ' % (((word_index+1)*1000+i),num)) 
-    #                 featFile.write('%s'%(' '.join(str('%d:%d'%(((word_index+1)*1000+i),num)) for i,num in enumerate(word_vec) if num != 0)))
+    for nSent,sent in enumerate(train_sentences):
+        words = [word[0] for word in sent]
+        for nWord,w in enumerate(words):
+            pos_tag = sent[nWord][1]
+            if pos_tag in tag_list:
+                featFile.write('%d '%pos_data.tag_to_number(pos_tag,tag_list))
+                x = sp.lil_matrix((1, nDS), dtype=np.float64)
+                lex = train_feats[nSent][nWord]
+                for ft in lex:
+                    if ft[0]!=0 and ft[0] in feats:
+                        x[0,feats.index(ft[0])] =ft[1] 
+                if project:
+                    y = x.tocsr().dot(M)
+                    for i in range(0, h):
+                        featFile.write('%d:%f ' % (i+1, gamma * y[0,i])) 
+                z = train_vectors[nSent][nWord]
+                word_vectors=split_list(z,window_size)
+                for word_index,word_vec in enumerate(word_vectors):
+                    for i,num in enumerate(word_vec):
+                        if num != 0:
+                            featFile.write('%d:%f ' % (((word_index+1)*1000+i),num)) 
+                    featFile.write('%s'%(' '.join(str('%d:%d'%(((word_index+1)*1000+i),num)) for i,num in enumerate(word_vec) if num != 0)))
                         
-    #             # lex = train_feats[nSent][nWord]
-    #             # for ft in lex:
-    #             #     featFile.write('%s:%f ' % (ft[0],ft[1])) 
-    #             # print 'word %d of %d, sentence %d of %d...'%(nWord,len(words),nSent,len(train_sentences))
-    #             featFile.write('\n')
-    # featFile.close()
+                # lex = train_feats[nSent][nWord]
+                # for ft in lex:
+                #     featFile.write('%s:%f ' % (ft[0],ft[1])) 
+                # print 'word %d of %d, sentence %d of %d...'%(nWord,len(words),nSent,len(train_sentences))
+                featFile.write('\n')
+    featFile.close()
     featFile = open(testFileName, 'w')
     for nSent,sent in enumerate(test_sentences):
         words = [word[0] for word in sent]
@@ -1057,7 +1057,7 @@ if __name__ == '__main__':
     # target = 'reviews'
     # method = 'ppmi'
     # method = 'un_mi'
-    # method = "un_mi"
+    method = 'freq'
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
     
@@ -1077,10 +1077,12 @@ if __name__ == '__main__':
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
     # methods = ['un_mi','pmi']
+    pos_tag = 'NN'
+    methods = ['%s.%s'%(method,pos_tag)]
     
 
     # methods = ['freq','un_freq','mi','un_mi','ppmi','un_ppmi']
-    methods = ['freq','mi','pmi','ppmi']
+    # methods = ['freq','mi','pmi','ppmi']
     # opt = 'r'
     # opt = 'w'
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
@@ -1088,8 +1090,8 @@ if __name__ == '__main__':
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
     # methods = ['pmi','un_pmi','ppmi','un_ppmi']
     for method in methods:
-        pos_tag = 'NN'
-        method='%s.%s'%(method,pos_tag)
+        # pos_tag = 'NN'
+        # method='%s.%s'%(method,pos_tag)
         evaluate_POS(source, target, True, 1 ,method, n)
         # batchEval(method, 1, n)
         # batchEval_one_domain_pair(source,target,method,1,n)

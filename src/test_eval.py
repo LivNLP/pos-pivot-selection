@@ -115,7 +115,7 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     print "target = ", target
     print "pv_method: ", pv_method
     print "model: ", train_model
-    print
+    print "gamma: ", gamma
 
     # test the trained model to generate output: predict_labels
     # combined
@@ -244,7 +244,8 @@ def print_graphs_single_pv():
     # drop w(x) method on the graph,'w(x)'
     methods = ['x','q(x)','r(x)','x.NN']
     # methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
-    pv_methods=['freq','mi','pmi','ppmi']
+    # pv_methods=['freq','mi','pmi','ppmi']
+    pv_methods = ['freq']
     for pv_method in pv_methods:
         draw_f1_for_methods(source,target,methods,pv_method,train_model,gamma)
     pass
@@ -256,7 +257,8 @@ def print_graphs_single_method():
     train_model = 'combined'
     gamma = 1
     # drop w(x) method on the graph,'w(x)'
-    methods = ['x','q(x)','r(x)','x.NN']
+    # methods = ['x','q(x)','r(x)','x.NN']
+    methods = ['r(x)']
     # methods = ['$x$','$q(x)$','$r(x)$','$x_NN$']
     pv_methods=['freq','mi','pmi','ppmi']
     for method in methods:
@@ -485,5 +487,5 @@ if __name__ == '__main__':
     # test_sort()
     # clas_rpt()
     print_graphs_single_pv()
-    # print_graphs_single_method()
-    # print_graph_unlabelled()
+    print_graphs_single_method()
+    print_graph_unlabelled()
