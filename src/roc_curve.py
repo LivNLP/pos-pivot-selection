@@ -42,8 +42,8 @@ def draw(x,y,y_label,source,target,pv_method,train_model,gamma):
         plt.title('%s-%s:%s,%s,$\gamma$=%s'%(source,target,convert(pv_method),train_model,digit_limit(gamma)))
     else:
         plt.title('%s-%s:%s,%s'%(source,target,convert(pv_method),train_model))
-    if y_label == 'Distribution':
-        plt.title('Distribution in wsj')
+    # if y_label == 'Distribution':
+    #     plt.title('Distribution in wsj')
     plt.plot(index,y)
     pylab.xticks(index,x,rotation='vertical')
     plt.ylabel(y_label)
