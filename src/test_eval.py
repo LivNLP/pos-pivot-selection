@@ -130,7 +130,7 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     #     model_file = '../work/%s/%s-%s/model_lexical.SCL' % (pv_method,source,target)
     #     test_file = '../work/%s/%s-%s/testVects_lexical.SCL' % (pv_method,source,target)
     testLBFGS(test_file,model_file)
-    output = '../work/output_eval'
+    output = '../work/%s/%s-%s/output_eval'% (pv_method,source,target,gamma)
     predict_labels = read_labels(output)
     target_labels = read_labels(test_file)
     tag_list = generate_tag_list(source,target)
