@@ -121,14 +121,14 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     # combined
     model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
     test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
-    # implicit: word embeddings
-    if train_model == "implicit":
-        model_file = '../work/%s-%s/model.NA' % (source, target)
-        test_file = '../work/%s-%s/testVects.NA' % (source, target)
-    # explicit: SCL pivot predictors
-    if train_model == "explicit":
-        model_file = '../work/%s/%s-%s/model_lexical.SCL' % (pv_method,source,target)
-        test_file = '../work/%s/%s-%s/testVects_lexical.SCL' % (pv_method,source,target)
+    # # implicit: word embeddings
+    # if train_model == "implicit":
+    #     model_file = '../work/%s-%s/model.NA' % (source, target)
+    #     test_file = '../work/%s-%s/testVects.NA' % (source, target)
+    # # explicit: SCL pivot predictors
+    # if train_model == "explicit":
+    #     model_file = '../work/%s/%s-%s/model_lexical.SCL' % (pv_method,source,target)
+    #     test_file = '../work/%s/%s-%s/testVects_lexical.SCL' % (pv_method,source,target)
     testLBFGS(test_file,model_file)
     output = '../work/output_eval'
     predict_labels = read_labels(output)
@@ -137,7 +137,7 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     # print tag_list
     tag_dist = pos_data.compute_dist(source)
     res_list = sort_results(index,compare_labels(predict_labels,target_labels,tag_list,tag_dist))
-    tab = create_table(res_list)
+    # tab = create_table(res_list)
     # draw_roc(res_list)
     # draw_prf(res_list[:len(tag_list)],source,target,pv_method,train_model,gamma)
     # for i in range(2,7):
