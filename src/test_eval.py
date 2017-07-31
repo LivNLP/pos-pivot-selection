@@ -121,7 +121,7 @@ def evaluate_table(source,target,pv_method,train_model,index,gamma):
     # combined
     model_file = '../work/%s/%s-%s/model.SCL.%f' % (pv_method,source,target,gamma)
     # test_file = '../work/%s/%s-%s/testVects.SCL' % (pv_method,source,target)
-    test_file = '../work/%s-%s/testVects.NA' % (source, target)
+    test_file = '../work/r/freq/%s-%s/testVects.SCL' % (source, target)
     # # implicit: word embeddings
     # if train_model == "implicit":
     #     model_file = '../work/%s-%s/model.NA' % (source, target)
