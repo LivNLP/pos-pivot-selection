@@ -223,7 +223,7 @@ def draw_f1_for_methods(source,target,pv_methods,method,train_model,gamma):
         ys.append(f1)
     if 'x' in method:
         if method == 'x':
-            method = '$x$'
+            method = '$x_L$'
         elif method == 'q(x)':
             method = '$q(x)$'
         elif method == 'r(x)':
@@ -487,5 +487,5 @@ if __name__ == '__main__':
     # test_sort()
     # clas_rpt()
     print_graphs_single_pv()
-    print_graphs_single_method()
-    print_graph_unlabelled()
+    # print_graphs_single_method()
+    # print_graph_unlabelled()
