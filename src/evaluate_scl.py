@@ -1077,18 +1077,19 @@ if __name__ == '__main__':
     # batchEval_NA_lexical()
     # evaluate_POS_ID_lexical(target)
     # methods = ['un_mi','pmi']
-    # pos_tag = 'NN'
-    # methods = ['%s.%s'%(method,pos_tag)]
+    
 
     # methods = ['freq','un_freq','mi','un_mi','ppmi','un_ppmi']
-    # methods = ['freq','mi','pmi','ppmi']
+    methods = ['freq','mi','pmi','ppmi']
     # opt = 'r'
     # opt = 'w'
-    methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
+    # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
     # methods = ['pmi','un_pmi','ppmi','un_ppmi']
     for method in methods:
+        pos_tag = 'NN'
+        method='%s.%s'%(method,pos_tag)
         evaluate_POS(source, target, True, 1 ,method, n)
         # batchEval(method, 1, n)
         # batchEval_one_domain_pair(source,target,method,1,n)
