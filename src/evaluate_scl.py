@@ -1057,7 +1057,7 @@ if __name__ == '__main__':
     # target = 'reviews'
     # method = 'ppmi'
     # method = 'un_mi'
-    method = 'freq'
+    # method = 'freq'
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     n = 500
     
@@ -1065,7 +1065,7 @@ if __name__ == '__main__':
     # batchEval_NA()
     # learnProjection(source, target, method, n)
     # evaluate_POS_lexical(source, target, True, 1, method, n)
-    evaluate_POS(source, target, True, 100 ,method, n)
+    # evaluate_POS(source, target, True, 100 ,method, n)
     # evaluate_POS_NA(source,target)
     # evaluate_POS_NA_lexical(source,target)
     # test_results(source,target,method,1)
@@ -1088,11 +1088,11 @@ if __name__ == '__main__':
     # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
-    # methods = ['pmi','un_pmi','ppmi','un_ppmi']
-    # for method in methods:
+    methods = ['un_freq','un_mi','un_pmi','un_ppmi']
+    for method in methods:
         # pos_tag = 'NN'
         # method='%s.%s'%(method,pos_tag)
-        # evaluate_POS(source, target, True, 100 ,method, n)
+        evaluate_POS(source, target, True, 100 ,method, n)
         # batchEval(method, 1, n)
         # batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)

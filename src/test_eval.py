@@ -487,5 +487,5 @@ if __name__ == '__main__':
     # test_sort()
     # clas_rpt()
     print_graphs_single_pv()
-    print_graphs_single_method()
-    print_graph_unlabelled()
+    # print_graphs_single_method()
+    # print_graph_unlabelled()
