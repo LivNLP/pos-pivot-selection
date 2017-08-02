@@ -1062,10 +1062,10 @@ def evaluate_numbers_of_pivots(source,target,method,gamma):
 if __name__ == '__main__':
     source = 'wsj'
     # target = 'answers'
-    # target = 'reviews'
+    target = 'reviews'
     # target = 'weblogs'
     # target = 'newsgroups'
-    target = 'emails'
+    # target = 'emails'
     # method = 'ppmi'
     # method = 'un_mi'
     # method = 'freq'
