@@ -1018,13 +1018,13 @@ def f1_evaluate_one_domain_pair(source,target,method,gamma,n,opt):
     resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots\n')
     learnProjection(source, target, f1_method, n)
     # explicit: SCL pivot predictors 
-    evaluation = evaluate_POS_lexical(source, target, True, gamma, f1_method, n)
-    resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'explicit' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
-    resFile.flush()
+    # evaluation = evaluate_POS_lexical(source, target, True, gamma, f1_method, n)
+    # resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'explicit' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
+    # resFile.flush()
     # implicit: word embeddings
-    evaluation = evaluate_POS_NA(source, target)
-    resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'implicit' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
-    resFile.flush()
+    # evaluation = evaluate_POS_NA(source, target)
+    # resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'implicit' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
+    # resFile.flush()
     # combined = explicit + implicit
     evaluation = evaluate_POS(source, target, True, gamma, f1_method, n)
     resFile.write('%s, %s, %s, %f, %f, %f, %f\n' % (source, target, 'combined' , evaluation[0], evaluation[1][0],evaluation[1][1],n))
@@ -1053,8 +1053,11 @@ def evaluate_numbers_of_pivots(source,target,method,gamma,nums):
 
 if __name__ == '__main__':
     source = 'wsj'
-    target = 'answers'
+    # target = 'answers'
     # target = 'reviews'
+    target = 'weblogs'
+    # target = 'newsgroups'
+    # target = 'emails'
     # method = 'ppmi'
     # method = 'un_mi'
     # method = 'freq'
@@ -1085,20 +1088,20 @@ if __name__ == '__main__':
     # methods = ['freq','mi','pmi','ppmi']
     # opt = 'r'
     # opt = 'w'
-    # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
+    methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
-    methods = ['un_freq','un_mi']
+    # methods = ['un_freq','un_mi']
     #,'un_pmi','un_ppmi'
     for method in methods:
         # pos_tag = 'NN'
         # method='%s.%s'%(method,pos_tag)
-        evaluate_POS(source, target, True, 1 ,method, n)
+        # evaluate_POS(source, target, True, 1 ,method, n)
         # batchEval(method, 1, n)
-        # batchEval_one_domain_pair(source,target,method,1,n)
+        batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
-        # f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
+        f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
     # gammas = [0.01,0.1,1,10,100]
     # for method in methods:
         # dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
