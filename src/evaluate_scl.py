@@ -1046,13 +1046,14 @@ def f1_choose_gamma_one_domain_pair(source,target,method,gammas,n,opt):
 
 
 # number of pivots
-def evaluate_numbers_of_pivots(source,target,method,gamma):
+def evaluate_numbers_of_pivots(source,target,method,gamma,opt):
+    f1_method = ("f1/%s/"%opt)+method
     resFile = open('../work/a_sim/SCLnums%s-%s.freq.r(x).csv'% (source, target), 'w')
     resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots, gamma\n')
     nums = [100,200,300,400,500,600,700,800,900,1000]
     for n in nums:
-        learnProjection(source, target, method, n)
-        evaluation = evaluate_POS(source, target, True, gamma, method, n)
+        learnProjection(source, target, f1_method, n)
+        evaluation = evaluate_POS(source, target, True, gamma, f1_method, n)
         resFile.write('%s, %s, %s, %f, %f, %f, %f,%f\n' % (source, target, 'combined' , evaluation[0], evaluation[1][0],evaluation[1][1],n,gamma))
         resFile.flush()
     resFile.close()
@@ -1110,8 +1111,8 @@ if __name__ == '__main__':
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
         # f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
-        f1_method = ("f1/%s/"%opt)+method
-        evaluate_numbers_of_pivots(source,target,f1_method,100)
+        
+        evaluate_numbers_of_pivots(source,target,method,100,opt)
     # gammas = [0.01,0.1,1,10,100]
     # for method in methods:
         # dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
