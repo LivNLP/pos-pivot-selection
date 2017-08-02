@@ -238,7 +238,7 @@ def load(source,target):
 if __name__ == '__main__':
     source = 'wsj'
     # target = 'answers'
-    # target = 'reviews'
+    target = 'reviews'
     # target = 'emails'
     res_list = compute_res(source,target)
     sum_up_f1_labeled_scores(source,target,'r',res_list)
