@@ -1047,7 +1047,7 @@ def f1_choose_gamma_one_domain_pair(source,target,method,gammas,n,opt):
 
 # number of pivots
 def evaluate_numbers_of_pivots(source,target,method,gamma):
-    resFile = open('../work/a_sim/SCLnums%s-%s.%s.csv'% (source, target, method), 'w')
+    resFile = open('../work/a_sim/SCLnums%s-%s.freq.r(x).csv'% (source, target), 'w')
     resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots, gamma\n')
     nums = [100,200,300,400,500,600,700,800,900,1000]
     for n in nums:
