@@ -1086,7 +1086,7 @@ if __name__ == '__main__':
 
     # methods = ['freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods = ['freq','mi','pmi','ppmi']
-    # opt = 'r'
+    opt = 'r'
     # opt = 'w'
     methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
