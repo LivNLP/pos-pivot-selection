@@ -60,7 +60,7 @@ def trainMultiLBFGS(train_file, model_file):
 
 
 def testLBFGS(test_file, model_file):
-    output = '../work/output'
+    output = '../work/output_test'
     # retcode = subprocess.call('cat %s | classias-tag -m %s -t> %s' %\
     #                           (test_file, model_file, output), shell=True)
     # retcode = subprocess.check_output(['/bin/bash','-i', '-c', 'liblinear-predict -b 1 %s %s %s' %\
@@ -1046,8 +1046,16 @@ def f1_choose_gamma_one_domain_pair(source,target,method,gammas,n,opt):
 
 
 # number of pivots
-def evaluate_numbers_of_pivots(source,target,method,gamma,nums):
-
+def evaluate_numbers_of_pivots(source,target,method,gamma):
+    resFile = open('../work/a_sim/SCLnums%s-%s.%s.csv'% (source, target, method), 'w')
+    resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots, gamma\n')
+    nums = [100,200,300,400,500,600,700,800,900,1000]
+    for n in nums:
+        learnProjection(source, target, method, n)
+        evaluation = evaluate_POS(source, target, True, gamma, method, n)
+        resFile.write('%s, %s, %s, %f, %f, %f, %f,%f\n' % (source, target, 'combined' , evaluation[0], evaluation[1][0],evaluation[1][1],n,gamma))
+        resFile.flush()
+    resFile.close()
     pass
 
 
@@ -1055,14 +1063,14 @@ if __name__ == '__main__':
     source = 'wsj'
     # target = 'answers'
     # target = 'reviews'
-    target = 'weblogs'
+    # target = 'weblogs'
     # target = 'newsgroups'
-    # target = 'emails'
+    target = 'emails'
     # method = 'ppmi'
     # method = 'un_mi'
     # method = 'freq'
     # methods = ['mi','un_mi','pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
-    n = 500
+    # n = 500
     
     # batchEval(method, 1, n)
     # batchEval_NA()
@@ -1088,20 +1096,22 @@ if __name__ == '__main__':
     # methods = ['freq','mi','pmi','ppmi']
     opt = 'r'
     # opt = 'w'
-    methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
+    # methods = ['pmi','un_pmi','freq','un_freq','mi','un_mi','ppmi','un_ppmi']
     # methods += ['landmark_pretrained_word2vec','landmark_pretrained_word2vec_ppmi','landmark_pretrained_glove','landmark_pretrained_glove_ppmi']
     # methods = ['landmark_pretrained_word2vec','landmark_pretrained_glove']
-    # methods = ['un_freq','un_mi']
+    methods = ['freq']
     #,'un_pmi','un_ppmi'
     for method in methods:
         # pos_tag = 'NN'
         # method='%s.%s'%(method,pos_tag)
         # evaluate_POS(source, target, True, 1 ,method, n)
         # batchEval(method, 1, n)
-        batchEval_one_domain_pair(source,target,method,1,n)
+        # batchEval_one_domain_pair(source,target,method,1,n)
         # batchEval_lexical(method, 1, n)
         # dist_evaluate_one_domain_pair(source,target,method,1,n)
-        f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
+        # f1_evaluate_one_domain_pair(source,target,method,1,n,opt)
+        f1_method = ("f1/%s/"%opt)+method
+        evaluate_numbers_of_pivots(source,target,f1_method,100)
     # gammas = [0.01,0.1,1,10,100]
     # for method in methods:
         # dist_choose_gamma_one_domain_pair(source, target, method,gammas,n)
