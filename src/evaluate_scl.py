@@ -1052,7 +1052,7 @@ def evaluate_numbers_of_pivots(source,target,method,gamma,opt):
     resFile.write('Source, Target, Model, Acc, IntLow, IntHigh, #pivots, gamma\n')
     nums = [100,200,300,400,500,600,700,800,900,1000]
     for n in nums:
-        # learnProjection(source, target, f1_method, n)
+        learnProjection(source, target, f1_method, n)
         evaluation = evaluate_POS(source, target, True, gamma, f1_method, n)
         resFile.write('%s, %s, %s, %f, %f, %f, %f,%f\n' % (source, target, 'combined' , evaluation[0], evaluation[1][0],evaluation[1][1],n,gamma))
         resFile.flush()
@@ -1062,8 +1062,8 @@ def evaluate_numbers_of_pivots(source,target,method,gamma,opt):
 
 if __name__ == '__main__':
     source = 'wsj'
-    # target = 'answers'
-    target = 'reviews'
+    target = 'answers'
+    # target = 'reviews'
     # target = 'weblogs'
     # target = 'newsgroups'
     # target = 'emails'
