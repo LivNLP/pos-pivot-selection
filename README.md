@@ -15,4 +15,4 @@ Labelled pivot selection (FREQ_L, MI_L, PMI_L, PPMI_L) between POS category+ and
 
 ## Evaluation
 - *pivot_wordnet.py*: how many words are nouns?
-- *test_eval.py* and *roc_curve.py*: p,r,f1?
+- *test_eval.py* and *roc_curve.py*: p , r, f1?
